@@ -1,0 +1,178 @@
+﻿@model IEnumerable<SistemaAereo.Models.ClientePreferencial>
+
+@{
+    ViewData["Title"] = "Clientes Preferenciais";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-2 text-dark">
+            <i class="fas fa-users text-primary me-2"></i>Clientes Preferenciais
+        </h1>
+        <p class="text-muted mb-0">Gerencie todos os clientes do sistema</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Inativos" class="btn btn-outline-secondary btn-modern">
+            <i class="fas fa-user-slash me-2"></i>Clientes Inativos
+        </a>
+        <a asp-action="MalaDireta" class="btn btn-outline-primary btn-modern">
+            <i class="fas fa-envelope me-2"></i>Mala Direta
+        </a>
+        <a asp-action="Create" class="btn btn-primary-modern">
+            <i class="fas fa-user-plus me-2"></i>Novo Cliente
+        </a>
+    </div>
+</div>
+
+<!-- Alertas -->
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert-modern alert-success">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3 fa-lg"></i>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">Sucesso!</h6>
+                <p class="mb-0">@TempData["Sucesso"]</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["Erro"] != null)
+{
+    <div class="alert-modern alert-danger">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-3 fa-lg"></i>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">Erro!</h6>
+                <p class="mb-0">@TempData["Erro"]</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<!-- Card Principal -->
+<div class="card-modern">
+    <div class="card-header-modern d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-dark">Lista de Clientes Ativos</h5>
+        <div class="d-flex gap-2">
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <input type="text" class="form-control form-control-modern" placeholder="Buscar cliente...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body-modern">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Contato</th>
+                            <th>Localização</th>
+                            <th>Cadastro</th>
+                            <th>Status</th>
+                            <th width="120">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cliente in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block">@cliente.Nome</strong>
+                                            <small class="text-muted">ID: @cliente.ClienteId</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold">@cliente.Email</div>
+                                        <small class="text-muted">@(string.IsNullOrEmpty(cliente.Telefone) ? "N/A" : cliente.Telefone)</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold">@(string.IsNullOrEmpty(cliente.Cidade) ? "N/A" : cliente.Cidade)</div>
+                                        <small class="text-muted">@cliente.Estado</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-muted">@cliente.DataCadastro.ToString("dd/MM/yyyy")</div>
+                                </td>
+                                <td>
+                                    @if (cliente.Ativo)
+                                    {
+                                        <span class="badge-modern bg-success bg-opacity-10 text-success">
+                                            <i class="fas fa-check-circle me-1"></i>Ativo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-modern bg-danger bg-opacity-10 text-danger">
+                                            <i class="fas fa-times-circle me-1"></i>Inativo
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="Edit" asp-route-id="@cliente.ClienteId"
+                                           class="btn btn-outline-warning btn-sm"
+                                           data-bs-toggle="tooltip" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form asp-action="Delete" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Excluir"
+                                                    onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                    <i class="fas fa-users fa-2x text-muted"></i>
+                </div>
+                <h5 class="text-muted">Nenhum cliente cadastrado</h5>
+                <p class="text-muted mb-4">Comece cadastrando o primeiro cliente do sistema.</p>
+                <a asp-action="Create" class="btn btn-primary-modern">
+                    <i class="fas fa-user-plus me-2"></i>Cadastrar Primeiro Cliente
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .avatar {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

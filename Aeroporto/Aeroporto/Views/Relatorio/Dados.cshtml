@@ -1,0 +1,125 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Debug - Dados do Sistema";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-bug"></i> Debug - Dados do Sistema</h1>
+        <a href="/Passagens/Create" class="btn btn-primary">Testar Passagens</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Voos no Sistema</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Voos.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Número</th>
+                                        <th>Rota</th>
+                                        <th>Saída</th>
+                                        <th>Futuro?</th>
+                                        <th>Poltronas</th>
+                                        <th>Disponíveis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var voo in Model.Voos)
+                                    {
+                                        <tr class="@(voo.EhFuturo ? "table-success" : "table-warning")">
+                                            <td>@voo.VooId</td>
+                                            <td>@voo.NumeroVoo</td>
+                                            <td>@voo.Origem → @voo.Destino</td>
+                                            <td>@voo.HorarioSaida.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@(voo.EhFuturo ? "✅ Sim" : "❌ Não")</td>
+                                            <td>@voo.TotalPoltronas</td>
+                                            <td>@voo.PoltronasDisponiveis</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Nenhum voo cadastrado no sistema!
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Clientes Ativos</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Clientes.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var cliente in Model.Clientes)
+                                    {
+                                        <tr>
+                                            <td>@cliente.ClienteId</td>
+                                            <td>@cliente.Nome</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Nenhum cliente ativo cadastrado!
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Ações</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/Voos/Create" class="btn btn-success">Criar Novo Voo</a>
+                        <a href="/Clientes/Create" class="btn btn-info">Criar Novo Cliente</a>
+                        <button id="criarDadosTeste" class="btn btn-warning">Criar Dados de Teste</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#criarDadosTeste').click(function() {
+            if (confirm('Deseja criar dados de teste? Isso irá adicionar voos, clientes e poltronas.')) {
+                $.post('/Debug/CriarDadosTeste', function(response) {
+                    alert(response.mensagem);
+                    location.reload();
+                });
+            }
+        });
+    </script>
+}

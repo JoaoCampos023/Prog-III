@@ -1,0 +1,98 @@
+﻿@model SistemaAereo.Models.Voo
+
+@{
+    ViewData["Title"] = "Detalhes do Voo";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-info-circle"></i> Detalhes do Voo</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Voo @Model.NumeroVoo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Informações do Voo</h6>
+                        <p><strong>Número:</strong> @Model.NumeroVoo</p>
+                        <p><strong>Aeronave:</strong> @Model.Aeronave?.TipoAeronave</p>
+                        <p><strong>Saída:</strong> @Model.HorarioSaida.ToString("dd/MM/yyyy HH:mm")</p>
+                        <p><strong>Chegada Prevista:</strong> @Model.HorarioChegadaPrevisto.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Rota</h6>
+                        <p><strong>Origem:</strong> @Model.AeroportoOrigem?.Nome (@Model.AeroportoOrigem?.CodigoIATA)</p>
+                        <p><strong>Destino:</strong> @Model.AeroportoDestino?.Nome (@Model.AeroportoDestino?.CodigoIATA)</p>
+                        <p>
+                            <strong>Status:</strong>
+                            @if (Model.HorarioSaida > DateTime.Now)
+                            {
+                                <span class="badge bg-success">Agendado</span>
+                            }
+                            else if (Model.HorarioChegadaPrevisto > DateTime.Now)
+                            {
+                                <span class="badge bg-primary">Em Andamento</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Concluído</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                @if (Model.Escalas?.Any() == true)
+                {
+                    <div class="mt-4">
+                        <h6>Escalas</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Ordem</th>
+                                        <th>Aeroporto</th>
+                                        <th>Saída</th>
+                                        <th>Chegada</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var escala in Model.Escalas.OrderBy(e => e.Ordem))
+                                    {
+                                        <tr>
+                                            <td>@escala.Ordem</td>
+                                            <td>@escala.Aeroporto?.Nome (@escala.Aeroporto?.CodigoIATA)</td>
+                                            <td>@escala.HorarioSaida.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@(escala.HorarioChegada?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Poltronas?.Any() == true)
+                {
+                    <div class="mt-4">
+                        <h6>Poltronas</h6>
+                        <p>
+                            <strong>Total:</strong> @Model.Poltronas.Count |
+                            <strong>Disponíveis:</strong> @Model.Poltronas.Count(p => p.Disponivel) |
+                            <strong>Ocupadas:</strong> @Model.Poltronas.Count(p => !p.Disponivel)
+                        </p>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <a asp-action="Edit" asp-route-id="@Model.VooId" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>

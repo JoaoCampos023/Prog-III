@@ -1,0 +1,221 @@
+﻿@model SistemaAereo.Models.Passagem
+
+@{
+    ViewData["Title"] = "Emitir Nova Passagem";
+
+    // Prevenir null reference - verificação robusta
+    var clientesList = ViewBag.Clientes as IEnumerable<SelectListItem>;
+    var voosList = ViewBag.VoosDetalhados as IEnumerable<SelectListItem>;
+
+    var clientes = clientesList?.ToList() ?? new List<SelectListItem>();
+    var voos = voosList?.ToList() ?? new List<SelectListItem>();
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-dark">
+                <i class="fas fa-ticket-alt text-primary me-2"></i>Emitir Nova Passagem
+            </h1>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Avisos sobre dados faltantes -->
+    @if (!clientes.Any())
+    {
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Nenhum cliente cadastrado!</strong>
+            <a href="@Url.Action("Create", "Clientes")" class="alert-link">Cadastrar cliente</a>
+        </div>
+    }
+
+    @if (!voos.Any())
+    {
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Nenhum voo disponível!</strong>
+            <a href="@Url.Action("Create", "Voos")" class="alert-link">Cadastrar voo</a>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Dados da Passagem</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-warning">
+                        <strong>Erros de validação:</strong>
+                        <ul class="mb-0">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ClienteId" class="form-label">Cliente *</label>
+                        <select asp-for="ClienteId" class="form-select" required
+                                disabled="@(!clientes.Any())">
+                            <option value="">Selecione um cliente</option>
+                            @foreach (var item in clientes)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                        @if (!clientes.Any())
+                        {
+                            <small class="text-warning">É necessário cadastrar clientes primeiro</small>
+                        }
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="VooId" class="form-label">Voo *</label>
+                        <select asp-for="VooId" class="form-select" id="VooId" required
+                                disabled="@(!voos.Any())">
+                            <option value="">Selecione um voo</option>
+                            @foreach (var item in voos)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="VooId" class="text-danger"></span>
+                        @if (!voos.Any())
+                        {
+                            <small class="text-warning">É necessário cadastrar voos primeiro</small>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PoltronaId" class="form-label">Poltrona *</label>
+                        <select asp-for="PoltronaId" class="form-select" id="PoltronaId" required
+                                disabled="true">
+                            <option value="">Primeiro selecione um voo</option>
+                        </select>
+                        <span asp-validation-for="PoltronaId" class="text-danger"></span>
+                        <div id="poltronasLoading" class="text-info small" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Carregando poltronas...
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Preço</label>
+                        <input type="text" class="form-control" id="PrecoDisplay" readonly>
+                        <small class="form-text text-muted">O preço será definido automaticamente</small>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary" id="btnSubmit"
+                            disabled="@(!clientes.Any() || !voos.Any())">
+                        <i class="fas fa-save me-2"></i>Emitir Passagem
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log("Documento carregado");
+
+            // Habilitar seleção de voo apenas se houver voos
+            if (@voos.Count > 0) {
+                $('#VooId').prop('disabled', false);
+            }
+
+            // Habilitar seleção de cliente apenas se houver clientes
+            if (@clientes.Count > 0) {
+                $('#ClienteId').prop('disabled', false);
+            }
+
+            $('#VooId').change(function() {
+                var vooId = $(this).val();
+                var poltronaSelect = $('#PoltronaId');
+                var loading = $('#poltronasLoading');
+
+                if (vooId) {
+                    loading.show();
+                    poltronaSelect.prop('disabled', true);
+
+                    $.getJSON('@Url.Action("PoltronasDisponiveis", "Passagens")', { vooId: vooId }, function(data) {
+                        poltronaSelect.empty();
+                        loading.hide();
+
+                        if (data.success && data.data.length > 0) {
+                            poltronaSelect.append('<option value="">Selecione uma poltrona</option>');
+                            $.each(data.data, function(index, poltrona) {
+                                var optionText = poltrona.numeroPoltrona + ' - ' + poltrona.tipo +
+                                                ' (' + poltrona.localizacao + ') - R$ ' + poltrona.preco.toFixed(2);
+                                poltronaSelect.append('<option value="' + poltrona.poltronaId + '">' + optionText + '</option>');
+                            });
+                            poltronaSelect.prop('disabled', false);
+                            $('#btnSubmit').prop('disabled', false);
+                        } else {
+                            poltronaSelect.append('<option value="">Nenhuma poltrona disponível</option>');
+                            $('#btnSubmit').prop('disabled', true);
+                        }
+                    }).fail(function() {
+                        loading.hide();
+                        poltronaSelect.empty().append('<option value="">Erro ao carregar poltronas</option>');
+                    });
+                } else {
+                    poltronaSelect.empty().append('<option value="">Primeiro selecione um voo</option>');
+                    poltronaSelect.prop('disabled', true);
+                    $('#PrecoDisplay').val('');
+                    $('#btnSubmit').prop('disabled', true);
+                }
+            });
+
+            $('#PoltronaId').change(function() {
+                var selectedText = $(this).find('option:selected').text();
+                var precoMatch = selectedText.match(/R\$\s([0-9,\.]+)/);
+                if (precoMatch) {
+                    $('#PrecoDisplay').val('R$ ' + precoMatch[1]);
+                } else {
+                    $('#PrecoDisplay').val('');
+                }
+            });
+        });
+    </script>
+}

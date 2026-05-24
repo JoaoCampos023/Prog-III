@@ -1,0 +1,193 @@
+﻿@model IEnumerable<SistemaAereo.Models.ClientePreferencial>
+
+@{
+    ViewData["Title"] = "Clientes Inativos";
+    var totalInativos = ViewBag.TotalInativos;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-2 text-dark">
+            <i class="fas fa-user-slash text-secondary me-2"></i>Clientes Inativos
+        </h1>
+        <p class="text-muted mb-0">Gerencie clientes desativados do sistema</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-primary btn-modern">
+            <i class="fas fa-users me-2"></i>Clientes Ativos
+        </a>
+        <a asp-action="Create" class="btn btn-primary-modern">
+            <i class="fas fa-user-plus me-2"></i>Novo Cliente
+        </a>
+    </div>
+</div>
+
+<!-- Alertas -->
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert-modern alert-success">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3 fa-lg"></i>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">Sucesso!</h6>
+                <p class="mb-0">@TempData["Sucesso"]</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["Erro"] != null)
+{
+    <div class="alert-modern alert-danger">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-3 fa-lg"></i>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">Erro!</h6>
+                <p class="mb-0">@TempData["Erro"]</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<!-- Card Principal -->
+<div class="card-modern">
+    <div class="card-header-modern d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-dark">Lista de Clientes Inativos</h5>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="badge-modern bg-secondary bg-opacity-10 text-secondary">
+                <i class="fas fa-user-slash me-1"></i>@totalInativos clientes inativos
+            </span>
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <input type="text" class="form-control form-control-modern" placeholder="Buscar cliente..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" onclick="filtrarClientes()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body-modern">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-modern" id="tabelaClientes">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Contato</th>
+                            <th>Localização</th>
+                            <th>Data de Inativação</th>
+                            <th>Status</th>
+                            <th width="140">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cliente in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-secondary bg-opacity-10 text-secondary rounded-circle p-2 me-3">
+                                            <i class="fas fa-user-slash"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block">@cliente.Nome</strong>
+                                            <small class="text-muted">ID: @cliente.ClienteId</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold">@cliente.Email</div>
+                                        <small class="text-muted">@(string.IsNullOrEmpty(cliente.Telefone) ? "N/A" : cliente.Telefone)</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold">@(string.IsNullOrEmpty(cliente.Cidade) ? "N/A" : cliente.Cidade)</div>
+                                        <small class="text-muted">@cliente.Estado</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-muted">@cliente.DataCadastro.ToString("dd/MM/yyyy")</div>
+                                </td>
+                                <td>
+                                    <span class="badge-modern bg-danger bg-opacity-10 text-danger">
+                                        <i class="fas fa-times-circle me-1"></i>Inativo
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <form asp-action="Reativar" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@cliente.ClienteId" />
+                                            <button type="submit"
+                                                    class="btn btn-outline-success btn-sm"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Reativar Cliente"
+                                                    onclick="return confirm('Tem certeza que deseja reativar este cliente?')">
+                                                <i class="fas fa-user-check"></i> Reativar
+                                            </button>
+                                        </form>
+                                        <a asp-action="Edit" asp-route-id="@cliente.ClienteId"
+                                           class="btn btn-outline-warning btn-sm"
+                                           data-bs-toggle="tooltip" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                    <i class="fas fa-user-check fa-2x text-muted"></i>
+                </div>
+                <h5 class="text-muted">Nenhum cliente inativo</h5>
+                <p class="text-muted mb-4">Todos os clientes estão ativos no momento.</p>
+                <a asp-action="Index" class="btn btn-primary-modern">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar para Clientes Ativos
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarClientes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#tabelaClientes tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Busca em tempo real
+        document.getElementById('searchInput').addEventListener('input', filtrarClientes);
+
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    <style>
+        .avatar {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+}
