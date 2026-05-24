@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data;
-using SistemaAereo.Models;
+using SistemaAereo.Data.Context;
+using SistemaAereo.Data.Seed;
 using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
 using SistemaAereo.Services;
+using SistemaAereo.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,9 @@ builder.Services.AddScoped<IAeroportoRepository, AeroportoRepository>();
 builder.Services.AddScoped<IClientePreferencialRepository, ClientePreferencialRepository>();
 builder.Services.AddScoped<IPassagemRepository, PassagemRepository>();
 builder.Services.AddScoped<IPoltronaRepository, PoltronaRepository>();
+
+// Registro dos serviços
+builder.Services.AddScoped<IPoltronaService, PoltronaService>();
 
 var app = builder.Build();
 

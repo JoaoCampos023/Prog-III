@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data;
-using SistemaAereo.Models;
+using SistemaAereo.Data.Context;
+using SistemaAereo.Models.Entities;
+using SistemaAereo.Models.Enums;
+using SistemaAereo.Models.ViewModels;
 using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
+using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Controllers
 {
@@ -14,6 +17,7 @@ namespace SistemaAereo.Controllers
         private readonly IPoltronaRepository _poltronaRepository;
         private readonly IClientePreferencialRepository _clienteRepository;
         private readonly IVooRepository _vooRepository;
+        private readonly IPoltronaService _poltronaService;
         private readonly AeroportoContext _context;
         private readonly ILogger<PassagensController> _logger;
 
@@ -22,6 +26,7 @@ namespace SistemaAereo.Controllers
             IPoltronaRepository poltronaRepository,
             IClientePreferencialRepository clienteRepository,
             IVooRepository vooRepository,
+            IPoltronaService poltronaService,
             AeroportoContext context,
             ILogger<PassagensController> logger)
         {
@@ -29,6 +34,7 @@ namespace SistemaAereo.Controllers
             _poltronaRepository = poltronaRepository;
             _clienteRepository = clienteRepository;
             _vooRepository = vooRepository;
+            _poltronaService = poltronaService;
             _context = context;
             _logger = logger;
         }
@@ -37,19 +43,55 @@ namespace SistemaAereo.Controllers
         // MÉTODOS PRINCIPAIS - CRUD
         // =============================================
 
-        // GET: Passagens
-        public async Task<IActionResult> Index()
+        // GET: Passagens (COM PAGINAÇÃO)
+        public async Task<IActionResult> Index(int pagina = 1, int itensPorPagina = 10, string status = null)
         {
             try
             {
-                var passagens = await _passagemRepository.GetPassagensCompletasAsync();
-                return View(passagens);
+                var query = _context.Passagens
+                    .AsNoTracking()
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoOrigem)
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoDestino)
+                    .Include(p => p.Cliente)
+                    .Include(p => p.Poltrona)
+                    .AsQueryable();
+
+                // Filtro por status
+                if (!string.IsNullOrEmpty(status) && PassagemStatus.IsValid(status))
+                {
+                    query = query.Where(p => p.Status == status);
+                    ViewBag.StatusFiltro = status;
+                }
+
+                var totalItens = await query.CountAsync();
+                var passagens = await query
+                    .OrderByDescending(p => p.DataEmissao)
+                    .Skip((pagina - 1) * itensPorPagina)
+                    .Take(itensPorPagina)
+                    .ToListAsync();
+
+                var model = new PaginacaoViewModel<Passagem>(passagens, totalItens, pagina, itensPorPagina);
+
+                // Opções de paginação para a view
+                ViewBag.ItensPorPaginaOptions = new[] { 5, 10, 25, 50, 100 };
+                ViewBag.ItensPorPaginaAtual = itensPorPagina;
+                ViewBag.StatusOptions = PassagemStatus.GetAll();
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao carregar passagens");
                 TempData["Erro"] = "Erro ao carregar lista de passagens";
-                return View(new List<Passagem>());
+
+                // Garantir que os ViewBags sejam definidos mesmo em caso de erro
+                ViewBag.ItensPorPaginaOptions = new[] { 5, 10, 25, 50, 100 };
+                ViewBag.ItensPorPaginaAtual = itensPorPagina;
+                ViewBag.StatusOptions = PassagemStatus.GetAll();
+
+                return View(new PaginacaoViewModel<Passagem>());
             }
         }
 
@@ -58,12 +100,24 @@ namespace SistemaAereo.Controllers
         {
             try
             {
-                var passagem = await _passagemRepository.GetPassagemCompletaAsync(id);
+                var passagem = await _context.Passagens
+                    .AsNoTracking()
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoOrigem)
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoDestino)
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.Aeronave)
+                    .Include(p => p.Cliente)
+                    .Include(p => p.Poltrona)
+                    .FirstOrDefaultAsync(p => p.PassagemId == id);
+
                 if (passagem == null)
                 {
                     TempData["Erro"] = "Passagem não encontrada";
                     return RedirectToAction(nameof(Index));
                 }
+
                 return View(passagem);
             }
             catch (Exception ex)
@@ -96,7 +150,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        // POST: Passagens/Create
+        // POST: Passagens/Create (COM TRANSAÇÃO E CONTROLE DE CONCORRÊNCIA)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Passagem passagem)
@@ -117,39 +171,83 @@ namespace SistemaAereo.Controllers
 
                 _logger.LogInformation($"Dados válidos - Cliente: {passagem.ClienteId}, Voo: {passagem.VooId}, Poltrona: {passagem.PoltronaId}");
 
-                var poltrona = await ValidarPoltrona(passagem.PoltronaId);
-                if (poltrona == null)
+                // Usar transação para garantir consistência
+                using var transaction = await _context.Database.BeginTransactionAsync();
+
+                try
                 {
+                    // Recarregar poltrona com bloqueio para controle de concorrência
+                    var poltrona = await _context.Poltronas
+                        .FirstOrDefaultAsync(p => p.PoltronaId == passagem.PoltronaId && p.Disponivel);
+
+                    if (poltrona == null)
+                    {
+                        ModelState.AddModelError("PoltronaId", "Poltrona não encontrada ou não está mais disponível.");
+                        await CarregarViewBags();
+                        return View(passagem);
+                    }
+
+                    var cliente = await ValidarCliente(passagem.ClienteId);
+                    if (cliente == null)
+                    {
+                        await CarregarViewBags();
+                        return View(passagem);
+                    }
+
+                    var voo = await ValidarVoo(passagem.VooId);
+                    if (voo == null)
+                    {
+                        await CarregarViewBags();
+                        return View(passagem);
+                    }
+
+                    // Verificar dupla ocupação
+                    if (await PoltronaOcupada(passagem.PoltronaId))
+                    {
+                        ModelState.AddModelError("PoltronaId", "Poltrona já ocupada.");
+                        await CarregarViewBags();
+                        return View(passagem);
+                    }
+
+                    // Verificar se o voo já partiu
+                    if (voo.HorarioSaida < DateTime.Now)
+                    {
+                        ModelState.AddModelError("VooId", "Não é possível comprar passagem para um voo que já partiu.");
+                        await CarregarViewBags();
+                        return View(passagem);
+                    }
+
+                    // Marcar poltrona como indisponível primeiro
+                    poltrona.Disponivel = false;
+                    _context.Poltronas.Update(poltrona);
+                    await _context.SaveChangesAsync();
+
+                    // Preencher e salvar passagem
+                    PreencherDadosPassagem(passagem, poltrona);
+                    _context.Passagens.Add(passagem);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    TempData["Sucesso"] = $"Passagem emitida com sucesso! Número: {passagem.NumeroBilhete}";
+                    return RedirectToAction(nameof(Details), new { id = passagem.PassagemId });
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Conflito de concorrência ao criar passagem");
+                    ModelState.AddModelError("", "A poltrona foi comprada por outro usuário. Tente novamente.");
                     await CarregarViewBags();
                     return View(passagem);
                 }
-
-                var cliente = await ValidarCliente(passagem.ClienteId);
-                if (cliente == null)
+                catch (Exception ex)
                 {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Erro ao criar passagem");
+                    ModelState.AddModelError("", "Erro ao processar a compra. Tente novamente.");
                     await CarregarViewBags();
                     return View(passagem);
                 }
-
-                var voo = await ValidarVoo(passagem.VooId);
-                if (voo == null)
-                {
-                    await CarregarViewBags();
-                    return View(passagem);
-                }
-
-                if (await PoltronaOcupada(passagem.PoltronaId))
-                {
-                    ModelState.AddModelError("PoltronaId", "Poltrona já ocupada.");
-                    await CarregarViewBags();
-                    return View(passagem);
-                }
-
-                PreencherDadosPassagem(passagem, poltrona);
-                await SalvarPassagem(passagem, poltrona);
-
-                TempData["Sucesso"] = $"Passagem emitida com sucesso! Número: {passagem.NumeroBilhete}";
-                return RedirectToAction(nameof(Details), new { id = passagem.PassagemId });
             }
             catch (Exception ex)
             {
@@ -176,13 +274,21 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (passagem.Status != "Confirmada")
+                if (passagem.Status != PassagemStatus.Confirmada)
                 {
                     TempData["Erro"] = $"Check-in não permitido. Status atual: {passagem.Status}";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
-                passagem.Status = "Check-in";
+                // Verificar se o voo já partiu
+                var voo = await _vooRepository.GetByIdAsync(passagem.VooId);
+                if (voo != null && voo.HorarioSaida < DateTime.Now)
+                {
+                    TempData["Erro"] = "Não é possível fazer check-in de um voo que já partiu.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                passagem.Status = PassagemStatus.CheckIn;
                 await _passagemRepository.UpdateAsync(passagem);
 
                 TempData["Sucesso"] = "Check-in realizado com sucesso!";
@@ -208,13 +314,13 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (passagem.Status != "Check-in")
+                if (passagem.Status != PassagemStatus.CheckIn)
                 {
                     TempData["Erro"] = $"Embarque não permitido. Status atual: {passagem.Status}. É necessário fazer check-in primeiro.";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
-                passagem.Status = "Embarcada";
+                passagem.Status = PassagemStatus.Embarcada;
                 await _passagemRepository.UpdateAsync(passagem);
 
                 TempData["Sucesso"] = "Embarque registrado com sucesso!";
@@ -228,31 +334,63 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        // GET: Passagens/Cancelar/5
+        // GET: Passagens/Cancelar/5 (COM TRANSAÇÃO)
         public async Task<IActionResult> Cancelar(int id)
         {
             try
             {
-                var passagem = await _passagemRepository.GetPassagemCompletaAsync(id);
+                var passagem = await _context.Passagens
+                    .Include(p => p.Voo)
+                    .FirstOrDefaultAsync(p => p.PassagemId == id);
+
                 if (passagem == null)
                 {
                     TempData["Erro"] = "Passagem não encontrada";
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (passagem.Status == "Cancelada")
+                if (passagem.Status == PassagemStatus.Cancelada)
                 {
                     TempData["Info"] = "Esta passagem já está cancelada.";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
-                passagem.Status = "Cancelada";
-                await _passagemRepository.UpdateAsync(passagem);
+                // Verificar se o voo já partiu
+                if (passagem.Voo != null && passagem.Voo.HorarioSaida < DateTime.Now)
+                {
+                    TempData["Erro"] = "Não é possível cancelar uma passagem de um voo que já partiu.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
 
-                await LiberarPoltrona(passagem.PoltronaId);
+                // Usar transação
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-                TempData["Sucesso"] = "Passagem cancelada com sucesso! A poltrona foi liberada.";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    passagem.Status = PassagemStatus.Cancelada;
+                    _context.Passagens.Update(passagem);
+                    await _context.SaveChangesAsync();
+
+                    var poltrona = await _poltronaRepository.GetByIdAsync(passagem.PoltronaId);
+                    if (poltrona != null)
+                    {
+                        poltrona.Disponivel = true;
+                        _context.Poltronas.Update(poltrona);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    await transaction.CommitAsync();
+
+                    TempData["Sucesso"] = "Passagem cancelada com sucesso! A poltrona foi liberada.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Erro ao cancelar passagem {PassagemId}", id);
+                    TempData["Erro"] = "Erro ao cancelar passagem";
+                    return RedirectToAction(nameof(Index));
+                }
             }
             catch (Exception ex)
             {
@@ -267,48 +405,91 @@ namespace SistemaAereo.Controllers
         // =============================================
 
         // GET: Passagens/PorCliente/5
-        public async Task<IActionResult> PorCliente(int id)
+        public async Task<IActionResult> PorCliente(int id, int pagina = 1, int itensPorPagina = 10)
         {
             try
             {
-                var passagens = await _passagemRepository.GetPassagensPorClienteAsync(id);
                 var cliente = await _clienteRepository.GetByIdAsync(id);
-
-                if (cliente != null)
+                if (cliente == null)
                 {
-                    ViewBag.ClienteNome = cliente.Nome;
+                    TempData["Erro"] = "Cliente não encontrado";
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return View(passagens);
+                ViewBag.ClienteNome = cliente.Nome;
+                ViewBag.ClienteId = id;
+
+                var query = _context.Passagens
+                    .AsNoTracking()
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoOrigem)
+                    .Include(p => p.Voo)
+                        .ThenInclude(v => v.AeroportoDestino)
+                    .Include(p => p.Poltrona)
+                    .Where(p => p.ClienteId == id)
+                    .AsQueryable();
+
+                var totalItens = await query.CountAsync();
+                var passagens = await query
+                    .OrderByDescending(p => p.DataEmissao)
+                    .Skip((pagina - 1) * itensPorPagina)
+                    .Take(itensPorPagina)
+                    .ToListAsync();
+
+                var model = new PaginacaoViewModel<Passagem>(passagens, totalItens, pagina, itensPorPagina);
+                ViewBag.ItensPorPaginaOptions = new[] { 5, 10, 25, 50, 100 };
+                ViewBag.ItensPorPaginaAtual = itensPorPagina;
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao carregar passagens do cliente {ClienteId}", id);
                 TempData["Erro"] = "Erro ao carregar passagens do cliente";
-                return View(new List<Passagem>());
+                return View(new PaginacaoViewModel<Passagem>());
             }
         }
 
         // GET: Passagens/PorVoo/5
-        public async Task<IActionResult> PorVoo(int id)
+        public async Task<IActionResult> PorVoo(int id, int pagina = 1, int itensPorPagina = 10)
         {
             try
             {
-                var passagens = await _passagemRepository.GetPassagensPorVooAsync(id);
                 var voo = await _vooRepository.GetByIdAsync(id);
-
-                if (voo != null)
+                if (voo == null)
                 {
-                    ViewBag.VooNumero = voo.NumeroVoo;
+                    TempData["Erro"] = "Voo não encontrado";
+                    return RedirectToAction(nameof(Index));
                 }
 
-                return View(passagens);
+                ViewBag.VooNumero = voo.NumeroVoo;
+                ViewBag.VooId = id;
+
+                var query = _context.Passagens
+                    .AsNoTracking()
+                    .Include(p => p.Cliente)
+                    .Include(p => p.Poltrona)
+                    .Where(p => p.VooId == id)
+                    .AsQueryable();
+
+                var totalItens = await query.CountAsync();
+                var passagens = await query
+                    .OrderBy(p => p.Poltrona.NumeroPoltrona)
+                    .Skip((pagina - 1) * itensPorPagina)
+                    .Take(itensPorPagina)
+                    .ToListAsync();
+
+                var model = new PaginacaoViewModel<Passagem>(passagens, totalItens, pagina, itensPorPagina);
+                ViewBag.ItensPorPaginaOptions = new[] { 5, 10, 25, 50, 100 };
+                ViewBag.ItensPorPaginaAtual = itensPorPagina;
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao carregar passagens do voo {VooId}", id);
                 TempData["Erro"] = "Erro ao carregar passagens do voo";
-                return View(new List<Passagem>());
+                return View(new PaginacaoViewModel<Passagem>());
             }
         }
 
@@ -329,6 +510,7 @@ namespace SistemaAereo.Controllers
                 }
 
                 var poltronas = await _context.Poltronas
+                    .AsNoTracking()
                     .Where(p => p.VooId == vooId && p.Disponivel)
                     .OrderBy(p => p.NumeroPoltrona)
                     .ToListAsync();
@@ -353,8 +535,46 @@ namespace SistemaAereo.Controllers
             }
         }
 
+        // GET: Passagens/BuscarDadosVoo
+        public async Task<JsonResult> BuscarDadosVoo(int vooId)
+        {
+            try
+            {
+                var voo = await _context.Voos
+                    .AsNoTracking()
+                    .Include(v => v.AeroportoOrigem)
+                    .Include(v => v.AeroportoDestino)
+                    .Include(v => v.Aeronave)
+                    .FirstOrDefaultAsync(v => v.VooId == vooId);
+
+                if (voo == null)
+                {
+                    return Json(new { success = false, message = "Voo não encontrado" });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        vooId = voo.VooId,
+                        numeroVoo = voo.NumeroVoo,
+                        origem = voo.AeroportoOrigem?.CodigoIATA,
+                        destino = voo.AeroportoDestino?.CodigoIATA,
+                        saida = voo.HorarioSaida.ToString("dd/MM/yyyy HH:mm"),
+                        aeronave = voo.Aeronave?.TipoAeronave
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar dados do voo {VooId}", vooId);
+                return Json(new { success = false, message = "Erro ao buscar dados do voo" });
+            }
+        }
+
         // =============================================
-        // MÉTODOS DE DEBUG E DIAGNÓSTICO
+        // MÉTODOS DE DIAGNÓSTICO
         // =============================================
 
         public async Task<IActionResult> VerificarDados()
@@ -384,217 +604,6 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        public async Task<IActionResult> DebugDadosCompleto()
-        {
-            try
-            {
-                var clientes = await _context.ClientesPreferenciais.ToListAsync();
-                var clientesAtivos = await _context.ClientesPreferenciais
-                    .Where(c => c.Ativo)
-                    .ToListAsync();
-
-                var voos = await _context.Voos.ToListAsync();
-                var voosComPoltronas = await _context.Voos
-                    .Include(v => v.Poltronas)
-                    .Where(v => v.HorarioSaida > DateTime.Now && v.Poltronas.Any(p => p.Disponivel))
-                    .ToListAsync();
-
-                var poltronas = await _context.Poltronas.ToListAsync();
-                var poltronasDisponiveis = await _context.Poltronas
-                    .Where(p => p.Disponivel)
-                    .ToListAsync();
-
-                return Json(new
-                {
-                    success = true,
-                    clientes = new
-                    {
-                        total = clientes.Count,
-                        ativos = clientesAtivos.Count,
-                        dados = clientesAtivos.Select(c => new { c.ClienteId, c.Nome, c.Ativo })
-                    },
-                    voos = new
-                    {
-                        total = voos.Count,
-                        comPoltronasDisponiveis = voosComPoltronas.Count,
-                        dados = voosComPoltronas.Select(v => new {
-                            v.VooId,
-                            v.NumeroVoo,
-                            origem = v.AeroportoOrigem?.CodigoIATA,
-                            destino = v.AeroportoDestino?.CodigoIATA,
-                            saida = v.HorarioSaida,
-                            poltronasDisponiveis = v.Poltronas.Count(p => p.Disponivel)
-                        })
-                    },
-                    poltronas = new
-                    {
-                        total = poltronas.Count,
-                        disponiveis = poltronasDisponiveis.Count
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex.Message, stackTrace = ex.StackTrace });
-            }
-        }
-
-        public async Task<IActionResult> DebugVoos()
-        {
-            try
-            {
-                var todosVoos = await _context.Voos
-                    .Include(v => v.AeroportoOrigem)
-                    .Include(v => v.AeroportoDestino)
-                    .Include(v => v.Aeronave)
-                    .Include(v => v.Poltronas)
-                    .OrderBy(v => v.HorarioSaida)
-                    .ToListAsync();
-
-                var resultado = new
-                {
-                    success = true,
-                    totalVoos = todosVoos.Count,
-                    voos = todosVoos.Select(v => new
-                    {
-                        v.VooId,
-                        v.NumeroVoo,
-                        origem = v.AeroportoOrigem?.CodigoIATA ?? "N/A",
-                        destino = v.AeroportoDestino?.CodigoIATA ?? "N/A",
-                        saida = v.HorarioSaida.ToString("dd/MM/yyyy HH:mm"),
-                        ehFuturo = v.HorarioSaida > DateTime.Now,
-                        totalPoltronas = v.Poltronas.Count,
-                        poltronasDisponiveis = v.Poltronas.Count(p => p.Disponivel),
-                        temAeronave = v.Aeronave != null,
-                        temOrigem = v.AeroportoOrigem != null,
-                        temDestino = v.AeroportoDestino != null,
-                        status = v.HorarioSaida > DateTime.Now ?
-                            (v.Poltronas.Any(p => p.Disponivel) ? "DISPONÍVEL" : "SEM POLTRONAS") :
-                            "PASSADO"
-                    })
-                };
-
-                return Json(resultado);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex.Message });
-            }
-        }
-
-        public async Task<JsonResult> DebugDados()
-        {
-            try
-            {
-                var clientesCount = await _clienteRepository.GetTotalClientesAtivosAsync();
-                var voosCount = await _context.Voos
-                    .Where(v => v.HorarioSaida > DateTime.Now &&
-                               v.Poltronas.Any(p => p.Disponivel))
-                    .CountAsync();
-
-                var poltronasCount = await _context.Poltronas
-                    .Where(p => p.Disponivel && p.Voo.HorarioSaida > DateTime.Now)
-                    .CountAsync();
-
-                return Json(new
-                {
-                    clientesAtivos = clientesCount,
-                    voosDisponiveis = voosCount,
-                    poltronasDisponiveis = poltronasCount,
-                    timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message });
-            }
-        }
-
-        // =============================================
-        // GERENCIAMENTO DE POLTRONAS
-        // =============================================
-
-        public async Task<IActionResult> CriarPoltronasParaVoos()
-        {
-            try
-            {
-                var voosSemPoltronas = await _context.Voos
-                    .Include(v => v.Aeronave)
-                    .Include(v => v.Poltronas)
-                    .Where(v => v.HorarioSaida > DateTime.Now && !v.Poltronas.Any())
-                    .ToListAsync();
-
-                _logger.LogInformation($"Encontrados {voosSemPoltronas.Count} voos sem poltronas");
-
-                var poltronasCriadas = 0;
-
-                foreach (var voo in voosSemPoltronas)
-                {
-                    if (voo.Aeronave != null && voo.Aeronave.NumeroPoltronas > 0)
-                    {
-                        await CriarPoltronasParaVoo(voo.VooId, voo.Aeronave.NumeroPoltronas);
-                        poltronasCriadas++;
-                    }
-                    else
-                    {
-                        await CriarPoltronasParaVoo(voo.VooId, 50);
-                        poltronasCriadas++;
-                    }
-                }
-
-                return Json(new
-                {
-                    success = true,
-                    message = $"Poltronas criadas para {poltronasCriadas} voos",
-                    voosProcessados = voosSemPoltronas.Count
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao criar poltronas para voos");
-                return Json(new { success = false, error = ex.Message });
-            }
-        }
-
-        public async Task<IActionResult> CriarPoltronasParaVoo(int vooId, int? numeroPoltronas = null)
-        {
-            try
-            {
-                var voo = await _context.Voos
-                    .Include(v => v.Aeronave)
-                    .Include(v => v.Poltronas)
-                    .FirstOrDefaultAsync(v => v.VooId == vooId);
-
-                if (voo == null)
-                {
-                    return Json(new { success = false, message = "Voo não encontrado" });
-                }
-
-                if (voo.Poltronas.Any())
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = $"Voo já possui {voo.Poltronas.Count} poltronas cadastradas"
-                    });
-                }
-
-                int numPoltronas = numeroPoltronas ?? voo.Aeronave?.NumeroPoltronas ?? 50;
-                await CriarPoltronasParaVoo(vooId, numPoltronas);
-
-                return Json(new
-                {
-                    success = true,
-                    message = $"Criadas {numPoltronas} poltronas para o voo {voo.NumeroVoo}"
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Erro ao criar poltronas para voo {vooId}");
-                return Json(new { success = false, error = ex.Message });
-            }
-        }
-
         // =============================================
         // MÉTODOS PRIVADOS AUXILIARES
         // =============================================
@@ -606,6 +615,7 @@ namespace SistemaAereo.Controllers
                 _logger.LogInformation("=== INICIANDO CarregarViewBags ===");
 
                 var clientesAtivos = await _context.ClientesPreferenciais
+                    .AsNoTracking()
                     .Where(c => c.Ativo)
                     .OrderBy(c => c.Nome)
                     .ToListAsync();
@@ -625,6 +635,7 @@ namespace SistemaAereo.Controllers
 
                 var agora = DateTime.Now;
                 var voosDisponiveis = await _context.Voos
+                    .AsNoTracking()
                     .Include(v => v.AeroportoOrigem)
                     .Include(v => v.AeroportoDestino)
                     .Include(v => v.Poltronas)
@@ -658,65 +669,14 @@ namespace SistemaAereo.Controllers
                 _logger.LogError(ex, "ERRO CRÍTICO em CarregarViewBags");
                 ViewBag.Clientes = new SelectList(new List<ClientePreferencial>(), "ClienteId", "Nome");
                 ViewBag.VoosDetalhados = new SelectList(new List<object>(), "VooId", "DisplayText");
-                _logger.LogInformation("ViewBags definidos com valores padrão devido ao erro");
             }
-        }
-
-        private async Task CriarPoltronasParaVoo(int vooId, int numeroPoltronas)
-        {
-            var voo = await _context.Voos.FindAsync(vooId);
-            if (voo == null) return;
-
-            var poltronas = new List<Poltrona>();
-            var random = new Random();
-
-            for (int i = 1; i <= numeroPoltronas; i++)
-            {
-                var fileira = (i - 1) / 6 + 1;
-                var assento = (i - 1) % 6 + 1;
-                var letraAssento = ((char)('A' + (assento - 1))).ToString();
-
-                var tipo = i <= numeroPoltronas * 0.2 ? "Executiva" : "Economica";
-                var localizacao = assento switch
-                {
-                    1 or 6 => "Janela",
-                    2 or 5 => "Meio",
-                    3 or 4 => "Corredor",
-                    _ => "Corredor"
-                };
-
-                var precoBase = tipo == "Executiva" ? 500.00m : 300.00m;
-                var preco = precoBase + (random.Next(-50, 51));
-
-                var poltrona = new Poltrona
-                {
-                    VooId = vooId,
-                    NumeroPoltrona = $"{fileira}{letraAssento}",
-                    Disponivel = true,
-                    Localizacao = localizacao,
-                    Tipo = tipo,
-                    Preco = preco
-                };
-
-                poltronas.Add(poltrona);
-            }
-
-            await _context.Poltronas.AddRangeAsync(poltronas);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation($"Criadas {poltronas.Count} poltronas para o voo {voo.NumeroVoo}");
         }
 
         private string GerarNumeroBilhete()
         {
-            var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            var random = new Random().Next(1000, 9999);
-            return $"{timestamp}{random}";
+            // Usando GUID para garantir unicidade
+            return Guid.NewGuid().ToString("N").Substring(0, 20).ToUpper();
         }
-
-        // =============================================
-        // MÉTODOS PRIVADOS DE VALIDAÇÃO
-        // =============================================
 
         private void ValidarPassagem(Passagem passagem)
         {
@@ -730,28 +690,15 @@ namespace SistemaAereo.Controllers
                 ModelState.AddModelError("PoltronaId", "Poltrona é obrigatória.");
         }
 
-        private async Task<Poltrona> ValidarPoltrona(int poltronaId)
-        {
-            var poltrona = await _context.Poltronas
-                .FirstOrDefaultAsync(p => p.PoltronaId == poltronaId && p.Disponivel);
-
-            if (poltrona == null)
-            {
-                ModelState.AddModelError("PoltronaId", "Poltrona não encontrada ou indisponível.");
-                return null;
-            }
-
-            return poltrona;
-        }
-
         private async Task<ClientePreferencial> ValidarCliente(int clienteId)
         {
             var cliente = await _context.ClientesPreferenciais
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.ClienteId == clienteId && c.Ativo);
 
             if (cliente == null)
             {
-                ModelState.AddModelError("ClienteId", "Cliente não encontrado.");
+                ModelState.AddModelError("ClienteId", "Cliente não encontrado ou inativo.");
                 return null;
             }
 
@@ -761,6 +708,7 @@ namespace SistemaAereo.Controllers
         private async Task<Voo> ValidarVoo(int vooId)
         {
             var voo = await _context.Voos
+                .AsNoTracking()
                 .FirstOrDefaultAsync(v => v.VooId == vooId);
 
             if (voo == null)
@@ -775,35 +723,17 @@ namespace SistemaAereo.Controllers
         private async Task<bool> PoltronaOcupada(int poltronaId)
         {
             return await _context.Passagens
-                .AnyAsync(p => p.PoltronaId == poltronaId && p.Status != "Cancelada");
+                .AsNoTracking()
+                .AnyAsync(p => p.PoltronaId == poltronaId && p.Status != PassagemStatus.Cancelada);
         }
 
         private void PreencherDadosPassagem(Passagem passagem, Poltrona poltrona)
         {
             passagem.NumeroBilhete = GerarNumeroBilhete();
             passagem.DataEmissao = DateTime.Now;
-            passagem.Status = "Confirmada";
+            passagem.Status = PassagemStatus.Confirmada;
             passagem.Classe = poltrona.Tipo;
             passagem.Preco = poltrona.Preco;
-        }
-
-        private async Task SalvarPassagem(Passagem passagem, Poltrona poltrona)
-        {
-            _context.Passagens.Add(passagem);
-            await _context.SaveChangesAsync();
-
-            poltrona.Disponivel = false;
-            await _context.SaveChangesAsync();
-        }
-
-        private async Task LiberarPoltrona(int poltronaId)
-        {
-            var poltrona = await _poltronaRepository.GetByIdAsync(poltronaId);
-            if (poltrona != null)
-            {
-                poltrona.Disponivel = true;
-                await _poltronaRepository.UpdateAsync(poltrona);
-            }
         }
     }
 }

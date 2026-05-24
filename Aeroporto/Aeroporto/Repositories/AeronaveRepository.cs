@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data;
-using SistemaAereo.Models;
+using SistemaAereo.Data.Context;
+using SistemaAereo.Models.Entities;
 using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
 

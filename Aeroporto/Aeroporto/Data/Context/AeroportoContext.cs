@@ -1,7 +1,7 @@
-﻿using SistemaAereo.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using SistemaAereo.Models.Entities;
 
-namespace SistemaAereo.Data
+namespace SistemaAereo.Data.Context
 {
     public class AeroportoContext : DbContext
     {
@@ -82,6 +82,11 @@ namespace SistemaAereo.Data
                 .HasOne(p => p.Voo)
                 .WithMany(v => v.Poltronas)
                 .HasForeignKey(p => p.VooId);
+
+            // CORREÇÃO: Configurar o Timestamp para controle de concorrência
+            modelBuilder.Entity<Poltrona>()
+                .Property(p => p.RowVersion)
+                .IsRowVersion();
         }
 
         private void ConfigurarRelacionamentosPassagens(ModelBuilder modelBuilder)

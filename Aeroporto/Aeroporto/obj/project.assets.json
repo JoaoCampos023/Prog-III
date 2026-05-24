@@ -4730,11 +4730,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Banco de Dados II\\BancodeDados-II\\Atividades\\Aeroporto\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
+      "projectUniqueName": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
       "projectName": "SistemaAereo",
-      "projectPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Banco de Dados II\\BancodeDados-II\\Atividades\\Aeroporto\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
+      "projectPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
       "packagesPath": "C:\\Users\\jo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Banco de Dados II\\BancodeDados-II\\Atividades\\Aeroporto\\Aeroporto\\Aeroporto\\obj\\",
+      "outputPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

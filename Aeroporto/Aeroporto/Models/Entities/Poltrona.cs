@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SistemaAereo.Models
+namespace SistemaAereo.Models.Entities
 {
     public class Poltrona
     {
@@ -27,13 +27,20 @@ namespace SistemaAereo.Models
 
         [Required]
         [StringLength(20)]
-        public string Localizacao { get; set; } // "Janela", "Corredor", "Meio"
+        public string Localizacao { get; set; }
 
         [StringLength(20)]
-        public string Tipo { get; set; } // "Economica", "Executiva", "Primeira"
+        public string Tipo { get; set; }
 
         [DataType(DataType.Currency)]
         public decimal Preco { get; set; }
+
+        // =============================================
+        // CONTROLE DE CONCORRÊNCIA
+        // =============================================
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         // =============================================
         // RELACIONAMENTOS

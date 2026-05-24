@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data;
-using SistemaAereo.Models;
+using SistemaAereo.Data.Context;
+using SistemaAereo.Models.ViewModels;
 using SistemaAereo.Repositories.Interfaces;
 
 namespace SistemaAereo.Controllers

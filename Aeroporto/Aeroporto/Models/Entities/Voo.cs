@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SistemaAereo.Models
+namespace SistemaAereo.Models.Entities
 {
     public class Voo
     {

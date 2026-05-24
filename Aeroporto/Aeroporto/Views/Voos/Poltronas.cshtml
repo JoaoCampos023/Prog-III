@@ -1,0 +1,270 @@
+﻿@using SistemaAereo.Models.Entities
+@model IEnumerable<Poltrona>
+
+@{
+    ViewData["Title"] = $"Poltronas do Voo {ViewBag.Voo?.NumeroVoo}";
+    var voo = ViewBag.Voo as Voo;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div>
+            <h1 class="h2"><i class="fas fa-chair"></i> Poltronas do Voo @voo?.NumeroVoo</h1>
+            <p class="text-muted">
+                <i class="fas fa-plane-departure"></i> @voo?.AeroportoOrigem?.Nome (@voo?.AeroportoOrigem?.CodigoIATA) →
+                <i class="fas fa-plane-arrival"></i> @voo?.AeroportoDestino?.Nome (@voo?.AeroportoDestino?.CodigoIATA)
+                <br />
+                <i class="fas fa-calendar"></i> Saída: @voo?.HorarioSaida.ToString("dd/MM/yyyy HH:mm")
+            </p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary me-2">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            @if (voo?.HorarioSaida > DateTime.Now)
+            {
+                <form asp-action="RecriarPoltronas" asp-route-id="@voo?.VooId" method="post" class="d-inline"
+                      onsubmit="return confirm('Tem certeza que deseja recriar todas as poltronas? Isso irá remover as poltronas existentes.');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-sync-alt"></i> Recriar Poltronas
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total de Poltronas</h5>
+                    <h2 class="mb-0">@Model.Count()</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Disponíveis</h5>
+                    <h2 class="mb-0">@Model.Count(p => p.Disponivel)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Ocupadas</h5>
+                    <h2 class="mb-0">@Model.Count(p => !p.Disponivel)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Faturamento Potencial</h5>
+                    <h2 class="mb-0">@Model.Sum(p => p.Preco).ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Poltronas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Mapa de Ocupação</h6>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-3">
+                <span class="badge bg-success p-2 me-3">■ Disponível</span>
+                <span class="badge bg-danger p-2 me-3">■ Ocupada</span>
+                <span class="badge bg-warning p-2">■ Primeira Classe</span>
+                <span class="badge bg-info p-2 ms-3">■ Executiva</span>
+                <span class="badge bg-secondary p-2">■ Econômica</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fileira</th>
+                            <th>A</th>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                            <th>E</th>
+                            <th>F</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var fileiras = Model.GroupBy(p => int.Parse(p.NumeroPoltrona.Substring(0, p.NumeroPoltrona.Length - 1)))
+                            .OrderBy(g => g.Key);
+                        }
+                        @foreach (var fileira in fileiras)
+                        {
+                            <tr>
+                                <td><strong>@fileira.Key</strong></td>
+                                @{
+                                    var poltronasPorAssento = fileira.ToDictionary(p => p.NumeroPoltrona.Last().ToString(), p => p);
+                                    var assentos = new[] { "A", "B", "C", "D", "E", "F" };
+                                }
+                                @foreach (var assento in assentos)
+                                {
+                                    if (poltronasPorAssento.ContainsKey(assento))
+                                    {
+                                        var poltrona = poltronasPorAssento[assento];
+                                        var corClasse = poltrona.Tipo switch
+                                        {
+                                            "Primeira" => "warning",
+                                            "Executiva" => "info",
+                                            _ => "secondary"
+                                        };
+                                        var corStatus = poltrona.Disponivel ? "success" : "danger";
+
+                                        <td class="bg-@corStatus bg-opacity-25">
+                                            <div class="p-2">
+                                                <strong>@poltrona.NumeroPoltrona</strong><br />
+                                                <small class="text-muted">@poltrona.Tipo</small><br />
+                                                <small>@poltrona.Localizacao</small><br />
+                                                <strong class="text-@corClasse">@poltrona.Preco.ToString("C")</strong>
+                                                @if (!poltrona.Disponivel)
+                                                {
+                                                    <br />
+                                                    <span class="badge bg-danger mt-1">OCUPADA</span>
+                                                }
+                                            </div>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="bg-light">
+                                            <div class="p-2 text-muted">
+                                                ---
+                                            </div>
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista Detalhada -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista Detalhada de Poltronas</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Número</th>
+                            <th>Tipo</th>
+                            <th>Localização</th>
+                            <th>Preço</th>
+                            <th>Status</th>
+                            <th>Status Venda</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var poltrona in Model.OrderBy(p => p.NumeroPoltrona))
+                        {
+                            <tr>
+                                <td><strong>@poltrona.NumeroPoltrona</strong></td>
+                                <td>
+                                    @if (poltrona.Tipo == "Primeira")
+                                    {
+                                        <span class="badge bg-warning">@poltrona.Tipo</span>
+                                    }
+                                    else if (poltrona.Tipo == "Executiva")
+                                    {
+                                        <span class="badge bg-info">@poltrona.Tipo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@poltrona.Tipo</span>
+                                    }
+                                </td>
+                                <td>@poltrona.Localizacao</td>
+                                <td>@poltrona.Preco.ToString("C")</td>
+                                <td>
+                                    @if (poltrona.Disponivel)
+                                    {
+                                        <span class="badge bg-success">Disponível</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Ocupada</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!poltrona.Disponivel && voo?.HorarioSaida > DateTime.Now)
+                                    {
+                                        <span class="text-danger">Vendida</span>
+                                    }
+                                    else if (poltrona.Disponivel && voo?.HorarioSaida > DateTime.Now)
+                                    {
+                                        <span class="text-success">À Venda</span>
+                                    }
+                                    else if (voo?.HorarioSaida <= DateTime.Now)
+                                    {
+                                        <span class="text-muted">Voo Realizado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+                },
+                order: [[0, 'asc']],
+                responsive: true
+            });
+        });
+    </script>
+}
+
+<style>
+    .bg-opacity-25 {
+        --bs-bg-opacity: 0.25;
+    }
+
+    .table-bordered td, .table-bordered th {
+        vertical-align: middle;
+    }
+</style>

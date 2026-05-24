@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SistemaAereo.Data;
+using SistemaAereo.Data.Context;
 
 #nullable disable
 
@@ -22,7 +22,7 @@ namespace SistemaAereo.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SistemaAereo.Models.Aeronave", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeronave", b =>
                 {
                     b.Property<int>("AeronaveId")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Aeronaves");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Aeroporto", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeroporto", b =>
                 {
                     b.Property<int>("AeroportoId")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Aeroportos");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.ClientePreferencial", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.ClientePreferencial", b =>
                 {
                     b.Property<int>("ClienteId")
                         .ValueGeneratedOnAdd()
@@ -146,7 +146,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("ClientesPreferenciais");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Escala", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Escala", b =>
                 {
                     b.Property<int>("EscalaId")
                         .ValueGeneratedOnAdd()
@@ -178,7 +178,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Escalas");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Passagem", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Passagem", b =>
                 {
                     b.Property<int>("PassagemId")
                         .ValueGeneratedOnAdd()
@@ -230,7 +230,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Passagens");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Poltrona", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
                 {
                     b.Property<int>("PoltronaId")
                         .ValueGeneratedOnAdd()
@@ -254,6 +254,12 @@ namespace SistemaAereo.Migrations
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -269,7 +275,7 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Poltronas");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Voo", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
                 {
                     b.Property<int>("VooId")
                         .ValueGeneratedOnAdd()
@@ -311,15 +317,15 @@ namespace SistemaAereo.Migrations
                     b.ToTable("Voos");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Escala", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Escala", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Aeroporto", "Aeroporto")
+                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "Aeroporto")
                         .WithMany("Escalas")
                         .HasForeignKey("AeroportoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Voo", "Voo")
+                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
                         .WithMany("Escalas")
                         .HasForeignKey("VooId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -330,21 +336,21 @@ namespace SistemaAereo.Migrations
                     b.Navigation("Voo");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Passagem", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Passagem", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.ClientePreferencial", "Cliente")
+                    b.HasOne("SistemaAereo.Models.Entities.ClientePreferencial", "Cliente")
                         .WithMany()
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Poltrona", "Poltrona")
+                    b.HasOne("SistemaAereo.Models.Entities.Poltrona", "Poltrona")
                         .WithMany("Passagens")
                         .HasForeignKey("PoltronaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Voo", "Voo")
+                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
                         .WithMany("Passagens")
                         .HasForeignKey("VooId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -357,9 +363,9 @@ namespace SistemaAereo.Migrations
                     b.Navigation("Voo");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Poltrona", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Voo", "Voo")
+                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
                         .WithMany("Poltronas")
                         .HasForeignKey("VooId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,21 +374,21 @@ namespace SistemaAereo.Migrations
                     b.Navigation("Voo");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Voo", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Aeronave", "Aeronave")
+                    b.HasOne("SistemaAereo.Models.Entities.Aeronave", "Aeronave")
                         .WithMany("Voos")
                         .HasForeignKey("AeronaveId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Aeroporto", "AeroportoDestino")
+                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "AeroportoDestino")
                         .WithMany("VoosDestino")
                         .HasForeignKey("AeroportoDestinoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Aeroporto", "AeroportoOrigem")
+                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "AeroportoOrigem")
                         .WithMany("VoosOrigem")
                         .HasForeignKey("AeroportoOrigemId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -395,12 +401,12 @@ namespace SistemaAereo.Migrations
                     b.Navigation("AeroportoOrigem");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Aeronave", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeronave", b =>
                 {
                     b.Navigation("Voos");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Aeroporto", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeroporto", b =>
                 {
                     b.Navigation("Escalas");
 
@@ -409,12 +415,12 @@ namespace SistemaAereo.Migrations
                     b.Navigation("VoosOrigem");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Poltrona", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
                 {
                     b.Navigation("Passagens");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Voo", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
                 {
                     b.Navigation("Escalas");
 

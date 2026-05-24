@@ -1,4 +1,4 @@
-﻿using SistemaAereo.Models;
+﻿using SistemaAereo.Models.Entities;
 using System.Linq.Expressions;
 
 namespace SistemaAereo.Repositories.Interfaces

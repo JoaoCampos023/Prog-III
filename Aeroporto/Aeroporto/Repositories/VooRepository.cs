@@ -1,8 +1,8 @@
-﻿using SistemaAereo.Data;
-using SistemaAereo.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using SistemaAereo.Repositories.Interfaces;
+using SistemaAereo.Models.Entities;
+using SistemaAereo.Data.Context;
 
 namespace SistemaAereo.Repositories
 {

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data;
+using SistemaAereo.Data.Context;
 using SistemaAereo.Repositories.Interfaces;
 
 namespace SistemaAereo.Repositories

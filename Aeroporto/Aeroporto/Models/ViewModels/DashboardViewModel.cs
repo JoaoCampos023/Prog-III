@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SistemaAereo.Models.Entities;
 
-namespace SistemaAereo.Models
+namespace SistemaAereo.Models.ViewModels
 {
     public class DashboardViewModel
     {

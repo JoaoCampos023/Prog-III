@@ -1,4 +1,4 @@
-namespace SistemaAereo.Models
+namespace SistemaAereo.Models.ViewModels
 {
     public class ErrorViewModel
     {

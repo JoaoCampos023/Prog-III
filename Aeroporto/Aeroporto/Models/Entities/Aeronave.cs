@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SistemaAereo.Models
+namespace SistemaAereo.Models.Entities
 {
     public class Aeronave
     {
