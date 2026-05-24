@@ -1,18 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SistemaAereo.Models.Entities;
 
 namespace SistemaAereo.Data.Context
 {
-    public class AeroportoContext : DbContext
+    public class AeroportoContext : IdentityDbContext<Usuario>
     {
         public AeroportoContext(DbContextOptions<AeroportoContext> options) : base(options)
         {
         }
 
-        // =============================================
-        // DbSets - ENTIDADES PRINCIPAIS
-        // =============================================
-
+        // DbSets existentes
         public DbSet<Aeronave> Aeronaves { get; set; }
         public DbSet<Aeroporto> Aeroportos { get; set; }
         public DbSet<Voo> Voos { get; set; }
@@ -21,88 +19,70 @@ namespace SistemaAereo.Data.Context
         public DbSet<ClientePreferencial> ClientesPreferenciais { get; set; }
         public DbSet<Passagem> Passagens { get; set; }
 
-        // =============================================
-        // CONFIGURAÇÃO DO MODELO
-        // =============================================
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            // Configurações existentes do seu sistema
             ConfigurarRelacionamentos(modelBuilder);
             ConfigurarIndices(modelBuilder);
         }
 
-        // =============================================
-        // MÉTODOS DE CONFIGURAÇÃO DE RELACIONAMENTOS
-        // =============================================
-
         private void ConfigurarRelacionamentos(ModelBuilder modelBuilder)
         {
-            ConfigurarRelacionamentosVoos(modelBuilder);
-            ConfigurarRelacionamentosEscalas(modelBuilder);
-            ConfigurarRelacionamentosPoltronas(modelBuilder);
-            ConfigurarRelacionamentosPassagens(modelBuilder);
-        }
-
-        private void ConfigurarRelacionamentosVoos(ModelBuilder modelBuilder)
-        {
+            // Voo - AeroportoOrigem
             modelBuilder.Entity<Voo>()
                 .HasOne(v => v.AeroportoOrigem)
                 .WithMany(a => a.VoosOrigem)
                 .HasForeignKey(v => v.AeroportoOrigemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Voo - AeroportoDestino
             modelBuilder.Entity<Voo>()
                 .HasOne(v => v.AeroportoDestino)
                 .WithMany(a => a.VoosDestino)
                 .HasForeignKey(v => v.AeroportoDestinoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Voo - Aeronave
             modelBuilder.Entity<Voo>()
                 .HasOne(v => v.Aeronave)
                 .WithMany(a => a.Voos)
                 .HasForeignKey(v => v.AeronaveId);
-        }
 
-        private void ConfigurarRelacionamentosEscalas(ModelBuilder modelBuilder)
-        {
+            // Escala - Voo
             modelBuilder.Entity<Escala>()
                 .HasOne(e => e.Voo)
                 .WithMany(v => v.Escalas)
                 .HasForeignKey(e => e.VooId);
 
+            // Escala - Aeroporto
             modelBuilder.Entity<Escala>()
                 .HasOne(e => e.Aeroporto)
                 .WithMany(a => a.Escalas)
                 .HasForeignKey(e => e.AeroportoId);
-        }
 
-        private void ConfigurarRelacionamentosPoltronas(ModelBuilder modelBuilder)
-        {
+            // Poltrona - Voo
             modelBuilder.Entity<Poltrona>()
                 .HasOne(p => p.Voo)
                 .WithMany(v => v.Poltronas)
                 .HasForeignKey(p => p.VooId);
 
-            // CORREÇÃO: Configurar o Timestamp para controle de concorrência
-            modelBuilder.Entity<Poltrona>()
-                .Property(p => p.RowVersion)
-                .IsRowVersion();
-        }
-
-        private void ConfigurarRelacionamentosPassagens(ModelBuilder modelBuilder)
-        {
+            // Passagem - Voo
             modelBuilder.Entity<Passagem>()
                 .HasOne(p => p.Voo)
                 .WithMany(v => v.Passagens)
                 .HasForeignKey(p => p.VooId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Passagem - Cliente
             modelBuilder.Entity<Passagem>()
                 .HasOne(p => p.Cliente)
                 .WithMany()
                 .HasForeignKey(p => p.ClienteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Passagem - Poltrona
             modelBuilder.Entity<Passagem>()
                 .HasOne(p => p.Poltrona)
                 .WithMany(p => p.Passagens)
@@ -110,19 +90,7 @@ namespace SistemaAereo.Data.Context
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
-        // =============================================
-        // MÉTODOS DE CONFIGURAÇÃO DE ÍNDICES
-        // =============================================
-
         private void ConfigurarIndices(ModelBuilder modelBuilder)
-        {
-            ConfigurarIndicesClientes(modelBuilder);
-            ConfigurarIndicesAeroportos(modelBuilder);
-            ConfigurarIndicesVoos(modelBuilder);
-            ConfigurarIndicesPassagens(modelBuilder);
-        }
-
-        private void ConfigurarIndicesClientes(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ClientePreferencial>()
                 .HasIndex(c => c.Email)
@@ -131,24 +99,15 @@ namespace SistemaAereo.Data.Context
             modelBuilder.Entity<ClientePreferencial>()
                 .HasIndex(c => c.CPF)
                 .IsUnique();
-        }
 
-        private void ConfigurarIndicesAeroportos(ModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<Aeroporto>()
                 .HasIndex(a => a.CodigoIATA)
                 .IsUnique();
-        }
 
-        private void ConfigurarIndicesVoos(ModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<Voo>()
                 .HasIndex(v => v.NumeroVoo)
                 .IsUnique();
-        }
 
-        private void ConfigurarIndicesPassagens(ModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<Passagem>()
                 .HasIndex(p => p.NumeroBilhete)
                 .IsUnique();

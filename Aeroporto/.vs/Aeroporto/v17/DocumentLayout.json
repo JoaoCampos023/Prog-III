@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\views\\voos\\poltronas.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\voos\\poltronas.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260524163258_LoginSenha.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Aeroporto\\Migrations\\20260524163258_LoginSenha.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\views\\voos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\voos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\controllers\\vooscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\vooscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\jo\\documents\\aulas - facul\\prog3\\prog-iii\\aeroporto\\aeroporto\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,40 +35,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Poltronas.cshtml",
-              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Voos\\Poltronas.cshtml",
-              "RelativeDocumentMoniker": "Aeroporto\\Views\\Voos\\Poltronas.cshtml",
-              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Voos\\Poltronas.cshtml",
-              "RelativeToolTip": "Aeroporto\\Views\\Voos\\Poltronas.cshtml",
-              "ViewState": "AgIAAMUAAAAAAAAAAAAAAA0BAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-24T16:07:42.583Z",
+              "Title": "20260524163258_LoginSenha.cs",
+              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260524163258_LoginSenha.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Migrations\\20260524163258_LoginSenha.cs",
+              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260524163258_LoginSenha.cs",
+              "RelativeToolTip": "Aeroporto\\Migrations\\20260524163258_LoginSenha.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-24T16:32:58.554Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Voos\\Index.cshtml",
-              "RelativeDocumentMoniker": "Aeroporto\\Views\\Voos\\Index.cshtml",
-              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Voos\\Index.cshtml",
-              "RelativeToolTip": "Aeroporto\\Views\\Voos\\Index.cshtml",
-              "ViewState": "AgIAAMIAAAAAAAAAAAAQwNwAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-24T16:06:17.153Z",
+              "DocumentIndex": 3,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Aeroporto\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAQwFEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-24T16:30:20.193Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "VoosController.cs",
-              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\VoosController.cs",
-              "RelativeDocumentMoniker": "Aeroporto\\Controllers\\VoosController.cs",
-              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\VoosController.cs",
-              "RelativeToolTip": "Aeroporto\\Controllers\\VoosController.cs",
-              "ViewState": "AgIAACkCAAAAAAAAAAAQwEMCAAABAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Program.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Program.cs",
+              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Program.cs",
+              "RelativeToolTip": "Aeroporto\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-24T16:05:36.013Z",
+              "WhenOpened": "2026-05-24T16:30:09.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAADsBAAAAAAAAAAAQwFUBAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-24T16:28:16.766Z",
               "EditorCaption": ""
             }
           ]
