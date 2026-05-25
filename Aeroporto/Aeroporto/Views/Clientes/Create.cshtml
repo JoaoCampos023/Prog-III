@@ -58,32 +58,90 @@
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Endereco" class="form-label">Endereço</label>
-                            <input asp-for="Endereco" class="form-control" placeholder="Rua, número, bairro" />
-                            <span asp-validation-for="Endereco" class="text-danger"></span>
-                        </div>
+                        <!-- Seção de Endereço com CEP -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> Endereço</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="CEP" class="form-label">CEP</label>
+                                            <div class="input-group">
+                                                <input asp-for="CEP" class="form-control cep-mask" id="Cep" placeholder="00000-000" />
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-spinner fa-spin" id="cepLoading" style="display: none;"></i>
+                                                </span>
+                                            </div>
+                                            <span asp-validation-for="CEP" class="text-danger"></span>
+                                            <small class="text-muted">Digite o CEP para buscar endereço automaticamente</small>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Cidade" class="form-label">Cidade</label>
-                                    <input asp-for="Cidade" class="form-control" placeholder="Nome da cidade" />
-                                    <span asp-validation-for="Cidade" class="text-danger"></span>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Endereco" class="form-label">Endereço</label>
+                                            <input asp-for="Endereco" class="form-control" id="Endereco" placeholder="Rua, número, complemento" />
+                                            <span asp-validation-for="Endereco" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Estado" class="form-label">Estado</label>
-                                    <input asp-for="Estado" class="form-control" placeholder="UF" maxlength="2" style="text-transform:uppercase" />
-                                    <span asp-validation-for="Estado" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group mb-3">
-                                    <label asp-for="CEP" class="form-label">CEP</label>
-                                    <input asp-for="CEP" class="form-control cep" placeholder="00000-000" />
-                                    <span asp-validation-for="CEP" class="text-danger"></span>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Cidade" class="form-label">Cidade</label>
+                                            <input asp-for="Cidade" class="form-control" id="Cidade" placeholder="Nome da cidade" />
+                                            <span asp-validation-for="Cidade" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Estado" class="form-label">Estado</label>
+                                            <select asp-for="Estado" class="form-select" id="Estado">
+                                                <option value="">Selecione</option>
+                                                <option value="AC">Acre</option>
+                                                <option value="AL">Alagoas</option>
+                                                <option value="AP">Amapá</option>
+                                                <option value="AM">Amazonas</option>
+                                                <option value="BA">Bahia</option>
+                                                <option value="CE">Ceará</option>
+                                                <option value="DF">Distrito Federal</option>
+                                                <option value="ES">Espírito Santo</option>
+                                                <option value="GO">Goiás</option>
+                                                <option value="MA">Maranhão</option>
+                                                <option value="MT">Mato Grosso</option>
+                                                <option value="MS">Mato Grosso do Sul</option>
+                                                <option value="MG">Minas Gerais</option>
+                                                <option value="PA">Pará</option>
+                                                <option value="PB">Paraíba</option>
+                                                <option value="PR">Paraná</option>
+                                                <option value="PE">Pernambuco</option>
+                                                <option value="PI">Piauí</option>
+                                                <option value="RJ">Rio de Janeiro</option>
+                                                <option value="RN">Rio Grande do Norte</option>
+                                                <option value="RS">Rio Grande do Sul</option>
+                                                <option value="RO">Rondônia</option>
+                                                <option value="RR">Roraima</option>
+                                                <option value="SC">Santa Catarina</option>
+                                                <option value="SP">São Paulo</option>
+                                                <option value="SE">Sergipe</option>
+                                                <option value="TO">Tocantins</option>
+                                            </select>
+                                            <span asp-validation-for="Estado" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-outline-secondary form-control" id="btnLimparEndereco">
+                                                <i class="fas fa-eraser"></i> Limpar Endereço
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -120,6 +178,9 @@
                     <p class="small text-muted">
                         O email será usado para comunicação e mala direta.
                     </p>
+                    <p class="small text-muted">
+                        <i class="fas fa-truck"></i> Digite o CEP e o endereço será preenchido automaticamente.
+                    </p>
                 </div>
             </div>
         </div>
@@ -131,12 +192,22 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
+    <script src="~/js/cep.js"></script>
+
     <script>
         $(document).ready(function() {
-            // Máscaras
-            $('.telefone').inputmask('(99) 99999-9999');
-            $('.cpf').inputmask('999.999.999-99');
-            $('.cep').inputmask('99999-999');
+        // Máscaras
+        $('.telefone').inputmask('(99) 99999-9999');
+        $('.cpf').inputmask('999.999.999-99');
+        $('.cep-mask').inputmask('99999-999');
+
+        // Botão limpar endereço
+        $('#btnLimparEndereco').click(function() {
+        $('#Endereco').val('');
+        $('#Cidade').val('');
+        $('#Estado').val('');
+        $('#Cep').val('').focus();
+        });
         });
     </script>
 }

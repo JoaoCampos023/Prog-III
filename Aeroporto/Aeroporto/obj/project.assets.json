@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net9.0": {
       "Azure.Core/1.38.0": {
@@ -5130,23 +5130,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jo\\.nuget\\packages\\": {},
+    "C:\\Users\\joaov\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
+      "projectUniqueName": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
       "projectName": "SistemaAereo",
-      "projectPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
-      "packagesPath": "C:\\Users\\jo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jo\\Documents\\Aulas - Facul\\Prog3\\Prog-III\\Aeroporto\\Aeroporto\\obj\\",
+      "projectPath": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\SistemaAereo.csproj",
+      "packagesPath": "C:\\Users\\joaov\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\jo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\joaov\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5159,6 +5159,7 @@
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "projectReferences": {}
         }
@@ -5173,10 +5174,11 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.300"
     },
     "frameworks": {
       "net9.0": {
+        "framework": "net9.0",
         "targetAlias": "net9.0",
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
@@ -5231,7 +5233,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.314/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

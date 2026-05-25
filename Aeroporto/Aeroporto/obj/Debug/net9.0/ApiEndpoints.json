@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.CepController",
+    "Method": "GetEnderecoByCep",
+    "RelativePath": "api/Cep/{cep}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cep",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.CepController",
+    "Method": "ValidarCep",
+    "RelativePath": "api/Cep/validar/{cep}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cep",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

@@ -58,6 +58,14 @@ builder.Services.AddScoped<IPoltronaRepository, PoltronaRepository>();
 // Registro dos serviços
 builder.Services.AddScoped<IPoltronaService, PoltronaService>();
 
+// NOVO: Registro do serviço ViaCEP
+builder.Services.AddHttpClient<IViaCepService, ViaCepService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddScoped<IViaCepService, ViaCepService>();
+
 var app = builder.Build();
 
 // Inicializar banco de dados e criar usuário admin
@@ -87,11 +95,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // IMPORTANTE: Adicionar antes do Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "api",
+    pattern: "api/{controller}/{action}/{id?}");
 
 app.Run();
