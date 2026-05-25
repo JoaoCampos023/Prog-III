@@ -1,0 +1,34 @@
+O que Foi usado:
+
+BACKEND
+Tecnologia		Versão	Descrição
+.NET			9.0	Framework principal
+ASP.NET Core MVC	9.0	Framework web
+Entity Framework Core	9.0	ORM para acesso a dados
+SQL Server		-	Banco de dados relacional
+ASP.NET Core Identity	9.0	Autenticação e autorização
+
+FRONTEND
+Tecnologia		Descrição
+Bootstrap 5		Framework CSS responsivo
+jQuery			Manipulação do DOM
+DataTables		Tabelas interativas com paginação
+Font Awesome 6		Ícones vetoriais
+InputMask		Máscaras para campos de formulário
+Google Fonts (Inter)	Fonte personalizada
+
+APIs Integradas
+API	Descrição			Endpoint
+ViaCEP	Busca de endereços por CEP	https://viacep.com.br/ws/{cep}/json/
+
+DESIGN PATTERNS IMPLEMENTADOS
+
+Repository Pattern
+
+Dependency Injection
+
+Service Layer
+
+DTO (Data Transfer Object)
+
+Strategy Pattern (parcial)
