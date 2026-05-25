@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525181317_AddFacade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Aeroporto\\Migrations\\20260525181317_AddFacade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\clientes\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\clientes\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\controllers\\vooscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\vooscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\clientes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\clientes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\models\\entities\\clientepreferencial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\models\\entities\\clientepreferencial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\controllers\\passagenscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\passagenscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,53 +31,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "20260525172435_ConfigAPI.cs",
-              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs",
-              "RelativeDocumentMoniker": "Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs",
-              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs",
-              "RelativeToolTip": "Aeroporto\\Migrations\\20260525172435_ConfigAPI.cs",
+              "Title": "20260525181317_AddFacade.cs",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525181317_AddFacade.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Migrations\\20260525181317_AddFacade.cs",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260525181317_AddFacade.cs",
+              "RelativeToolTip": "Aeroporto\\Migrations\\20260525181317_AddFacade.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-25T17:24:35.193Z",
+              "WhenOpened": "2026-05-25T18:13:17.457Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Clientes\\Edit.cshtml",
-              "RelativeDocumentMoniker": "Aeroporto\\Views\\Clientes\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Clientes\\Edit.cshtml",
-              "RelativeToolTip": "Aeroporto\\Views\\Clientes\\Edit.cshtml",
-              "ViewState": "AgIAANMAAAAAAAAAAAAgwO8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-25T17:22:35.005Z",
+              "Title": "VoosController.cs",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\VoosController.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Controllers\\VoosController.cs",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\VoosController.cs",
+              "RelativeToolTip": "Aeroporto\\Controllers\\VoosController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-25T18:10:41.011Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Clientes\\Create.cshtml",
-              "RelativeDocumentMoniker": "Aeroporto\\Views\\Clientes\\Create.cshtml",
-              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Clientes\\Create.cshtml",
-              "RelativeToolTip": "Aeroporto\\Views\\Clientes\\Create.cshtml",
-              "ViewState": "AgIAAK8AAAAAAAAAAAAgwNQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-25T17:22:28.019Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ClientePreferencial.cs",
-              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Models\\Entities\\ClientePreferencial.cs",
-              "RelativeDocumentMoniker": "Aeroporto\\Models\\Entities\\ClientePreferencial.cs",
-              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Models\\Entities\\ClientePreferencial.cs",
-              "RelativeToolTip": "Aeroporto\\Models\\Entities\\ClientePreferencial.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFkAAAABAAAAAAAAAA==",
+              "Title": "PassagensController.cs",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\PassagensController.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Controllers\\PassagensController.cs",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\PassagensController.cs",
+              "RelativeToolTip": "Aeroporto\\Controllers\\PassagensController.cs",
+              "ViewState": "AgIAADUBAAAAAAAAAAAowEkBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-25T17:22:13.919Z",
+              "WhenOpened": "2026-05-25T18:09:39.487Z",
               "EditorCaption": ""
             }
           ]

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SistemaAereo.Data.Context;
+using SistemaAereo.Facades.Implementations;
+using SistemaAereo.Facades.Interfaces;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
@@ -54,6 +56,9 @@ builder.Services.AddScoped<IAeroportoRepository, AeroportoRepository>();
 builder.Services.AddScoped<IClientePreferencialRepository, ClientePreferencialRepository>();
 builder.Services.AddScoped<IPassagemRepository, PassagemRepository>();
 builder.Services.AddScoped<IPoltronaRepository, PoltronaRepository>();
+
+builder.Services.AddScoped<IPassagemFacade, PassagemFacade>();
+builder.Services.AddScoped<IVooFacade, VooFacade>();
 
 // Registro dos serviços
 builder.Services.AddScoped<IPoltronaService, PoltronaService>();
