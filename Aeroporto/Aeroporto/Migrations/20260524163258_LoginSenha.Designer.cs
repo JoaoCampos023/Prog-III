@@ -11,7 +11,7 @@ using SistemaAereo.Data.Context;
 
 namespace SistemaAereo.Migrations
 {
-    [DbContext(typeof(AeroportoContext))]
+    [DbContext(typeof(AirportsContext))]
     [Migration("20260524163258_LoginSenha")]
     partial class LoginSenha
     {

@@ -1,0 +1,233 @@
+﻿@using SistemaAereo.Models.Entities
+@using SistemaAereo.Models.Enums
+@model Ticket
+
+@{
+    ViewData["Title"] = "Detalhes da Passagem";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-ticket-alt"></i> @ViewData["Title"]</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a asp-action="Index" class="btn btn-secondary me-2">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            @if (Model.Status == TicketStatus.Confirmed)
+            {
+                <a asp-action="Checkin" asp-route-id="@Model.TicketId" class="btn btn-warning me-2">
+                    <i class="fas fa-check-in"></i> Check-in
+                </a>
+            }
+            @if (Model.Status == TicketStatus.CheckIn)
+            {
+                <a asp-action="Boarding" asp-route-id="@Model.TicketId" class="btn btn-success me-2">
+                    <i class="fas fa-plane"></i> Embarque
+                </a>
+            }
+            @if (Model.Status != TicketStatus.Cancelled)
+            {
+                <a asp-action="Cancel" asp-route-id="@Model.TicketId" class="btn btn-danger"
+                   onclick="return confirm('Tem certeza que deseja cancelar esta passagem?')">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-user"></i> Dados do Passageiro</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Nome:</th>
+                            <td>@Model.Customer?.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>@Model.Customer?.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Telefone:</th>
+                            <td>@(string.IsNullOrEmpty(Model.Customer?.Phone) ? "N/A" : Model.Customer.Phone)</td>
+                        </tr>
+                        <tr>
+                            <th>CPF:</th>
+                            <td>@(string.IsNullOrEmpty(Model.Customer?.CPF) ? "N/A" : Model.Customer.CPF)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-plane"></i> Dados do Voo</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Número do Voo:</th>
+                            <td>@Model.Flight?.FlightNumber</td>
+                        </tr>
+                        <tr>
+                            <th>Origem:</th>
+                            <td>@Model.Flight?.DepartureAirport?.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Destino:</th>
+                            <td>@Model.Flight?.ArrivalAirport?.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Saída:</th>
+                            <td>@Model.Flight?.DepartureTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                        <tr>
+                            <th>Chegada:</th>
+                            <td>@Model.Flight?.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                        <tr>
+                            <th>Aeronave:</th>
+                            <td>@Model.Flight?.Aircraft?.AircraftType</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chair"></i> Dados da Poltrona</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Número:</th>
+                            <td><strong class="h5">@Model.Seat?.SeatNumber</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Classe:</th>
+                            <td>
+                                @if (Model.Class == SeatClass.FirstClass)
+                                {
+                                    <span class="badge bg-warning">Primeira</span>
+                                }
+                                else if (Model.Class == SeatClass.Executive)
+                                {
+                                    <span class="badge bg-info">Executiva</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Econômica</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Localização:</th>
+                            <td>@Model.Seat?.Location</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-receipt"></i> Dados da Passagem</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Número do Bilhete:</th>
+                            <td><strong class="h5">@Model.TicketNumber</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Data de Emissão:</th>
+                            <td>@Model.IssueDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                        <tr>
+                            <th>Preço:</th>
+                            <td><strong class="h5 text-success">@Model.Price.ToString("C")</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                @if (Model.Status == TicketStatus.Confirmed)
+                                {
+                                    <span class="badge bg-primary">Confirmada</span>
+                                }
+                                else if (Model.Status == TicketStatus.CheckIn)
+                                {
+                                    <span class="badge bg-warning">Check-in</span>
+                                }
+                                else if (Model.Status == TicketStatus.Boarded)
+                                {
+                                    <span class="badge bg-success">Embarcada</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Cancelada</span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-qrcode"></i> Código da Passagem</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="border p-4 d-inline-block bg-light">
+                        <h4>@Model.TicketNumber</h4>
+                        <small class="text-muted">Número do Bilhete</small>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary" onclick="window.print()">
+                            <i class="fas fa-print"></i> Imprimir Passagem
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        .btn-toolbar, .border-bottom, .alert, .card-header .btn {
+            display: none !important;
+        }
+
+        .card {
+            border: 1px solid #000 !important;
+        }
+
+        .card-header {
+            background: #f8f9fa !important;
+            color: #000 !important;
+        }
+    }
+</style>

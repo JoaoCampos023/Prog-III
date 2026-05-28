@@ -1,6 +1,12 @@
 ﻿// CEP Auto Complete
 function buscarCep() {
-    const cepInput = document.getElementById('Cep');
+    // CORRIGIDO: Usando ZipCode (padrão do Customer)
+    const cepInput = document.getElementById('ZipCode');
+    if (!cepInput) {
+        console.log('Campo CEP não encontrado');
+        return;
+    }
+
     let cep = cepInput.value.replace(/\D/g, '');
 
     if (cep.length !== 8) {
@@ -8,11 +14,13 @@ function buscarCep() {
         return;
     }
 
+    console.log('Buscando CEP:', cep);
     mostrarLoadingCep(true);
 
     fetch(`/api/cep/${cep}`)
         .then(response => response.json())
         .then(data => {
+            console.log('Resposta da API:', data);
             if (data.success && data.data) {
                 preencherCamposEndereco(data.data);
                 mostrarMensagemSucesso('CEP encontrado!');
@@ -32,27 +40,30 @@ function buscarCep() {
 }
 
 function preencherCamposEndereco(endereco) {
-    const logradouroInput = document.getElementById('Endereco');
-    const bairroInput = document.getElementById('Bairro');
-    const cidadeInput = document.getElementById('Cidade');
-    const ufSelect = document.getElementById('Estado');
+    // CORRIGIDO: Usando Address, City, State (padrão do Customer)
+    const addressInput = document.getElementById('Address');
+    const cityInput = document.getElementById('City');
+    const stateSelect = document.getElementById('State');
 
-    if (logradouroInput) {
-        const logradouroCompleto = endereco.logradouro;
-        if (endereco.complemento) {
-            logradouroInput.value = `${logradouroCompleto} - ${endereco.complemento}`;
-        } else {
-            logradouroInput.value = logradouroCompleto;
+    console.log('Preenchendo campos:', endereco);
+
+    if (addressInput) {
+        let enderecoCompleto = endereco.street || endereco.logradouro || '';
+        if (endereco.complement || endereco.complemento) {
+            enderecoCompleto += ` - ${endereco.complement || endereco.complemento}`;
         }
+        addressInput.value = enderecoCompleto;
     }
 
-    if (bairroInput) bairroInput.value = endereco.bairro || '';
-    if (cidadeInput) cidadeInput.value = endereco.cidade || '';
-    
-    if (ufSelect && endereco.uf) {
-        for (let i = 0; i < ufSelect.options.length; i++) {
-            if (ufSelect.options[i].value === endereco.uf) {
-                ufSelect.selectedIndex = i;
+    if (cityInput) {
+        cityInput.value = endereco.city || endereco.cidade || '';
+    }
+
+    if (stateSelect && (endereco.state || endereco.uf)) {
+        const estado = endereco.state || endereco.uf;
+        for (let i = 0; i < stateSelect.options.length; i++) {
+            if (stateSelect.options[i].value === estado) {
+                stateSelect.selectedIndex = i;
                 break;
             }
         }
@@ -60,15 +71,15 @@ function preencherCamposEndereco(endereco) {
 }
 
 function limparCamposEndereco() {
-    const logradouroInput = document.getElementById('Endereco');
-    const bairroInput = document.getElementById('Bairro');
-    const cidadeInput = document.getElementById('Cidade');
+    const addressInput = document.getElementById('Address');
+    const cityInput = document.getElementById('City');
+    const stateSelect = document.getElementById('State');
 
-    if (logradouroInput && logradouroInput.value === '') return;
-    
-    if (logradouroInput) logradouroInput.value = '';
-    if (bairroInput) bairroInput.value = '';
-    if (cidadeInput) cidadeInput.value = '';
+    if (addressInput && addressInput.value === '') return;
+
+    if (addressInput) addressInput.value = '';
+    if (cityInput) cityInput.value = '';
+    if (stateSelect) stateSelect.selectedIndex = 0;
 }
 
 function mostrarLoadingCep(show) {
@@ -95,7 +106,7 @@ function mostrarMensagemErro(mensagem) {
     const alertDiv = document.createElement('div');
     alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3';
     alertDiv.style.zIndex = '9999';
-   alertDiv.innerHTML = `
+    alertDiv.innerHTML = `
         <i class="fas fa-exclamation-circle me-2"></i>
         ${mensagem}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -106,9 +117,9 @@ function mostrarMensagemErro(mensagem) {
 
 // Máscara para CEP
 function aplicarMascaraCep() {
-    const cepInput = document.getElementById('Cep');
+    const cepInput = document.getElementById('ZipCode');
     if (cepInput) {
-        cepInput.addEventListener('input', function(e) {
+        cepInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 5) {
                 value = value.replace(/^(\d{5})(\d)/, '$1-$2');
@@ -119,11 +130,21 @@ function aplicarMascaraCep() {
 }
 
 // Inicializar quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM carregado - Inicializando CEP');
     aplicarMascaraCep();
-    
-    const cepInput = document.getElementById('Cep');
+
+    const cepInput = document.getElementById('ZipCode');
     if (cepInput) {
+        console.log('Campo CEP encontrado');
         cepInput.addEventListener('blur', buscarCep);
+        cepInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarCep();
+            }
+        });
+    } else {
+        console.log('Campo CEP NÃO encontrado! O ID deve ser "ZipCode"');
     }
 });

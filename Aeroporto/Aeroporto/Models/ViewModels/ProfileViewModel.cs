@@ -6,16 +6,16 @@ namespace SistemaAereo.Models.ViewModels
     {
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "O nome é obrigatório")]
-        [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres")]
+        [Required(ErrorMessage = "O nome completo é obrigatório")]
+        [StringLength(100)]
         [Display(Name = "Nome Completo")]
-        public string NomeCompleto { get; set; }
+        public string FullName { get; set; }  // antes NomeCompleto
 
         [Phone(ErrorMessage = "Telefone inválido")]
         [Display(Name = "Telefone")]
-        public string Telefone { get; set; }
+        public string Phone { get; set; }  // antes Telefone
 
         [Display(Name = "Data de Cadastro")]
-        public DateTime DataCadastro { get; set; }
+        public DateTime RegistrationDate { get; set; }  // antes DataCadastro
     }
 }

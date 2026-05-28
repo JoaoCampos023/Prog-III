@@ -6,41 +6,50 @@ namespace SistemaAereo.Data.Seed
 {
     public static class DbInitializer
     {
+        /// <summary>
+        /// Inicializa o banco de dados com dados padrão
+        /// </summary>
         public static void Initialize(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetService<AeroportoContext>();
+                var context = serviceScope.ServiceProvider.GetService<AirportsContext>();
 
                 context.Database.EnsureCreated();
 
-                if (BancoVazio(context))
+                if (IsDatabaseEmpty(context))
                 {
-                    AdicionarDadosIniciais(context);
+                    AddInitialData(context);
                 }
             }
         }
 
-        private static bool BancoVazio(AeroportoContext context)
+        /// <summary>
+        /// Verifica se o banco de dados está vazio
+        /// </summary>
+        private static bool IsDatabaseEmpty(AirportsContext context)
         {
-            return !context.Aeronaves.Any() && !context.Aeroportos.Any();
+            return !context.Aircrafts.Any() && !context.Airports.Any();
         }
 
-        private static void AdicionarDadosIniciais(AeroportoContext context)
+        /// <summary>
+        /// Adiciona dados iniciais ao banco de dados
+        /// </summary>
+        private static void AddInitialData(AirportsContext context)
         {
-            var aeronaves = new[]
+            var aircrafts = new[]
             {
-                new Aeronave { TipoAeronave = "Boeing 737", NumeroPoltronas = 180 },
-                new Aeronave { TipoAeronave = "Airbus A320", NumeroPoltronas = 150 }
+                new Aircraft { AircraftType = "Boeing 737", NumberOfSeats = 180 },
+                new Aircraft { AircraftType = "Airbus A320", NumberOfSeats = 150 }
             };
-            context.Aeronaves.AddRange(aeronaves);
+            context.Aircrafts.AddRange(aircrafts);
 
-            var aeroportos = new[]
+            var airports = new[]
             {
-                new Aeroporto { Nome = "Aeroporto Internacional do Rio de Janeiro", CodigoIATA = "GIG", Cidade = "Rio de Janeiro", Pais = "Brasil" },
-                new Aeroporto { Nome = "Aeroporto Santos Dumont", CodigoIATA = "SDU", Cidade = "Rio de Janeiro", Pais = "Brasil" }
+                new Airport { Name = "Aeroporto Internacional do Rio de Janeiro", IATACode = "GIG", City = "Rio de Janeiro", Country = "Brasil" },
+                new Airport { Name = "Aeroporto Santos Dumont", IATACode = "SDU", City = "Rio de Janeiro", Country = "Brasil" }
             };
-            context.Aeroportos.AddRange(aeroportos);
+            context.Airports.AddRange(airports);
 
             context.SaveChanges();
         }

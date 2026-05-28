@@ -5,22 +5,22 @@ namespace SistemaAereo.Models.DTOs
     public class ViaCepResponseDto
     {
         [JsonPropertyName("cep")]
-        public string Cep { get; set; }
+        public string ZipCode { get; set; }
 
         [JsonPropertyName("logradouro")]
-        public string Logradouro { get; set; }
+        public string Street { get; set; }
 
         [JsonPropertyName("complemento")]
-        public string Complemento { get; set; }
+        public string Complement { get; set; }
 
         [JsonPropertyName("bairro")]
-        public string Bairro { get; set; }
+        public string Neighborhood { get; set; }
 
         [JsonPropertyName("localidade")]
-        public string Localidade { get; set; }
+        public string City { get; set; }
 
         [JsonPropertyName("uf")]
-        public string Uf { get; set; }
+        public string State { get; set; }
 
         [JsonPropertyName("ibge")]
         public string Ibge { get; set; }
@@ -35,8 +35,8 @@ namespace SistemaAereo.Models.DTOs
         public string Siafi { get; set; }
 
         [JsonPropertyName("erro")]
-        public bool Erro { get; set; }
+        public bool Error { get; set; }
 
-        public bool IsValid => !Erro && !string.IsNullOrEmpty(Cep);
+        public bool IsValid => !Error && !string.IsNullOrEmpty(ZipCode);
     }
 }

@@ -15,11 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Configuração do Entity Framework
-builder.Services.AddDbContext<AeroportoContext>(options =>
+builder.Services.AddDbContext<AirportsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configuração do Identity
-builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     // Configurações de senha
     options.Password.RequireDigit = true;
@@ -36,7 +36,7 @@ builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
     // Configurações de usuário
     options.User.RequireUniqueEmail = true;
 })
-.AddEntityFrameworkStores<AeroportoContext>()
+.AddEntityFrameworkStores<AirportsContext>()
 .AddDefaultTokenProviders();
 
 // Configurar Cookie de Autenticação
@@ -49,27 +49,37 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Registro dos repositórios
-builder.Services.AddScoped<IVooRepository, VooRepository>();
-builder.Services.AddScoped<IAeronaveRepository, AeronaveRepository>();
-builder.Services.AddScoped<IAeroportoRepository, AeroportoRepository>();
-builder.Services.AddScoped<IClientePreferencialRepository, ClientePreferencialRepository>();
-builder.Services.AddScoped<IPassagemRepository, PassagemRepository>();
-builder.Services.AddScoped<IPoltronaRepository, PoltronaRepository>();
+// =============================================
+// REGISTRO DOS REPOSITÓRIOS
+// =============================================
 
-builder.Services.AddScoped<IPassagemFacade, PassagemFacade>();
-builder.Services.AddScoped<IVooFacade, VooFacade>();
+builder.Services.AddScoped<IAircraftRepository, AircraftRepository>();
+builder.Services.AddScoped<IAirportRepository, AirportRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
-// Registro dos serviços
-builder.Services.AddScoped<IPoltronaService, PoltronaService>();
+// =============================================
+// REGISTRO DOS SERVIÇOS
+// =============================================
 
-// NOVO: Registro do serviço ViaCEP
+builder.Services.AddScoped<ISeatService, SeatService>();
+
+// Registro do serviço ViaCEP
 builder.Services.AddHttpClient<IViaCepService, ViaCepService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(10);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 builder.Services.AddScoped<IViaCepService, ViaCepService>();
+
+// =============================================
+// REGISTRO DAS FACADES
+// =============================================
+
+builder.Services.AddScoped<ITicketFacade, TicketFacade>();
+builder.Services.AddScoped<IFlightFacade, FlightFacade>();
 
 var app = builder.Build();
 

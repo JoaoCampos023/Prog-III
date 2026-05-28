@@ -2,8 +2,8 @@
 {
     public class CheckinRequestDto
     {
-        public int PassagemId { get; set; }
-        public int NumeroBagagens { get; set; }
-        public decimal PesoBagagens { get; set; }
+        public int TicketId { get; set; }
+        public int NumberOfBags { get; set; }
+        public decimal BaggageWeight { get; set; }
     }
 }

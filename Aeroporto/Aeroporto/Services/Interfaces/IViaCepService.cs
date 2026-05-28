@@ -7,23 +7,21 @@ namespace SistemaAereo.Services.Interfaces
         /// <summary>
         /// Busca endereço pelo CEP
         /// </summary>
-        /// <param name="cep">CEP no formato 00000000 ou 00000-000</param>
-        /// <returns>Dados do endereço ou null se não encontrado</returns>
-        Task<ViaCepResponseDto> BuscarEnderecoPorCepAsync(string cep);
+        Task<ViaCepResponseDto> GetAddressByZipCodeAsync(string zipCode);
 
         /// <summary>
-        /// Valida se o CEP é válido (formato e existência)
+        /// Valida se o CEP é válido
         /// </summary>
-        Task<bool> CepIsValidAsync(string cep);
+        Task<bool> IsZipCodeValidAsync(string zipCode);
 
         /// <summary>
         /// Formata o CEP para o padrão 00000-000
         /// </summary>
-        string FormatarCep(string cep);
+        string FormatZipCode(string zipCode);
 
         /// <summary>
-        /// Remove formatação do CEP (00000-000 -> 00000000)
+        /// Remove formatação do CEP
         /// </summary>
-        string RemoverFormatacao(string cep);
+        string RemoveFormatting(string zipCode);
     }
 }

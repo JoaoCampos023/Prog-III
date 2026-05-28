@@ -1,0 +1,130 @@
+﻿@using SistemaAereo.Models.Entities
+@model Flight
+
+@{
+    ViewData["Title"] = "Agendar Novo Voo";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-dark">
+                <i class="fas fa-plane-departure text-primary me-2"></i>Agendar Novo Voo
+            </h1>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Sucesso"]
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Erro"]
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Informações do Voo</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FlightNumber" class="form-label">Número do Voo *</label>
+                        <input asp-for="FlightNumber" class="form-control" placeholder="Ex: AA1234" required />
+                        <span asp-validation-for="FlightNumber" class="text-danger"></span>
+                        <div class="form-text">Código único de identificação do voo</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="AircraftId" class="form-label">Aeronave *</label>
+                        <select asp-for="AircraftId" class="form-select" required>
+                            <option value="">Selecione uma aeronave</option>
+                            @if (ViewBag.Aircrafts != null)
+                            {
+                                foreach (var item in ViewBag.Aircrafts as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="AircraftId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DepartureAirportId" class="form-label">Aeroporto de Origem *</label>
+                        <select asp-for="DepartureAirportId" class="form-select" required>
+                            <option value="">Selecione o aeroporto de origem</option>
+                            @if (ViewBag.Airports != null)
+                            {
+                                foreach (var item in ViewBag.Airports as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="DepartureAirportId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ArrivalAirportId" class="form-label">Aeroporto de Destino *</label>
+                        <select asp-for="ArrivalAirportId" class="form-select" required>
+                            <option value="">Selecione o aeroporto de destino</option>
+                            @if (ViewBag.Airports != null)
+                            {
+                                foreach (var item in ViewBag.Airports as List<SelectListItem>)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="ArrivalAirportId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DepartureTime" class="form-label">Horário de Saída *</label>
+                        <input asp-for="DepartureTime" type="datetime-local" class="form-control" required />
+                        <span asp-validation-for="DepartureTime" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EstimatedArrivalTime" class="form-label">Horário Previsto de Chegada *</label>
+                        <input asp-for="EstimatedArrivalTime" type="datetime-local" class="form-control" required />
+                        <span asp-validation-for="EstimatedArrivalTime" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Agendar Voo
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

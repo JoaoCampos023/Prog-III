@@ -1,0 +1,228 @@
+﻿@using SistemaAereo.Models.Entities
+@model SistemaAereo.Models.ViewModels.PaginationViewModel<Flight>
+
+@{
+    ViewData["Title"] = "Voos";
+
+    var statusOptions = ViewBag.StatusOptions as string[] ?? new[] { "upcoming", "today", "past" };
+    // Mapear para exibição em português
+    var statusDisplay = new Dictionary<string, string>
+    {
+        { "upcoming", "Futuros" },
+        { "today", "Hoje" },
+        { "past", "Passados" }
+    };
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-plane"></i> @ViewData["Title"]</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a asp-action="Create" class="btn btn-success">
+                <i class="fas fa-plus"></i> Novo Voo
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todos</option>
+                        @foreach (var status in statusOptions)
+                        {
+                            if (ViewBag.StatusFilter == status)
+                            {
+                                <option value="@status" selected>@(statusDisplay.ContainsKey(status) ? statusDisplay[status] : status)</option>
+                            }
+                            else
+                            {
+                                <option value="@status">@(statusDisplay.ContainsKey(status) ? statusDisplay[status] : status)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Itens por página</label>
+                    <select name="itemsPerPage" class="form-select" onchange="this.form.submit()">
+                        @foreach (var option in ViewBag.ItemsPerPageOptions as int[])
+                        {
+                            if (ViewBag.CurrentItemsPerPage == option)
+                            {
+                                <option value="@option" selected>@option</option>
+                            }
+                            else
+                            {
+                                <option value="@option">@option</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Voos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nº Voo</th>
+                            <th>Origem</th>
+                            <th>Destino</th>
+                            <th>Saída</th>
+                            <th>Chegada</th>
+                            <th>Aeronave</th>
+                            <th>Status</th>
+                            <th width="150px">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var flight in Model.Items)
+                        {
+                            <tr>
+                                <td><strong>@flight.FlightNumber</strong></td>
+                                <td>@flight.DepartureAirport?.Name (@flight.DepartureAirport?.IATACode)</td>
+                                <td>@flight.ArrivalAirport?.Name (@flight.ArrivalAirport?.IATACode)</td>
+                                <td>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@flight.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@flight.Aircraft?.AircraftType</td>
+                                <td>
+                                    @if (flight.DepartureTime > DateTime.Now)
+                                    {
+                                        if (flight.DepartureTime.Date == DateTime.Today)
+                                        {
+                                            <span class="badge bg-warning">Hoje</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Futuro</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Passado</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@flight.FlightId" class="btn btn-info btn-sm" title="Detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@flight.FlightId" class="btn btn-primary btn-sm" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Seats" asp-route-id="@flight.FlightId" class="btn btn-secondary btn-sm" title="Poltronas">
+                                            <i class="fas fa-chair"></i>
+                                        </a>
+                                        @if (flight.DepartureTime > DateTime.Now)
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@flight.FlightId" class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Tem certeza que deseja excluir este voo?')" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            @if (Model.TotalPages > 1)
+            {
+                <nav aria-label="Navegação de páginas">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" asp-route-page="@(Model.CurrentPage - 1)"
+                               asp-route-itemsPerPage="@ViewBag.CurrentItemsPerPage"
+                               asp-route-status="@ViewBag.StatusFilter">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            if (i == Model.CurrentPage)
+                            {
+                                <li class="page-item active">
+                                    <span class="page-link">@i</span>
+                                </li>
+                            }
+                            else if (Math.Abs(i - Model.CurrentPage) <= 2 || i == 1 || i == Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-route-page="@i"
+                                       asp-route-itemsPerPage="@ViewBag.CurrentItemsPerPage"
+                                       asp-route-status="@ViewBag.StatusFilter">@i</a>
+                                </li>
+                            }
+                            else if (Math.Abs(i - Model.CurrentPage) == 3)
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            }
+                        }
+
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" asp-route-page="@(Model.CurrentPage + 1)"
+                               asp-route-itemsPerPage="@ViewBag.CurrentItemsPerPage"
+                               asp-route-status="@ViewBag.StatusFilter">
+                                Próximo <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
+            <div class="text-center text-muted">
+                <small>Mostrando @Model.Items.Count() de @Model.TotalItems voos (Página @Model.CurrentPage de @Model.TotalPages)</small>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-plane fa-2x mb-3"></i>
+            <h5>Nenhum voo encontrado</h5>
+            <p>Comece cadastrando o primeiro voo do sistema.</p>
+            <a asp-action="Create" class="btn btn-primary">Cadastrar Primeiro Voo</a>
+        </div>
+    }
+</div>

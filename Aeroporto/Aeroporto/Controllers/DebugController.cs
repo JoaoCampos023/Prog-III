@@ -8,17 +8,17 @@ namespace SistemaAereo.Controllers
 {
     public class DebugController : Controller
     {
-        private readonly AeroportoContext _context;
-        private readonly IPoltronaService _poltronaService;
+        private readonly AirportsContext _context;
+        private readonly ISeatService _seatService;
         private readonly ILogger<DebugController> _logger;
 
         public DebugController(
-            AeroportoContext context,
-            IPoltronaService poltronaService,
+            AirportsContext context,
+            ISeatService seatService,
             ILogger<DebugController> logger)
         {
             _context = context;
-            _poltronaService = poltronaService;
+            _seatService = seatService;
             _logger = logger;
         }
 
@@ -26,74 +26,80 @@ namespace SistemaAereo.Controllers
         // MÉTODOS DE VISUALIZAÇÃO DE DADOS
         // =============================================
 
+        /// <summary>
+        /// Exibe todos os dados do sistema em uma view
+        /// </summary>
         public async Task<IActionResult> Dados()
         {
             var dados = new
             {
-                Voos = await _context.Voos
+                Flights = await _context.Flights
                     .AsNoTracking()
-                    .Include(v => v.AeroportoOrigem)
-                    .Include(v => v.AeroportoDestino)
-                    .Include(v => v.Aeronave)
-                    .Include(v => v.Poltronas)
-                    .Select(v => new
+                    .Include(f => f.DepartureAirport)
+                    .Include(f => f.ArrivalAirport)
+                    .Include(f => f.Aircraft)
+                    .Include(f => f.Seats)
+                    .Select(f => new
                     {
-                        v.VooId,
-                        v.NumeroVoo,
-                        Origem = v.AeroportoOrigem.CodigoIATA,
-                        Destino = v.AeroportoDestino.CodigoIATA,
-                        v.HorarioSaida,
-                        EhFuturo = v.HorarioSaida > DateTime.Now,
-                        TotalPoltronas = v.Poltronas.Count,
-                        PoltronasDisponiveis = v.Poltronas.Count(p => p.Disponivel)
+                        f.FlightId,
+                        f.FlightNumber,
+                        Origin = f.DepartureAirport.IATACode,
+                        Destination = f.ArrivalAirport.IATACode,
+                        f.DepartureTime,
+                        IsFuture = f.DepartureTime > DateTime.Now,
+                        TotalSeats = f.Seats.Count,
+                        AvailableSeats = f.Seats.Count(s => s.IsAvailable)
                     })
                     .ToListAsync(),
 
-                Clientes = await _context.ClientesPreferenciais
+                Customers = await _context.Customers
                     .AsNoTracking()
-                    .Where(c => c.Ativo)
-                    .Select(c => new { c.ClienteId, c.Nome })
+                    .Where(c => c.IsActive)
+                    .Select(c => new { c.CustomerId, c.Name })
                     .ToListAsync(),
 
-                Aeronaves = await _context.Aeronaves
+                Aircrafts = await _context.Aircrafts
                     .AsNoTracking()
-                    .Select(a => new { a.AeronaveId, a.TipoAeronave })
+                    .Select(a => new { a.AircraftId, a.AircraftType })
                     .ToListAsync(),
 
-                Aeroportos = await _context.Aeroportos
+                Airports = await _context.Airports
                     .AsNoTracking()
-                    .Select(a => new { a.AeroportoId, a.Nome, a.CodigoIATA })
+                    .Select(a => new { a.AirportId, a.Name, a.IATACode })
                     .ToListAsync()
             };
 
             return View(dados);
         }
 
+        /// <summary>
+        /// Retorna dados em formato JSON para debug
+        /// </summary>
         public async Task<JsonResult> ApiDados()
         {
             var dados = new
             {
-                Voos = await _context.Voos
+                Flights = await _context.Flights
                     .AsNoTracking()
-                    .Include(v => v.AeroportoOrigem)
-                    .Include(v => v.AeroportoDestino)
-                    .Include(v => v.Poltronas)
-                    .Select(v => new
+                    .Include(f => f.DepartureAirport)
+                    .Include(f => f.ArrivalAirport)
+                    .Include(f => f.Seats)
+                    .Select(f => new
                     {
-                        v.VooId,
-                        v.NumeroVoo,
-                        Origem = v.AeroportoOrigem.CodigoIATA,
-                        Destino = v.AeroportoDestino.CodigoIATA,
-                        v.HorarioSaida,
-                        EhFuturo = v.HorarioSaida > DateTime.Now,
-                        TotalPoltronas = v.Poltronas.Count,
-                        PoltronasDisponiveis = v.Poltronas.Count(p => p.Disponivel)
+                        f.FlightId,
+                        f.FlightNumber,
+                        Origin = f.DepartureAirport.IATACode,
+                        Destination = f.ArrivalAirport.IATACode,
+                        f.DepartureTime,
+                        IsFuture = f.DepartureTime > DateTime.Now,
+                        TotalSeats = f.Seats.Count,
+                        AvailableSeats = f.Seats.Count(s => s.IsAvailable)
                     })
                     .ToListAsync(),
 
-                ClientesAtivos = await _context.ClientesPreferenciais
+                ActiveCustomers = await _context.Customers
                     .AsNoTracking()
-                    .CountAsync(c => c.Ativo)
+                    .CountAsync(c => c.IsActive)
             };
 
             return Json(dados);
@@ -103,20 +109,23 @@ namespace SistemaAereo.Controllers
         // MÉTODOS DE CRIAÇÃO DE DADOS TESTE
         // =============================================
 
+        /// <summary>
+        /// Cria dados de teste para o sistema
+        /// </summary>
         [HttpPost]
         public async Task<JsonResult> CriarDadosTeste()
         {
             try
             {
-                var voosExistem = await _context.Voos.AnyAsync();
-                var clientesExistem = await _context.ClientesPreferenciais.AnyAsync();
+                var flightsExist = await _context.Flights.AnyAsync();
+                var customersExist = await _context.Customers.AnyAsync();
 
-                if (voosExistem || clientesExistem)
+                if (flightsExist || customersExist)
                 {
                     return Json(new
                     {
-                        sucesso = false,
-                        mensagem = "Já existem dados no sistema. Use os dados existentes ou limpe o banco primeiro."
+                        success = false,
+                        message = "Já existem dados no sistema. Use os dados existentes ou limpe o banco primeiro."
                     });
                 }
 
@@ -124,83 +133,89 @@ namespace SistemaAereo.Controllers
 
                 try
                 {
-                    var aeronave = new Aeronave
+                    // Criar aeronave
+                    var aircraft = new Aircraft
                     {
-                        TipoAeronave = "Boeing 737-800",
-                        NumeroPoltronas = 180
+                        AircraftType = "Boeing 737-800",
+                        NumberOfSeats = 180
                     };
-                    _context.Aeronaves.Add(aeronave);
+                    _context.Aircrafts.Add(aircraft);
 
-                    var aeroportos = new[]
+                    // Criar aeroportos
+                    var airports = new[]
                     {
-                        new Aeroporto { Nome = "Aeroporto Internacional de São Paulo/Guarulhos", CodigoIATA = "GRU", Cidade = "São Paulo", Pais = "Brasil" },
-                        new Aeroporto { Nome = "Aeroporto Santos Dumont", CodigoIATA = "SDU", Cidade = "Rio de Janeiro", Pais = "Brasil" },
-                        new Aeroporto { Nome = "Aeroporto Internacional de Brasília", CodigoIATA = "BSB", Cidade = "Brasília", Pais = "Brasil" }
+                        new Airport { Name = "Aeroporto Internacional de São Paulo/Guarulhos", IATACode = "GRU", City = "São Paulo", Country = "Brasil" },
+                        new Airport { Name = "Aeroporto Santos Dumont", IATACode = "SDU", City = "Rio de Janeiro", Country = "Brasil" },
+                        new Airport { Name = "Aeroporto Internacional de Brasília", IATACode = "BSB", City = "Brasília", Country = "Brasil" }
                     };
-                    _context.Aeroportos.AddRange(aeroportos);
+                    _context.Airports.AddRange(airports);
 
                     await _context.SaveChangesAsync();
 
-                    var voos = new[]
+                    // Criar voos
+                    var flights = new[]
                     {
-                        new Voo
+                        new Flight
                         {
-                            NumeroVoo = "LA1234",
-                            AeroportoOrigemId = aeroportos[0].AeroportoId,
-                            AeroportoDestinoId = aeroportos[1].AeroportoId,
-                            AeronaveId = aeronave.AeronaveId,
-                            HorarioSaida = DateTime.Now.AddDays(1).AddHours(2),
-                            HorarioChegadaPrevisto = DateTime.Now.AddDays(1).AddHours(4)
+                            FlightNumber = "LA1234",
+                            DepartureAirportId = airports[0].AirportId,
+                            ArrivalAirportId = airports[1].AirportId,
+                            AircraftId = aircraft.AircraftId,
+                            DepartureTime = DateTime.Now.AddDays(1).AddHours(2),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(4)
                         },
-                        new Voo
+                        new Flight
                         {
-                            NumeroVoo = "LA5678",
-                            AeroportoOrigemId = aeroportos[0].AeroportoId,
-                            AeroportoDestinoId = aeroportos[2].AeroportoId,
-                            AeronaveId = aeronave.AeronaveId,
-                            HorarioSaida = DateTime.Now.AddDays(2).AddHours(3),
-                            HorarioChegadaPrevisto = DateTime.Now.AddDays(2).AddHours(5)
+                            FlightNumber = "LA5678",
+                            DepartureAirportId = airports[0].AirportId,
+                            ArrivalAirportId = airports[2].AirportId,
+                            AircraftId = aircraft.AircraftId,
+                            DepartureTime = DateTime.Now.AddDays(2).AddHours(3),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(5)
                         }
                     };
-                    _context.Voos.AddRange(voos);
+                    _context.Flights.AddRange(flights);
 
-                    var clientes = new[]
+                    // Criar clientes
+                    var customers = new[]
                     {
-                        new ClientePreferencial
+                        new Customer
                         {
-                            Nome = "João Silva",
+                            Name = "João Silva",
                             Email = "joao.silva@email.com",
-                            Telefone = "(11) 99999-9999",
+                            Phone = "(11) 99999-9999",
                             CPF = "123.456.789-00",
-                            Cidade = "São Paulo",
-                            Estado = "SP"
+                            City = "São Paulo",
+                            State = "SP",
+                            IsActive = true
                         },
-                        new ClientePreferencial
+                        new Customer
                         {
-                            Nome = "Maria Santos",
+                            Name = "Maria Santos",
                             Email = "maria.santos@email.com",
-                            Telefone = "(21) 98888-8888",
+                            Phone = "(21) 98888-8888",
                             CPF = "987.654.321-00",
-                            Cidade = "Rio de Janeiro",
-                            Estado = "RJ"
+                            City = "Rio de Janeiro",
+                            State = "RJ",
+                            IsActive = true
                         }
                     };
-                    _context.ClientesPreferenciais.AddRange(clientes);
+                    _context.Customers.AddRange(customers);
 
                     await _context.SaveChangesAsync();
 
-                    // CORREÇÃO: Usar o PoltronaService centralizado
-                    foreach (var voo in voos)
+                    // Criar poltronas para cada voo
+                    foreach (var flight in flights)
                     {
-                        await _poltronaService.CriarPoltronasParaVooAsync(voo.VooId, aeronave.NumeroPoltronas);
+                        await _seatService.CreateSeatsForFlightAsync(flight.FlightId, aircraft.NumberOfSeats);
                     }
 
                     await transaction.CommitAsync();
 
                     return Json(new
                     {
-                        sucesso = true,
-                        mensagem = "Dados de teste criados com sucesso! Foram criados 2 voos, 2 clientes e poltronas."
+                        success = true,
+                        message = "Dados de teste criados com sucesso! Foram criados 2 voos, 2 clientes e poltronas."
                     });
                 }
                 catch (Exception ex)
@@ -212,7 +227,7 @@ namespace SistemaAereo.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar dados de teste");
-                return Json(new { sucesso = false, mensagem = $"Erro ao criar dados de teste: {ex.Message}" });
+                return Json(new { success = false, message = $"Erro ao criar dados de teste: {ex.Message}" });
             }
         }
     }

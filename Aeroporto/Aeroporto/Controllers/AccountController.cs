@@ -8,13 +8,13 @@ namespace SistemaAereo.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<Usuario> _userManager;
-        private readonly SignInManager<Usuario> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
-            UserManager<Usuario> userManager,
-            SignInManager<Usuario> signInManager,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
@@ -22,7 +22,13 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        // GET: Account/Login
+        // =============================================
+        // MÉTODOS DE AUTENTICAÇÃO
+        // =============================================
+
+        /// <summary>
+        /// GET: Account/Login - Página de login
+        /// </summary>
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
@@ -30,7 +36,9 @@ namespace SistemaAereo.Controllers
             return View();
         }
 
-        // POST: Account/Login
+        /// <summary>
+        /// POST: Account/Login - Processa o login
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -51,7 +59,7 @@ namespace SistemaAereo.Controllers
                     _logger.LogInformation($"Usuário {model.Email} logou com sucesso.");
 
                     var user = await _userManager.FindByEmailAsync(model.Email);
-                    if (user != null && !user.Ativo)
+                    if (user != null && !user.IsActive)
                     {
                         await _signInManager.SignOutAsync();
                         ModelState.AddModelError(string.Empty, "Usuário inativo. Contate o administrador.");
@@ -79,14 +87,18 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // GET: Account/Register
+        /// <summary>
+        /// GET: Account/Register - Página de registro
+        /// </summary>
         [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST: Account/Register
+        /// <summary>
+        /// POST: Account/Register - Processa o registro de novo usuário
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -94,12 +106,12 @@ namespace SistemaAereo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new Usuario
+                var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    NomeCompleto = model.NomeCompleto,
-                    Ativo = true
+                    FullName = model.FullName,
+                    IsActive = true
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -108,7 +120,7 @@ namespace SistemaAereo.Controllers
                 {
                     _logger.LogInformation($"Usuário {user.Email} criado com sucesso.");
 
-                    await _userManager.AddToRoleAsync(user, "Usuario");
+                    await _userManager.AddToRoleAsync(user, "User");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
@@ -124,7 +136,9 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // POST: Account/Logout
+        /// <summary>
+        /// POST: Account/Logout - Realiza logout do usuário
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -134,21 +148,31 @@ namespace SistemaAereo.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        // GET: Account/AccessDenied
+        /// <summary>
+        /// GET: Account/AccessDenied - Página de acesso negado
+        /// </summary>
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        // GET: Account/Lockout
+        /// <summary>
+        /// GET: Account/Lockout - Página de conta bloqueada
+        /// </summary>
         [AllowAnonymous]
         public IActionResult Lockout()
         {
             return View();
         }
 
-        // GET: Account/Profile
+        // =============================================
+        // MÉTODOS DE PERFIL
+        // =============================================
+
+        /// <summary>
+        /// GET: Account/Profile - Página de perfil do usuário
+        /// </summary>
         [Authorize]
         public async Task<IActionResult> Profile()
         {
@@ -161,15 +185,17 @@ namespace SistemaAereo.Controllers
             var model = new ProfileViewModel
             {
                 Email = user.Email,
-                NomeCompleto = user.NomeCompleto,
-                Telefone = user.PhoneNumber,
-                DataCadastro = user.DataCadastro
+                FullName = user.FullName,
+                Phone = user.PhoneNumber,
+                RegistrationDate = user.RegistrationDate
             };
 
             return View(model);
         }
 
-        // POST: Account/Profile
+        /// <summary>
+        /// POST: Account/Profile - Atualiza o perfil do usuário
+        /// </summary>
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -183,8 +209,8 @@ namespace SistemaAereo.Controllers
                     return NotFound();
                 }
 
-                user.NomeCompleto = model.NomeCompleto;
-                user.PhoneNumber = model.Telefone;
+                user.FullName = model.FullName;
+                user.PhoneNumber = model.Phone;
 
                 var result = await _userManager.UpdateAsync(user);
 
@@ -203,14 +229,18 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // GET: Account/ChangePassword
+        /// <summary>
+        /// GET: Account/ChangePassword - Página de alteração de senha
+        /// </summary>
         [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
-        // POST: Account/ChangePassword
+        /// <summary>
+        /// POST: Account/ChangePassword - Altera a senha do usuário
+        /// </summary>
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]

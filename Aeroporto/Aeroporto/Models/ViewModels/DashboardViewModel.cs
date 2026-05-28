@@ -1,41 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
-using SistemaAereo.Models.Entities;
+﻿using SistemaAereo.Models.Entities;
 
 namespace SistemaAereo.Models.ViewModels
 {
     public class DashboardViewModel
     {
-        // =============================================
-        // ESTATÍSTICAS PRINCIPAIS
-        // =============================================
+        // Estatísticas principais
+        public int TotalFlights { get; set; }
+        public int TotalCustomers { get; set; }
+        public int TotalAircrafts { get; set; }
+        public int TotalAirports { get; set; }
 
-        public int TotalVoos { get; set; }
-        public int TotalClientes { get; set; }
-        public int TotalAeronaves { get; set; }
-        public int TotalAeroportos { get; set; }
+        // Estatísticas de passagens
+        public int TotalTickets { get; set; }
+        public int ConfirmedTickets { get; set; }
+        public int CheckInTickets { get; set; }
+        public int BoardedTickets { get; set; }
+        public int CancelledTickets { get; set; }
 
-        // =============================================
-        // ESTATÍSTICAS DE PASSAGENS
-        // =============================================
+        // Dados financeiros
+        public decimal TotalRevenue { get; set; }
+        public decimal CurrentMonthRevenue { get; set; }
 
-        public int TotalPassagens { get; set; }
-        public int PassagensConfirmadas { get; set; }
-        public int PassagensCheckin { get; set; }
-        public int PassagensEmbarcadas { get; set; }
-        public int PassagensCanceladas { get; set; }
-
-        // =============================================
-        // DADOS FINANCEIROS
-        // =============================================
-
-        public decimal FaturamentoTotal { get; set; }
-        public decimal FaturamentoMesAtual { get; set; }
-
-        // =============================================
-        // LISTAS DE DADOS
-        // =============================================
-
-        public List<Voo> ProximosVoos { get; set; } = new List<Voo>();
-        public List<Passagem> PassagensRecentes { get; set; } = new List<Passagem>();
+        // Listas de dados
+        public List<Flight> UpcomingFlights { get; set; } = new List<Flight>();
+        public List<Ticket> RecentTickets { get; set; } = new List<Ticket>();
     }
 }

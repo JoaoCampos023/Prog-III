@@ -1,0 +1,89 @@
+﻿@using SistemaAereo.Models.Entities
+@model Flight
+
+@{
+    ViewData["Title"] = "Editar Voo";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-edit"></i> Editar Voo</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="FlightId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="FlightNumber" class="control-label">Número do Voo</label>
+                        <input asp-for="FlightNumber" class="form-control" />
+                        <span asp-validation-for="FlightNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="AircraftId" class="control-label">Aeronave</label>
+                        <select asp-for="AircraftId" class="form-control" asp-items="ViewBag.Aircrafts">
+                            <option value="">Selecione uma aeronave</option>
+                        </select>
+                        <span asp-validation-for="AircraftId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="DepartureAirportId" class="control-label">Aeroporto de Origem</label>
+                        <select asp-for="DepartureAirportId" class="form-control" asp-items="ViewBag.Airports">
+                            <option value="">Selecione o aeroporto de origem</option>
+                        </select>
+                        <span asp-validation-for="DepartureAirportId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="ArrivalAirportId" class="control-label">Aeroporto de Destino</label>
+                        <select asp-for="ArrivalAirportId" class="form-control" asp-items="ViewBag.Airports">
+                            <option value="">Selecione o aeroporto de destino</option>
+                        </select>
+                        <span asp-validation-for="ArrivalAirportId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="DepartureTime" class="control-label">Horário de Saída</label>
+                        <input asp-for="DepartureTime" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="DepartureTime" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="EstimatedArrivalTime" class="control-label">Horário Previsto de Chegada</label>
+                        <input asp-for="EstimatedArrivalTime" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="EstimatedArrivalTime" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

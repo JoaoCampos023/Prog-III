@@ -6,18 +6,21 @@ namespace SistemaAereo.Services
 {
     public static class SeedUserService
     {
+        /// <summary>
+        /// Cria o usuário administrador padrão do sistema
+        /// </summary>
         public static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var context = scope.ServiceProvider.GetRequiredService<AeroportoContext>();
+            var context = scope.ServiceProvider.GetRequiredService<AirportsContext>();
 
             // Garantir que o banco de dados foi criado
             await context.Database.EnsureCreatedAsync();
 
             // Criar roles se não existirem
-            string[] roles = { "Admin", "Funcionario", "Usuario" };
+            string[] roles = { "Admin", "Funcionario", "User" };
 
             foreach (var role in roles)
             {
@@ -33,13 +36,13 @@ namespace SistemaAereo.Services
 
             if (adminUser == null)
             {
-                adminUser = new Usuario
+                adminUser = new User
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    NomeCompleto = "Administrador do Sistema",
+                    FullName = "Administrador do Sistema",
                     EmailConfirmed = true,
-                    Ativo = true
+                    IsActive = true
                 };
 
                 var result = await userManager.CreateAsync(adminUser, "Admin@123");
@@ -56,13 +59,13 @@ namespace SistemaAereo.Services
 
             if (funcionarioUser == null)
             {
-                funcionarioUser = new Usuario
+                funcionarioUser = new User
                 {
                     UserName = funcionarioEmail,
                     Email = funcionarioEmail,
-                    NomeCompleto = "Funcionário do Sistema",
+                    FullName = "Funcionário do Sistema",
                     EmailConfirmed = true,
-                    Ativo = true
+                    IsActive = true
                 };
 
                 var result = await userManager.CreateAsync(funcionarioUser, "Func@123");

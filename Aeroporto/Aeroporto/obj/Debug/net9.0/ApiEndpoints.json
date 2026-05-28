@@ -1,14 +1,14 @@
 [
   {
     "ContainingType": "SistemaAereo.Controllers.Api.CepController",
-    "Method": "GetEnderecoByCep",
-    "RelativePath": "api/Cep/{cep}",
+    "Method": "GetAddressByZipCode",
+    "RelativePath": "api/Cep/{zipCode}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "cep",
+        "Name": "zipCode",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -17,14 +17,14 @@
   },
   {
     "ContainingType": "SistemaAereo.Controllers.Api.CepController",
-    "Method": "ValidarCep",
-    "RelativePath": "api/Cep/validar/{cep}",
+    "Method": "ValidateZipCode",
+    "RelativePath": "api/Cep/validate/{zipCode}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "cep",
+        "Name": "zipCode",
         "Type": "System.String",
         "IsRequired": true
       }

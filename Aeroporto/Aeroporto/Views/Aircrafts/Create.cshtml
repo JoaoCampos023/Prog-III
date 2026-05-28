@@ -1,0 +1,43 @@
+﻿@using SistemaAereo.Models.Entities
+@model Aircraft
+
+@{
+    ViewData["Title"] = "Nova Aeronave";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-plane"></i> Nova Aeronave</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AircraftType" class="control-label">Tipo da Aeronave</label>
+                <input asp-for="AircraftType" class="form-control" placeholder="Ex: Boeing 737, Airbus A320" />
+                <span asp-validation-for="AircraftType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="NumberOfSeats" class="control-label">Número de Poltronas</label>
+                <input asp-for="NumberOfSeats" type="number" class="form-control" min="1" max="500" />
+                <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Cadastrar Aeronave
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

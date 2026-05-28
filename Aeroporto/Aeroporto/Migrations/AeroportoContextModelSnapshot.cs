@@ -10,7 +10,7 @@ using SistemaAereo.Data.Context;
 
 namespace SistemaAereo.Migrations
 {
-    [DbContext(typeof(AeroportoContext))]
+    [DbContext(typeof(AirportsContext))]
     partial class AeroportoContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -155,121 +155,120 @@ namespace SistemaAereo.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeronave", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aircraft", b =>
                 {
-                    b.Property<int>("AeronaveId")
+                    b.Property<int>("AircraftId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AeronaveId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AircraftId"));
 
-                    b.Property<int>("NumeroPoltronas")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TipoAeronave")
+                    b.Property<string>("AircraftType")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("AeronaveId");
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
 
-                    b.ToTable("Aeronaves");
+                    b.HasKey("AircraftId");
+
+                    b.ToTable("Aircrafts");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeroporto", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Airport", b =>
                 {
-                    b.Property<int>("AeroportoId")
+                    b.Property<int>("AirportId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AeroportoId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AirportId"));
 
-                    b.Property<string>("Cidade")
+                    b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("CodigoIATA")
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IATACode")
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Pais")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.HasKey("AirportId");
 
-                    b.HasKey("AeroportoId");
-
-                    b.HasIndex("CodigoIATA")
+                    b.HasIndex("IATACode")
                         .IsUnique();
 
-                    b.ToTable("Aeroportos");
+                    b.ToTable("Airports");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.ClientePreferencial", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Customer", b =>
                 {
-                    b.Property<int>("ClienteId")
+                    b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CEP")
+                    b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CPF")
                         .IsRequired()
                         .HasMaxLength(14)
                         .HasColumnType("nvarchar(14)");
 
-                    b.Property<string>("Cidade")
+                    b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataNascimento")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Endereco")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
-
-                    b.Property<string>("Nome")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Telefone")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("ClienteId");
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.HasKey("CustomerId");
 
                     b.HasIndex("CPF")
                         .IsUnique();
@@ -277,115 +276,76 @@ namespace SistemaAereo.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("ClientesPreferenciais");
+                    b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Escala", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Flight", b =>
                 {
-                    b.Property<int>("EscalaId")
+                    b.Property<int>("FlightId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EscalaId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FlightId"));
 
-                    b.Property<int>("AeroportoId")
+                    b.Property<int>("AircraftId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("HorarioChegada")
+                    b.Property<int>("ArrivalAirportId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartureAirportId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DepartureTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("HorarioSaida")
+                    b.Property<DateTime>("EstimatedArrivalTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Ordem")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VooId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EscalaId");
-
-                    b.HasIndex("AeroportoId");
-
-                    b.HasIndex("VooId");
-
-                    b.ToTable("Escalas");
-                });
-
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Passagem", b =>
-                {
-                    b.Property<int>("PassagemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PassagemId"));
-
-                    b.Property<string>("Classe")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DataEmissao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("NumeroBilhete")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("PoltronaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("VooId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PassagemId");
-
-                    b.HasIndex("ClienteId");
-
-                    b.HasIndex("NumeroBilhete")
-                        .IsUnique();
-
-                    b.HasIndex("PoltronaId");
-
-                    b.HasIndex("VooId");
-
-                    b.ToTable("Passagens");
-                });
-
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
-                {
-                    b.Property<int>("PoltronaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PoltronaId"));
-
-                    b.Property<bool>("Disponivel")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Localizacao")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("NumeroPoltrona")
+                    b.Property<string>("FlightNumber")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<decimal>("Preco")
+                    b.HasKey("FlightId");
+
+                    b.HasIndex("AircraftId");
+
+                    b.HasIndex("ArrivalAirportId");
+
+                    b.HasIndex("DepartureAirportId");
+
+                    b.HasIndex("FlightNumber")
+                        .IsUnique();
+
+                    b.ToTable("Flights");
+                });
+
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Seat", b =>
+                {
+                    b.Property<int>("SeatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SeatId"));
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("FlightId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<byte[]>("RowVersion")
@@ -394,22 +354,103 @@ namespace SistemaAereo.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("SeatId");
+
+                    b.HasIndex("FlightId");
+
+                    b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Stopover", b =>
+                {
+                    b.Property<int>("StopoverId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StopoverId"));
+
+                    b.Property<int>("AirportId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ArrivalTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DepartureTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FlightId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.HasKey("StopoverId");
+
+                    b.HasIndex("AirportId");
+
+                    b.HasIndex("FlightId");
+
+                    b.ToTable("Stopovers");
+                });
+
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Ticket", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FlightId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("VooId")
-                        .HasColumnType("int");
+                    b.Property<string>("TicketNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("PoltronaId");
+                    b.HasKey("TicketId");
 
-                    b.HasIndex("VooId");
+                    b.HasIndex("CustomerId");
 
-                    b.ToTable("Poltronas");
+                    b.HasIndex("FlightId");
+
+                    b.HasIndex("SeatId");
+
+                    b.HasIndex("TicketNumber")
+                        .IsUnique();
+
+                    b.ToTable("Tickets");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Usuario", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -417,15 +458,9 @@ namespace SistemaAereo.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -434,14 +469,18 @@ namespace SistemaAereo.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NomeCompleto")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -459,6 +498,9 @@ namespace SistemaAereo.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -483,48 +525,6 @@ namespace SistemaAereo.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
-                {
-                    b.Property<int>("VooId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VooId"));
-
-                    b.Property<int>("AeronaveId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AeroportoDestinoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AeroportoOrigemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("HorarioChegadaPrevisto")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("HorarioSaida")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("NumeroVoo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("VooId");
-
-                    b.HasIndex("AeronaveId");
-
-                    b.HasIndex("AeroportoDestinoId");
-
-                    b.HasIndex("AeroportoOrigemId");
-
-                    b.HasIndex("NumeroVoo")
-                        .IsUnique();
-
-                    b.ToTable("Voos");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -536,7 +536,7 @@ namespace SistemaAereo.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Usuario", null)
+                    b.HasOne("SistemaAereo.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -545,7 +545,7 @@ namespace SistemaAereo.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Usuario", null)
+                    b.HasOne("SistemaAereo.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -560,7 +560,7 @@ namespace SistemaAereo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Entities.Usuario", null)
+                    b.HasOne("SistemaAereo.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -569,123 +569,123 @@ namespace SistemaAereo.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Usuario", null)
+                    b.HasOne("SistemaAereo.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Escala", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Flight", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "Aeroporto")
-                        .WithMany("Escalas")
-                        .HasForeignKey("AeroportoId")
+                    b.HasOne("SistemaAereo.Models.Entities.Aircraft", "Aircraft")
+                        .WithMany("Flights")
+                        .HasForeignKey("AircraftId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
-                        .WithMany("Escalas")
-                        .HasForeignKey("VooId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("SistemaAereo.Models.Entities.Airport", "ArrivalAirport")
+                        .WithMany("ArrivalFlights")
+                        .HasForeignKey("ArrivalAirportId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Aeroporto");
+                    b.HasOne("SistemaAereo.Models.Entities.Airport", "DepartureAirport")
+                        .WithMany("DepartureFlights")
+                        .HasForeignKey("DepartureAirportId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Voo");
+                    b.Navigation("Aircraft");
+
+                    b.Navigation("ArrivalAirport");
+
+                    b.Navigation("DepartureAirport");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Passagem", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Seat", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.ClientePreferencial", "Cliente")
+                    b.HasOne("SistemaAereo.Models.Entities.Flight", "Flight")
+                        .WithMany("Seats")
+                        .HasForeignKey("FlightId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Flight");
+                });
+
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Stopover", b =>
+                {
+                    b.HasOne("SistemaAereo.Models.Entities.Airport", "Airport")
+                        .WithMany("Stopovers")
+                        .HasForeignKey("AirportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SistemaAereo.Models.Entities.Flight", "Flight")
+                        .WithMany("Stopovers")
+                        .HasForeignKey("FlightId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Airport");
+
+                    b.Navigation("Flight");
+                });
+
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Ticket", b =>
+                {
+                    b.HasOne("SistemaAereo.Models.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("ClienteId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Entities.Poltrona", "Poltrona")
-                        .WithMany("Passagens")
-                        .HasForeignKey("PoltronaId")
+                    b.HasOne("SistemaAereo.Models.Entities.Flight", "Flight")
+                        .WithMany("Tickets")
+                        .HasForeignKey("FlightId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
-                        .WithMany("Passagens")
-                        .HasForeignKey("VooId")
+                    b.HasOne("SistemaAereo.Models.Entities.Seat", "Seat")
+                        .WithMany("Tickets")
+                        .HasForeignKey("SeatId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Cliente");
+                    b.Navigation("Customer");
 
-                    b.Navigation("Poltrona");
+                    b.Navigation("Flight");
 
-                    b.Navigation("Voo");
+                    b.Navigation("Seat");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Aircraft", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Voo", "Voo")
-                        .WithMany("Poltronas")
-                        .HasForeignKey("VooId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Voo");
+                    b.Navigation("Flights");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Airport", b =>
                 {
-                    b.HasOne("SistemaAereo.Models.Entities.Aeronave", "Aeronave")
-                        .WithMany("Voos")
-                        .HasForeignKey("AeronaveId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ArrivalFlights");
 
-                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "AeroportoDestino")
-                        .WithMany("VoosDestino")
-                        .HasForeignKey("AeroportoDestinoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("DepartureFlights");
 
-                    b.HasOne("SistemaAereo.Models.Entities.Aeroporto", "AeroportoOrigem")
-                        .WithMany("VoosOrigem")
-                        .HasForeignKey("AeroportoOrigemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Aeronave");
-
-                    b.Navigation("AeroportoDestino");
-
-                    b.Navigation("AeroportoOrigem");
+                    b.Navigation("Stopovers");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeronave", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Flight", b =>
                 {
-                    b.Navigation("Voos");
+                    b.Navigation("Seats");
+
+                    b.Navigation("Stopovers");
+
+                    b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Aeroporto", b =>
+            modelBuilder.Entity("SistemaAereo.Models.Entities.Seat", b =>
                 {
-                    b.Navigation("Escalas");
-
-                    b.Navigation("VoosDestino");
-
-                    b.Navigation("VoosOrigem");
-                });
-
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Poltrona", b =>
-                {
-                    b.Navigation("Passagens");
-                });
-
-            modelBuilder.Entity("SistemaAereo.Models.Entities.Voo", b =>
-                {
-                    b.Navigation("Escalas");
-
-                    b.Navigation("Passagens");
-
-                    b.Navigation("Poltronas");
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

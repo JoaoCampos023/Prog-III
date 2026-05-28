@@ -11,7 +11,7 @@ using SistemaAereo.Data.Context;
 
 namespace SistemaAereo.Migrations
 {
-    [DbContext(typeof(AeroportoContext))]
+    [DbContext(typeof(AirportsContext))]
     [Migration("20251031235101_Update2")]
     partial class Update2
     {

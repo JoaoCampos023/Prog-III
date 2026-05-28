@@ -4,10 +4,10 @@ namespace SistemaAereo.Models.ViewModels
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "O nome é obrigatório")]
+        [Required(ErrorMessage = "O nome completo é obrigatório")]
         [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres")]
         [Display(Name = "Nome Completo")]
-        public string NomeCompleto { get; set; }
+        public string FullName { get; set; }  // antes NomeCompleto
 
         [Required(ErrorMessage = "O email é obrigatório")]
         [EmailAddress(ErrorMessage = "Email inválido")]

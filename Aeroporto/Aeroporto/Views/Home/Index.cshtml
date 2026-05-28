@@ -28,7 +28,7 @@
             <div class="icon text-primary">
                 <i class="fas fa-plane-departure"></i>
             </div>
-            <div class="number">@Model.TotalVoos</div>
+            <div class="number">@Model.TotalFlights</div>
             <div class="label">Voos Ativos</div>
             <div class="mt-2">
                 <small class="text-success">
@@ -47,7 +47,7 @@
             <div class="icon text-danger">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="number">@Model.TotalClientes</div>
+            <div class="number">@Model.TotalCustomers</div>
             <div class="label">Clientes Ativos</div>
             <div class="mt-2">
                 <small class="text-success">
@@ -66,7 +66,7 @@
             <div class="icon text-success">
                 <i class="fas fa-plane"></i>
             </div>
-            <div class="number">@Model.TotalAeronaves</div>
+            <div class="number">@Model.TotalAircrafts</div>
             <div class="label">Aeronaves</div>
             <div class="mt-2">
                 <small class="text-success">
@@ -85,7 +85,7 @@
             <div class="icon text-warning">
                 <i class="fas fa-building"></i>
             </div>
-            <div class="number">@Model.TotalAeroportos</div>
+            <div class="number">@Model.TotalAirports</div>
             <div class="label">Aeroportos</div>
             <div class="mt-2">
                 <small class="text-success">
@@ -104,7 +104,7 @@
             <div class="icon text-purple">
                 <i class="fas fa-ticket-alt"></i>
             </div>
-            <div class="number">@Model.TotalPassagens</div>
+            <div class="number">@Model.TotalTickets</div>
             <div class="label">Total Passagens</div>
             <div class="mt-2">
                 <small class="text-success">
@@ -123,11 +123,11 @@
             <div class="icon text-info">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
-            <div class="number faturamento-number">@Model.FaturamentoTotal.ToString("N0")</div>
+            <div class="number faturamento-number">@Model.TotalRevenue.ToString("N0")</div>
             <div class="label">Faturamento Total</div>
             <div class="mt-2">
                 <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>R$ @Model.FaturamentoMesAtual.ToString("N0")
+                    <i class="fas fa-arrow-up me-1"></i>R$ @Model.CurrentMonthRevenue.ToString("N0")
                 </small>
             </div>
             <div class="position-absolute top-0 end-0 m-3">
@@ -145,7 +145,7 @@
                 <div class="text-success mb-2">
                     <i class="fas fa-check-circle fa-2x"></i>
                 </div>
-                <h4 class="text-dark">@Model.PassagensConfirmadas</h4>
+                <h4 class="text-dark">@Model.ConfirmedTickets</h4>
                 <p class="text-muted mb-0">Confirmadas</p>
             </div>
         </div>
@@ -156,7 +156,7 @@
                 <div class="text-primary mb-2">
                     <i class="fas fa-clipboard-check fa-2x"></i>
                 </div>
-                <h4 class="text-dark">@Model.PassagensCheckin</h4>
+                <h4 class="text-dark">@Model.CheckInTickets</h4>
                 <p class="text-muted mb-0">Check-in</p>
             </div>
         </div>
@@ -167,7 +167,7 @@
                 <div class="text-warning mb-2">
                     <i class="fas fa-plane fa-2x"></i>
                 </div>
-                <h4 class="text-dark">@Model.PassagensEmbarcadas</h4>
+                <h4 class="text-dark">@Model.BoardedTickets</h4>
                 <p class="text-muted mb-0">Embarcadas</p>
             </div>
         </div>
@@ -178,14 +178,14 @@
                 <div class="text-danger mb-2">
                     <i class="fas fa-times-circle fa-2x"></i>
                 </div>
-                <h4 class="text-dark">@Model.PassagensCanceladas</h4>
+                <h4 class="text-dark">@Model.CancelledTickets</h4>
                 <p class="text-muted mb-0">Canceladas</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Resto do seu código permanece igual -->
+<!-- Próximos Voos e Passagens Recentes -->
 <div class="row g-4">
     <!-- Próximos Voos -->
     <div class="col-lg-6">
@@ -194,29 +194,29 @@
                 <h5 class="mb-0 text-dark">
                     <i class="fas fa-plane-departure text-primary me-2"></i>Próximos Voos
                 </h5>
-                <a asp-controller="Voos" asp-action="Index" class="btn btn-outline-primary btn-sm">
+                <a asp-controller="Flights" asp-action="Index" class="btn btn-outline-primary btn-sm">
                     Ver Todos
                 </a>
             </div>
             <div class="card-body-modern p-0">
-                @if (Model.ProximosVoos.Any())
+                @if (Model.UpcomingFlights.Any())
                 {
                     <div class="list-group list-group-flush">
-                        @foreach (var voo in Model.ProximosVoos.Take(5))
+                        @foreach (var flight in Model.UpcomingFlights.Take(5))
                         {
                             <div class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="mb-1">@voo.NumeroVoo</h6>
+                                        <h6 class="mb-1">@flight.FlightNumber</h6>
                                         <p class="mb-1 text-muted">
-                                            @voo.AeroportoOrigem?.CodigoIATA → @voo.AeroportoDestino?.CodigoIATA
+                                            @flight.DepartureAirport?.IATACode → @flight.ArrivalAirport?.IATACode
                                         </p>
                                         <small class="text-muted">
-                                            <i class="fas fa-clock me-1"></i>@voo.HorarioSaida.ToString("dd/MM/yyyy HH:mm")
+                                            <i class="fas fa-clock me-1"></i>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")
                                         </small>
                                     </div>
                                     <span class="badge-modern bg-primary bg-opacity-10 text-primary">
-                                        @voo.Aeronave?.TipoAeronave
+                                        @flight.Aircraft?.AircraftType
                                     </span>
                                 </div>
                             </div>
@@ -241,42 +241,42 @@
                 <h5 class="mb-0 text-dark">
                     <i class="fas fa-ticket-alt text-success me-2"></i>Passagens Recentes
                 </h5>
-                <a asp-controller="Passagens" asp-action="Index" class="btn btn-outline-success btn-sm">
+                <a asp-controller="Tickets" asp-action="Index" class="btn btn-outline-success btn-sm">
                     Ver Todas
                 </a>
             </div>
             <div class="card-body-modern p-0">
-                @if (Model.PassagensRecentes.Any())
+                @if (Model.RecentTickets.Any())
                 {
                     <div class="list-group list-group-flush">
-                        @foreach (var passagem in Model.PassagensRecentes.Take(5))
+                        @foreach (var ticket in Model.RecentTickets.Take(5))
                         {
                             <div class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="mb-1">@passagem.NumeroBilhete</h6>
+                                        <h6 class="mb-1">@ticket.TicketNumber</h6>
                                         <p class="mb-1 text-muted">
-                                            @passagem.Cliente?.Nome
+                                            @ticket.Customer?.Name
                                         </p>
                                         <small class="text-muted">
-                                            <i class="fas fa-calendar me-1"></i>@passagem.DataEmissao.ToString("dd/MM/yyyy HH:mm")
+                                            <i class="fas fa-calendar me-1"></i>@ticket.IssueDate.ToString("dd/MM/yyyy HH:mm")
                                         </small>
                                     </div>
                                     <div class="text-end">
                                         <span class="badge-modern
-                                                    @(passagem.Status == "Confirmada" ? "bg-success bg-opacity-10 text-success" :
-                                                                                            passagem.Status == "Check-in" ? "bg-primary bg-opacity-10 text-primary" :
-                                                                                            passagem.Status == "Embarcada" ? "bg-warning bg-opacity-10 text-warning" :
-                                                                                            "bg-danger bg-opacity-10 text-danger")">
-                                    @passagem.Status
-                                </span>
-                                <div class="mt-1">
-                                    <small class="text-dark fw-bold">R$ @passagem.Preco.ToString("N2")</small>
+                                            @(ticket.Status == "Confirmada" ? "bg-success bg-opacity-10 text-success" :
+                                                ticket.Status == "Check-in" ? "bg-primary bg-opacity-10 text-primary" :
+                                                ticket.Status == "Embarcada" ? "bg-warning bg-opacity-10 text-warning" :
+                                                "bg-danger bg-opacity-10 text-danger")">
+                                            @ticket.Status
+                                        </span>
+                                        <div class="mt-1">
+                                            <small class="text-dark fw-bold">R$ @ticket.Price.ToString("N2")</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                                        }
+                        }
                     </div>
                 }
                 else
@@ -303,28 +303,28 @@
             <div class="card-body-modern">
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <a asp-controller="Passagens" asp-action="Create" class="btn btn-primary-modern w-100 h-100 py-3">
+                        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary-modern w-100 h-100 py-3">
                             <i class="fas fa-ticket-alt fa-2x mb-2"></i>
                             <br>
                             Emitir Passagem
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a asp-controller="Voos" asp-action="Create" class="btn btn-success-modern w-100 h-100 py-3">
+                        <a asp-controller="Flights" asp-action="Create" class="btn btn-success-modern w-100 h-100 py-3">
                             <i class="fas fa-plane fa-2x mb-2"></i>
                             <br>
                             Agendar Voo
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a asp-controller="Clientes" asp-action="Create" class="btn btn-info-modern w-100 h-100 py-3">
+                        <a asp-controller="Customers" asp-action="Create" class="btn btn-info-modern w-100 h-100 py-3">
                             <i class="fas fa-user-plus fa-2x mb-2"></i>
                             <br>
                             Cadastrar Cliente
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a asp-controller="Passagens" asp-action="Index" class="btn btn-warning-modern w-100 h-100 py-3">
+                        <a asp-controller="Tickets" asp-action="Index" class="btn btn-warning-modern w-100 h-100 py-3">
                             <i class="fas fa-list fa-2x mb-2"></i>
                             <br>
                             Ver Passagens
@@ -373,8 +373,8 @@
         border-left: 4px solid;
         position: relative;
         transition: transform 0.2s;
-        height: 100%; /* Garante que todos tenham a mesma altura */
-        min-height: 180px; /* Altura mínima consistente */
+        height: 100%;
+        min-height: 180px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -390,16 +390,16 @@
         }
 
         .stat-card .number {
-            font-size: 1.8rem; /* Tamanho fixo para todos */
+            font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
             line-height: 1.2;
-            word-break: break-word; /* Quebra de linha se necessário */
+            word-break: break-word;
         }
 
         /* CORREÇÃO ESPECÍFICA PARA O FATURAMENTO */
         .stat-card .faturamento-number {
-            font-size: 1.6rem; /* Um pouco menor para caber melhor */
+            font-size: 1.6rem;
             font-weight: bold;
         }
 

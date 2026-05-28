@@ -59,48 +59,84 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeronaves/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb25hdmVzXENyZWF0ZS5jc2h0bWw=
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aircrafts/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlyY3JhZnRzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeronaves/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb25hdmVzXEVkaXQuY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aircrafts/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlyY3JhZnRzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeronaves/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb25hdmVzXEluZGV4LmNzaHRtbA==
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aircrafts/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlyY3JhZnRzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeroportos/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb3BvcnRvc1xDcmVhdGUuY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aircrafts/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlyY3JhZnRzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeroportos/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb3BvcnRvc1xFZGl0LmNzaHRtbA==
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Airports/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlycG9ydHNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Aeroportos/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWVyb3BvcnRvc1xJbmRleC5jc2h0bWw=
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Airports/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlycG9ydHNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Clientes/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcQ3JlYXRlLmNzaHRtbA==
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Airports/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlycG9ydHNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Clientes/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcRWRpdC5jc2h0bWw=
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Airports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWlycG9ydHNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Clientes/Inativos.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcSW5hdGl2b3MuY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Customers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Clientes/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcSW5kZXguY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Customers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Clientes/MalaDireta.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcTWFsYURpcmV0YS5jc2h0bWw=
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Customers/Inactive.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEluYWN0aXZlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Customers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Customers/MailingList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXE1haWxpbmdMaXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Seats.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xTZWF0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Flights/Teste.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmxpZ2h0c1xUZXN0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Home/Index.cshtml]
@@ -109,26 +145,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Passagens/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFzc2FnZW5zXENyZWF0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Passagens/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFzc2FnZW5zXERldGFpbHMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Passagens/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFzc2FnZW5zXEluZGV4LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Passagens/PorCliente.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFzc2FnZW5zXFBvckNsaWVudGUuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Passagens/PorVoo.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFzc2FnZW5zXFBvclZvby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Relatorio/Dados.cshtml]
@@ -143,32 +159,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xDcmVhdGUuY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Tickets/ByCustomer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0c1xCeUN1c3RvbWVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xEZWxldGUuY3NodG1s
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Tickets/ByFlight.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0c1xCeUZsaWdodC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xEZXRhaWxzLmNzaHRtbA==
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Tickets/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0c1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xFZGl0LmNzaHRtbA==
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Tickets/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0c1xEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xJbmRleC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Poltronas.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xQb2x0cm9uYXMuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Voos/Teste.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm9vc1xUZXN0ZS5jc2h0bWw=
+[C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/Tickets/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGlja2V0c1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/joaov/Documents/Projeto/Sistema aereo/Prog-III/Aeroporto/Aeroporto/Views/_ViewImports.cshtml]

@@ -1,0 +1,129 @@
+﻿@using SistemaAereo.Models.Entities
+@model Flight
+
+@{
+    ViewData["Title"] = "Excluir Voo";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-2 text-dark">
+            <i class="fas fa-trash text-danger me-2"></i>Excluir Voo
+        </h1>
+        <p class="text-muted mb-0">Confirme a exclusão do voo</p>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-modern">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card-modern">
+            <div class="card-header-modern bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Atenção!
+                </h5>
+            </div>
+            <div class="card-body-modern">
+                <div class="alert-modern alert-warning">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle me-3 fa-lg text-warning"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">Confirmação de Exclusão</h6>
+                            <p class="mb-0">Tem certeza que deseja excluir este voo? Esta ação não pode ser desfeita.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-semibold text-dark mb-3">Informações do Voo</h6>
+                        <p><strong>Número do Voo:</strong> @Model.FlightNumber</p>
+                        <p><strong>Aeronave:</strong> @Model.Aircraft?.AircraftType</p>
+                        <p><strong>Saída:</strong> @Model.DepartureTime.ToString("dd/MM/yyyy HH:mm")</p>
+                        <p><strong>Chegada Prevista:</strong> @Model.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-semibold text-dark mb-3">Rota</h6>
+                        <p><strong>Origem:</strong> @Model.DepartureAirport?.Name</p>
+                        <p><strong>Destino:</strong> @Model.ArrivalAirport?.Name</p>
+                        <p>
+                            <strong>Status:</strong>
+                            @if (Model.DepartureTime > DateTime.Now)
+                            {
+                                <span class="badge-modern bg-success bg-opacity-10 text-success">Agendado</span>
+                            }
+                            else if (Model.EstimatedArrivalTime > DateTime.Now)
+                            {
+                                <span class="badge-modern bg-primary bg-opacity-10 text-primary">Em Andamento</span>
+                            }
+                            else
+                            {
+                                <span class="badge-modern bg-secondary bg-opacity-10 text-secondary">Concluído</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+
+                @if (Model.Stopovers?.Any() == true)
+                {
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <p class="text-danger mb-2">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Este voo possui @Model.Stopovers.Count escala(s) que também serão excluídas.
+                        </p>
+                    </div>
+                }
+
+                @if (Model.Seats?.Any(s => !s.IsAvailable) == true)
+                {
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <p class="text-danger mb-2">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Este voo possui poltronas ocupadas. A exclusão removerá todas as reservas.
+                        </p>
+                    </div>
+                }
+
+                <div class="d-flex gap-2 pt-4 border-top">
+                    <form asp-action="DeleteConfirmed" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.FlightId" />
+                        <button type="submit" class="btn btn-danger-modern">
+                            <i class="fas fa-trash me-2"></i>Confirmar Exclusão
+                        </button>
+                    </form>
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-modern">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <h5 class="mb-0 text-dark">
+                    <i class="fas fa-info-circle me-2"></i>Informações
+                </h5>
+            </div>
+            <div class="card-body-modern">
+                <div class="alert-modern alert-info">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-lightbulb me-2"></i>Importante
+                    </h6>
+                    <ul class="mb-0 ps-3 small">
+                        <li>A exclusão é permanente</li>
+                        <li>Todas as escalas serão removidas</li>
+                        <li>Todas as poltronas serão excluídas</li>
+                        <li>Reservas associadas serão perdidas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

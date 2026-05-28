@@ -1,28 +1,20 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SistemaAereo.Data.Context;
 using SistemaAereo.Repositories.Interfaces;
+using System.Linq.Expressions;
 
 namespace SistemaAereo.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly AeroportoContext _context;
+        protected readonly AirportsContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        // =============================================
-        // CONSTRUTOR
-        // =============================================
-
-        public Repository(AeroportoContext context)
+        public Repository(AirportsContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
         }
-
-        // =============================================
-        // IMPLEMENTAÇÃO - OPERAÇÕES DE CONSULTA
-        // =============================================
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
@@ -52,10 +44,6 @@ namespace SistemaAereo.Repositories
             return await _dbSet.CountAsync(predicate);
         }
 
-        // =============================================
-        // IMPLEMENTAÇÃO - OPERAÇÕES DE ESCRITA
-        // =============================================
-
         public virtual async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
@@ -73,10 +61,6 @@ namespace SistemaAereo.Repositories
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
-
-        // =============================================
-        // IMPLEMENTAÇÃO - OPERAÇÕES DE VERIFICAÇÃO
-        // =============================================
 
         public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {

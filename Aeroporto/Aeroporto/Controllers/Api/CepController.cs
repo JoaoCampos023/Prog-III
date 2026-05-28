@@ -19,19 +19,19 @@ namespace SistemaAereo.Controllers.Api
         /// <summary>
         /// Busca endereço por CEP
         /// </summary>
-        /// <param name="cep">CEP no formato 00000000 ou 00000-000</param>
+        /// <param name="zipCode">CEP no formato 00000000 ou 00000-000</param>
         /// <returns>Dados do endereço</returns>
-        [HttpGet("{cep}")]
-        public async Task<IActionResult> GetEnderecoByCep(string cep)
+        [HttpGet("{zipCode}")]
+        public async Task<IActionResult> GetAddressByZipCode(string zipCode)
         {
-            if (string.IsNullOrEmpty(cep))
+            if (string.IsNullOrEmpty(zipCode))
             {
                 return BadRequest(new { success = false, message = "CEP é obrigatório" });
             }
 
-            var endereco = await _viaCepService.BuscarEnderecoPorCepAsync(cep);
+            var address = await _viaCepService.GetAddressByZipCodeAsync(zipCode);
 
-            if (endereco == null || !endereco.IsValid)
+            if (address == null || !address.IsValid)
             {
                 return NotFound(new { success = false, message = "CEP não encontrado" });
             }
@@ -41,13 +41,13 @@ namespace SistemaAereo.Controllers.Api
                 success = true,
                 data = new
                 {
-                    cep = endereco.Cep,
-                    logradouro = endereco.Logradouro,
-                    complemento = endereco.Complemento,
-                    bairro = endereco.Bairro,
-                    cidade = endereco.Localidade,
-                    uf = endereco.Uf,
-                    ddd = endereco.Ddd
+                    zipCode = address.ZipCode,
+                    street = address.Street,
+                    complement = address.Complement,
+                    neighborhood = address.Neighborhood,
+                    city = address.City,
+                    state = address.State,
+                    ddd = address.Ddd
                 }
             });
         }
@@ -55,15 +55,15 @@ namespace SistemaAereo.Controllers.Api
         /// <summary>
         /// Valida se o CEP existe
         /// </summary>
-        [HttpGet("validar/{cep}")]
-        public async Task<IActionResult> ValidarCep(string cep)
+        [HttpGet("validate/{zipCode}")]
+        public async Task<IActionResult> ValidateZipCode(string zipCode)
         {
-            var isValid = await _viaCepService.CepIsValidAsync(cep);
+            var isValid = await _viaCepService.IsZipCodeValidAsync(zipCode);
 
             return Ok(new
             {
                 success = true,
-                cep = _viaCepService.FormatarCep(cep),
+                zipCode = _viaCepService.FormatZipCode(zipCode),
                 isValid = isValid
             });
         }

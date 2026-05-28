@@ -15,87 +15,94 @@ namespace SistemaAereo.Services
             _logger = logger;
         }
 
-        public async Task<ViaCepResponseDto> BuscarEnderecoPorCepAsync(string cep)
+        /// <summary>
+        /// Busca endereço pelo CEP
+        /// </summary>
+        public async Task<ViaCepResponseDto> GetAddressByZipCodeAsync(string zipCode)
         {
             try
             {
-                // Limpar formatação do CEP
-                var cepLimpo = RemoverFormatacao(cep);
+                var cleanZipCode = RemoveFormatting(zipCode);
 
-                // Validar formato (8 dígitos)
-                if (string.IsNullOrEmpty(cepLimpo) || cepLimpo.Length != 8 || !cepLimpo.All(char.IsDigit))
+                if (string.IsNullOrEmpty(cleanZipCode) || cleanZipCode.Length != 8 || !cleanZipCode.All(char.IsDigit))
                 {
-                    _logger.LogWarning($"CEP inválido: {cep}");
+                    _logger.LogWarning($"CEP inválido: {zipCode}");
                     return null;
                 }
 
-                // URL da API ViaCEP
-                var url = $"https://viacep.com.br/ws/{cepLimpo}/json/";
-
-                _logger.LogInformation($"Consultando CEP: {cepLimpo}");
+                var url = $"https://viacep.com.br/ws/{cleanZipCode}/json/";
+                _logger.LogInformation($"Consultando CEP: {cleanZipCode}");
 
                 var response = await _httpClient.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning($"Erro ao consultar CEP {cepLimpo}: {response.StatusCode}");
+                    _logger.LogWarning($"Erro ao consultar CEP {cleanZipCode}: {response.StatusCode}");
                     return null;
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
-                var endereco = JsonSerializer.Deserialize<ViaCepResponseDto>(json, new JsonSerializerOptions
+                var address = JsonSerializer.Deserialize<ViaCepResponseDto>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
-                if (endereco == null || endereco.Erro)
+                if (address == null || address.Error)
                 {
-                    _logger.LogWarning($"CEP {cepLimpo} não encontrado");
+                    _logger.LogWarning($"CEP {cleanZipCode} não encontrado");
                     return null;
                 }
 
-                _logger.LogInformation($"CEP {cepLimpo} encontrado: {endereco.Logradouro}, {endereco.Localidade}/{endereco.Uf}");
-
-                return endereco;
+                _logger.LogInformation($"CEP {cleanZipCode} encontrado: {address.Street}, {address.City}/{address.State}");
+                return address;
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"Erro de rede ao consultar CEP {cep}");
+                _logger.LogError(ex, $"Erro de rede ao consultar CEP {zipCode}");
                 return null;
             }
             catch (JsonException ex)
             {
-                _logger.LogError(ex, $"Erro ao deserializar resposta do CEP {cep}");
+                _logger.LogError(ex, $"Erro ao deserializar resposta do CEP {zipCode}");
                 return null;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro inesperado ao consultar CEP {cep}");
+                _logger.LogError(ex, $"Erro inesperado ao consultar CEP {zipCode}");
                 return null;
             }
         }
 
-        public async Task<bool> CepIsValidAsync(string cep)
+        /// <summary>
+        /// Valida se o CEP é válido
+        /// </summary>
+        public async Task<bool> IsZipCodeValidAsync(string zipCode)
         {
-            var endereco = await BuscarEnderecoPorCepAsync(cep);
-            return endereco != null && endereco.IsValid;
+            var address = await GetAddressByZipCodeAsync(zipCode);
+            return address != null && address.IsValid;
         }
 
-        public string FormatarCep(string cep)
+        /// <summary>
+        /// Formata o CEP para o padrão 00000-000
+        /// </summary>
+        public string FormatZipCode(string zipCode)
         {
-            var cepLimpo = RemoverFormatacao(cep);
-            if (string.IsNullOrEmpty(cepLimpo) || cepLimpo.Length != 8)
-                return cep;
+            var cleanZipCode = RemoveFormatting(zipCode);
+            if (string.IsNullOrEmpty(cleanZipCode) || cleanZipCode.Length != 8)
+                return zipCode;
 
-            return $"{cepLimpo.Substring(0, 5)}-{cepLimpo.Substring(5, 3)}";
+            return $"{cleanZipCode.Substring(0, 5)}-{cleanZipCode.Substring(5, 3)}";
         }
 
-        public string RemoverFormatacao(string cep)
+        /// <summary>
+        /// Remove formatação do CEP
+        /// </summary>
+        public string RemoveFormatting(string zipCode)
         {
-            if (string.IsNullOrEmpty(cep))
+            if (string.IsNullOrEmpty(zipCode))
                 return string.Empty;
 
-            return new string(cep.Where(char.IsDigit).ToArray());
+            return new string(zipCode.Where(char.IsDigit).ToArray());
         }
     }
 }
