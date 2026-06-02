@@ -1,138 +1,64 @@
-﻿@using SistemaAereo.Models.ViewModels
-@model DashboardViewModel
+﻿@using SistemaAereo.Models.Entities
+@using SistemaAereo.Models.Enums
+@model SistemaAereo.Models.ViewModels.DashboardViewModel
 
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-5">
-    <div>
-        <h1 class="h3 mb-2 text-dark">Dashboard Geral</h1>
-        <p class="text-muted mb-0">Visão completa do sistema de gestão aérea</p>
-    </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary btn-modern" onclick="location.reload()">
-            <i class="fas fa-sync-alt me-2"></i>Atualizar
-        </button>
-        <button class="btn btn-primary-modern" onclick="gerarRelatorio()">
-            <i class="fas fa-download me-2"></i>Exportar Relatório
-        </button>
-    </div>
-</div>
-
-<!-- Stats Cards Melhoradas - TODOS COM MESMO TAMANHO -->
+<!-- Stats Cards -->
 <div class="row g-4 mb-5">
     <!-- Voos -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #3b82f6; animation-delay: 0.1s;">
-            <div class="icon text-primary">
-                <i class="fas fa-plane-departure"></i>
-            </div>
+        <div class="stat-card fade-in" style="border-left-color: #3b82f6;">
+            <div class="icon text-primary"><i class="fas fa-plane-departure"></i></div>
             <div class="number">@Model.TotalFlights</div>
             <div class="label">Voos Ativos</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>12% este mês
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-chart-line text-primary opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 
     <!-- Clientes -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #ef4444; animation-delay: 0.2s;">
-            <div class="icon text-danger">
-                <i class="fas fa-users"></i>
-            </div>
+        <div class="stat-card fade-in" style="border-left-color: #ef4444;">
+            <div class="icon text-danger"><i class="fas fa-users"></i></div>
             <div class="number">@Model.TotalCustomers</div>
             <div class="label">Clientes Ativos</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>8% este mês
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-user-friends text-danger opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 
     <!-- Aeronaves -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #10b981; animation-delay: 0.3s;">
-            <div class="icon text-success">
-                <i class="fas fa-plane"></i>
-            </div>
+        <div class="stat-card fade-in" style="border-left-color: #10b981;">
+            <div class="icon text-success"><i class="fas fa-plane"></i></div>
             <div class="number">@Model.TotalAircrafts</div>
             <div class="label">Aeronaves</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>5% este mês
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-fighter-jet text-success opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 
     <!-- Aeroportos -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #f59e0b; animation-delay: 0.4s;">
-            <div class="icon text-warning">
-                <i class="fas fa-building"></i>
-            </div>
+        <div class="stat-card fade-in" style="border-left-color: #f59e0b;">
+            <div class="icon text-warning"><i class="fas fa-building"></i></div>
             <div class="number">@Model.TotalAirports</div>
             <div class="label">Aeroportos</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>3% este mês
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-map-marker-alt text-warning opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 
     <!-- Total Passagens -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #8b5cf6; animation-delay: 0.5s;">
-            <div class="icon text-purple">
-                <i class="fas fa-ticket-alt"></i>
-            </div>
+        <div class="stat-card fade-in" style="border-left-color: #8b5cf6;">
+            <div class="icon text-purple"><i class="fas fa-ticket-alt"></i></div>
             <div class="number">@Model.TotalTickets</div>
             <div class="label">Total Passagens</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>15% este mês
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-receipt text-purple opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 
-    <!-- Faturamento - CORRIGIDO PARA MESMO TAMANHO -->
+    <!-- Faturamento -->
     <div class="col-xl-2 col-md-4">
-        <div class="stat-card fade-in" style="border-left-color: #06b6d4; animation-delay: 0.6s;">
-            <div class="icon text-info">
-                <i class="fas fa-money-bill-wave"></i>
-            </div>
-            <div class="number faturamento-number">@Model.TotalRevenue.ToString("N0")</div>
+        <div class="stat-card fade-in" style="border-left-color: #06b6d4;">
+            <div class="icon text-info"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="number">@Model.TotalRevenue.ToString("C")</div>
             <div class="label">Faturamento Total</div>
-            <div class="mt-2">
-                <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>R$ @Model.CurrentMonthRevenue.ToString("N0")
-                </small>
-            </div>
-            <div class="position-absolute top-0 end-0 m-3">
-                <i class="fas fa-chart-pie text-info opacity-25 fa-lg"></i>
-            </div>
         </div>
     </div>
 </div>
@@ -142,9 +68,7 @@
     <div class="col-md-3">
         <div class="card-modern text-center border-start border-success border-4">
             <div class="card-body-modern">
-                <div class="text-success mb-2">
-                    <i class="fas fa-check-circle fa-2x"></i>
-                </div>
+                <div class="text-success mb-2"><i class="fas fa-check-circle fa-2x"></i></div>
                 <h4 class="text-dark">@Model.ConfirmedTickets</h4>
                 <p class="text-muted mb-0">Confirmadas</p>
             </div>
@@ -153,9 +77,7 @@
     <div class="col-md-3">
         <div class="card-modern text-center border-start border-primary border-4">
             <div class="card-body-modern">
-                <div class="text-primary mb-2">
-                    <i class="fas fa-clipboard-check fa-2x"></i>
-                </div>
+                <div class="text-primary mb-2"><i class="fas fa-clipboard-check fa-2x"></i></div>
                 <h4 class="text-dark">@Model.CheckInTickets</h4>
                 <p class="text-muted mb-0">Check-in</p>
             </div>
@@ -164,9 +86,7 @@
     <div class="col-md-3">
         <div class="card-modern text-center border-start border-warning border-4">
             <div class="card-body-modern">
-                <div class="text-warning mb-2">
-                    <i class="fas fa-plane fa-2x"></i>
-                </div>
+                <div class="text-warning mb-2"><i class="fas fa-plane fa-2x"></i></div>
                 <h4 class="text-dark">@Model.BoardedTickets</h4>
                 <p class="text-muted mb-0">Embarcadas</p>
             </div>
@@ -175,9 +95,7 @@
     <div class="col-md-3">
         <div class="card-modern text-center border-start border-danger border-4">
             <div class="card-body-modern">
-                <div class="text-danger mb-2">
-                    <i class="fas fa-times-circle fa-2x"></i>
-                </div>
+                <div class="text-danger mb-2"><i class="fas fa-times-circle fa-2x"></i></div>
                 <h4 class="text-dark">@Model.CancelledTickets</h4>
                 <p class="text-muted mb-0">Canceladas</p>
             </div>
@@ -187,16 +105,11 @@
 
 <!-- Próximos Voos e Passagens Recentes -->
 <div class="row g-4">
-    <!-- Próximos Voos -->
     <div class="col-lg-6">
         <div class="card-modern">
             <div class="card-header-modern d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-dark">
-                    <i class="fas fa-plane-departure text-primary me-2"></i>Próximos Voos
-                </h5>
-                <a asp-controller="Flights" asp-action="Index" class="btn btn-outline-primary btn-sm">
-                    Ver Todos
-                </a>
+                <h5 class="mb-0 text-dark"><i class="fas fa-plane-departure text-primary me-2"></i>Próximos Voos</h5>
+                <a asp-controller="Flights" asp-action="Index" class="btn btn-outline-primary btn-sm">Ver Todos</a>
             </div>
             <div class="card-body-modern p-0">
                 @if (Model.UpcomingFlights.Any())
@@ -208,16 +121,10 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="mb-1">@flight.FlightNumber</h6>
-                                        <p class="mb-1 text-muted">
-                                            @flight.DepartureAirport?.IATACode → @flight.ArrivalAirport?.IATACode
-                                        </p>
-                                        <small class="text-muted">
-                                            <i class="fas fa-clock me-1"></i>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")
-                                        </small>
+                                        <p class="mb-1 text-muted">@flight.DepartureAirport?.IATACode → @flight.ArrivalAirport?.IATACode</p>
+                                        <small class="text-muted"><i class="fas fa-clock me-1"></i>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")</small>
                                     </div>
-                                    <span class="badge-modern bg-primary bg-opacity-10 text-primary">
-                                        @flight.Aircraft?.AircraftType
-                                    </span>
+                                    <span class="badge-modern bg-primary bg-opacity-10 text-primary">@flight.Aircraft?.AircraftType</span>
                                 </div>
                             </div>
                         }
@@ -234,16 +141,11 @@
         </div>
     </div>
 
-    <!-- Passagens Recentes -->
     <div class="col-lg-6">
         <div class="card-modern">
             <div class="card-header-modern d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-dark">
-                    <i class="fas fa-ticket-alt text-success me-2"></i>Passagens Recentes
-                </h5>
-                <a asp-controller="Tickets" asp-action="Index" class="btn btn-outline-success btn-sm">
-                    Ver Todas
-                </a>
+                <h5 class="mb-0 text-dark"><i class="fas fa-ticket-alt text-success me-2"></i>Passagens Recentes</h5>
+                <a asp-controller="Tickets" asp-action="Index" class="btn btn-outline-success btn-sm">Ver Todas</a>
             </div>
             <div class="card-body-modern p-0">
                 @if (Model.RecentTickets.Any())
@@ -255,24 +157,14 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="mb-1">@ticket.TicketNumber</h6>
-                                        <p class="mb-1 text-muted">
-                                            @ticket.Customer?.Name
-                                        </p>
-                                        <small class="text-muted">
-                                            <i class="fas fa-calendar me-1"></i>@ticket.IssueDate.ToString("dd/MM/yyyy HH:mm")
-                                        </small>
+                                        <p class="mb-1 text-muted">@ticket.Customer?.Name</p>
+                                        <small class="text-muted"><i class="fas fa-calendar me-1"></i>@ticket.IssueDate.ToString("dd/MM/yyyy HH:mm")</small>
                                     </div>
                                     <div class="text-end">
-                                        <span class="badge-modern
-                                            @(ticket.Status == "Confirmada" ? "bg-success bg-opacity-10 text-success" :
-                                                ticket.Status == "Check-in" ? "bg-primary bg-opacity-10 text-primary" :
-                                                ticket.Status == "Embarcada" ? "bg-warning bg-opacity-10 text-warning" :
-                                                "bg-danger bg-opacity-10 text-danger")">
+                                        <span class="badge-modern @(ticket.Status == TicketStatus.Confirmed ? "bg-success bg-opacity-10 text-success" : ticket.Status == TicketStatus.CheckIn ? "bg-primary bg-opacity-10 text-primary" : ticket.Status == TicketStatus.Boarded ? "bg-warning bg-opacity-10 text-warning" : "bg-danger bg-opacity-10 text-danger")">
                                             @ticket.Status
                                         </span>
-                                        <div class="mt-1">
-                                            <small class="text-dark fw-bold">R$ @ticket.Price.ToString("N2")</small>
-                                        </div>
+                                        <div class="mt-1"><small class="text-dark fw-bold">@ticket.Price.ToString("C")</small></div>
                                     </div>
                                 </div>
                             </div>
@@ -296,38 +188,28 @@
     <div class="col-12">
         <div class="card-modern">
             <div class="card-header-modern">
-                <h5 class="mb-0 text-dark">
-                    <i class="fas fa-bolt text-warning me-2"></i>Ações Rápidas
-                </h5>
+                <h5 class="mb-0 text-dark"><i class="fas fa-bolt text-warning me-2"></i>Ações Rápidas</h5>
             </div>
             <div class="card-body-modern">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary-modern w-100 h-100 py-3">
-                            <i class="fas fa-ticket-alt fa-2x mb-2"></i>
-                            <br>
-                            Emitir Passagem
+                            <i class="fas fa-ticket-alt fa-2x mb-2"></i><br>Emitir Passagem
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a asp-controller="Flights" asp-action="Create" class="btn btn-success-modern w-100 h-100 py-3">
-                            <i class="fas fa-plane fa-2x mb-2"></i>
-                            <br>
-                            Agendar Voo
+                            <i class="fas fa-plane fa-2x mb-2"></i><br>Agendar Voo
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a asp-controller="Customers" asp-action="Create" class="btn btn-info-modern w-100 h-100 py-3">
-                            <i class="fas fa-user-plus fa-2x mb-2"></i>
-                            <br>
-                            Cadastrar Cliente
+                            <i class="fas fa-user-plus fa-2x mb-2"></i><br>Cadastrar Cliente
                         </a>
                     </div>
                     <div class="col-md-3">
                         <a asp-controller="Tickets" asp-action="Index" class="btn btn-warning-modern w-100 h-100 py-3">
-                            <i class="fas fa-list fa-2x mb-2"></i>
-                            <br>
-                            Ver Passagens
+                            <i class="fas fa-list fa-2x mb-2"></i><br>Ver Passagens
                         </a>
                     </div>
                 </div>
@@ -336,24 +218,26 @@
     </div>
 </div>
 
-<script>
-    function gerarRelatorio() {
-        const toast = document.createElement('div');
-        toast.className = 'position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow';
-        toast.style.zIndex = '9999';
-        toast.innerHTML = `
-            <div class="d-flex align-items-center">
-                <i class="fas fa-check-circle me-2"></i>
-                <span>Relatório gerado com sucesso!</span>
+@if (User.IsInRole("Admin"))
+{
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card-modern">
+                <div class="card-body-modern">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1">Dados de Teste</h5>
+                            <p class="text-muted mb-0">Crie dados de exemplo para testar o sistema</p>
+                        </div>
+                        <a asp-controller="Home" asp-action="SeedData" class="btn btn-warning">
+                            <i class="fas fa-database me-2"></i>Criar Dados de Teste
+                        </a>
+                    </div>
+                </div>
             </div>
-        `;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
-</script>
+        </div>
+    </div>
+}
 
 <style>
     .text-purple {
@@ -362,59 +246,5 @@
 
     .border-4 {
         border-width: 4px !important;
-    }
-
-    /* CORREÇÃO PARA DEIXAR TODOS OS CARDS DO MESMO TAMANHO */
-    .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-left: 4px solid;
-        position: relative;
-        transition: transform 0.2s;
-        height: 100%;
-        min-height: 180px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-card .icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .stat-card .number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-            word-break: break-word;
-        }
-
-        /* CORREÇÃO ESPECÍFICA PARA O FATURAMENTO */
-        .stat-card .faturamento-number {
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
-
-        .stat-card .label {
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card small {
-            font-size: 0.75rem;
-        }
-
-    /* Garante que as colunas tenham altura igual */
-    .row.g-4 {
-        align-items: stretch;
     }
 </style>

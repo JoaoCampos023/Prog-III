@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <style>
-            /* Estilos adicionais para o sidebar e autenticação */
+            /* Estilos gerais */
             body {
                 font-family: 'Inter', sans-serif;
                 background-color: #f8f9fc;
@@ -38,31 +38,96 @@
                 transition: all 0.3s ease;
                 z-index: 1000;
                 box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                overflow-x: hidden;
             }
+
+                /* Sidebar Colapsado */
+                .sidebar.collapsed {
+                    width: 70px;
+                }
+
+                    .sidebar.collapsed .brand-text {
+                        display: none;
+                    }
+
+                    .sidebar.collapsed .sidebar-nav .nav-link {
+                        justify-content: center;
+                        padding: 12px 0;
+                    }
+
+                        .sidebar.collapsed .sidebar-nav .nav-link span {
+                            display: none;
+                        }
+
+                        .sidebar.collapsed .sidebar-nav .nav-link i {
+                            margin: 0;
+                            font-size: 20px;
+                        }
+
+                    .sidebar.collapsed .sidebar-nav .nav-item {
+                        text-align: center;
+                    }
 
             .sidebar-brand {
                 padding: 25px 20px;
                 border-bottom: 1px solid rgba(255,255,255,0.1);
                 margin-bottom: 20px;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             .brand-text {
-                font-size: 20px;
+                font-size: 18px;
                 font-weight: 700;
                 text-align: center;
+                white-space: nowrap;
             }
 
                 .brand-text i {
-                    margin-right: 10px;
-                    font-size: 24px;
+                    margin-right: 8px;
+                    font-size: 20px;
                 }
 
+            /* Botão de collapse */
+            .sidebar-collapse-btn {
+                position: absolute;
+                right: -12px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                z-index: 10;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                color: #1e3c72;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+                .sidebar-collapse-btn:hover {
+                    background-color: #f0f0f0;
+                    transform: translateY(-50%) scale(1.1);
+                }
+
+            /* Quando o sidebar está colapsado, o botão muda de posição */
+            .sidebar.collapsed .sidebar-collapse-btn {
+                right: -12px;
+            }
+
             .sidebar-nav {
-                padding: 0 15px;
+                padding: 0 10px;
             }
 
                 .sidebar-nav .nav-item {
                     margin-bottom: 8px;
+                    list-style: none;
                 }
 
                 .sidebar-nav .nav-link {
@@ -73,11 +138,14 @@
                     display: flex;
                     align-items: center;
                     gap: 12px;
+                    text-decoration: none;
+                    white-space: nowrap;
                 }
 
                     .sidebar-nav .nav-link i {
                         width: 24px;
                         font-size: 18px;
+                        text-align: center;
                     }
 
                     .sidebar-nav .nav-link:hover {
@@ -90,11 +158,36 @@
                         color: white;
                     }
 
+            /* Tooltip para quando o menu está colapsado */
+            .sidebar.collapsed .nav-link {
+                position: relative;
+            }
+
+                .sidebar.collapsed .nav-link:hover::after {
+                    content: attr(data-title);
+                    position: absolute;
+                    left: 70px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: #1e3c72;
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                }
+
             /* Main Content */
             .main-content {
                 margin-left: 280px;
                 transition: all 0.3s ease;
             }
+
+                .main-content.expanded {
+                    margin-left: 70px;
+                }
 
             /* Navbar Top */
             .navbar-top {
@@ -140,25 +233,6 @@
                 color: #6c757d;
             }
 
-            /* Responsive - CORRIGIDO */
-            @@media (max-width: 768px) {
-                .sidebar {
-                    transform: translateX(-100%);
-                }
-
-                    .sidebar.mobile-open {
-                        transform: translateX(0);
-                    }
-
-                .main-content {
-                    margin-left: 0;
-                }
-
-                .content-wrapper {
-                    padding: 15px;
-                }
-            }
-
             /* Cards modernos */
             .card-modern {
                 background: white;
@@ -184,7 +258,6 @@
                 padding: 1.5rem;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 border-left: 4px solid;
-                position: relative;
                 transition: transform 0.2s;
                 height: 100%;
                 min-height: 160px;
@@ -212,7 +285,6 @@
                 .stat-card .label {
                     color: #6c757d;
                     font-size: 0.9rem;
-                    margin-bottom: 0.5rem;
                 }
 
             .badge-modern {
@@ -278,20 +350,6 @@
                     color: white;
                 }
 
-            .btn-danger-modern {
-                background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-                border: none;
-                color: white;
-                border-radius: 10px;
-                padding: 10px 20px;
-                transition: all 0.3s;
-            }
-
-                .btn-danger-modern:hover {
-                    transform: translateY(-2px);
-                    color: white;
-                }
-
             .alert-modern {
                 padding: 15px 20px;
                 border-radius: 12px;
@@ -313,55 +371,91 @@
                     transform: translateY(0);
                 }
             }
+
+            /* Responsive */
+            @@media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+
+                    .sidebar.mobile-open {
+                        transform: translateX(0);
+                    }
+
+                    .sidebar.collapsed {
+                        transform: translateX(-100%);
+                    }
+
+                .main-content {
+                    margin-left: 0;
+                }
+
+                    .main-content.expanded {
+                        margin-left: 0;
+                    }
+
+                .content-wrapper {
+                    padding: 15px;
+                }
+            }
     </style>
 </head>
 <body>
     <!-- Sidebar - só aparece se o usuário estiver autenticado -->
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-brand">
                 <div class="brand-text">
                     <i class="fas fa-plane"></i> Global Skyline
                 </div>
+                <button class="btn btn-sm btn-light sidebar-collapse-btn" id="sidebarCollapseBtn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
                 <ul class="navbar-nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
-                           asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-chart-line"></i> Dashboard
+                           asp-controller="Home" asp-action="Index"
+                           data-title="Dashboard">
+                            <i class="fas fa-chart-line"></i> <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Tickets" ? "active" : "")"
-                           asp-controller="Tickets" asp-action="Index">
-                            <i class="fas fa-ticket-alt"></i> Passagens
+                           asp-controller="Tickets" asp-action="Index"
+                           data-title="Passagens">
+                            <i class="fas fa-ticket-alt"></i> <span>Passagens</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Flights" ? "active" : "")"
-                           asp-controller="Flights" asp-action="Index">
-                            <i class="fas fa-plane-departure"></i> Voos
+                           asp-controller="Flights" asp-action="Index"
+                           data-title="Voos">
+                            <i class="fas fa-plane-departure"></i> <span>Voos</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customers" ? "active" : "")"
-                           asp-controller="Customers" asp-action="Index">
-                            <i class="fas fa-users"></i> Clientes
+                           asp-controller="Customers" asp-action="Index"
+                           data-title="Clientes">
+                            <i class="fas fa-users"></i> <span>Clientes</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Aircrafts" ? "active" : "")"
-                           asp-controller="Aircrafts" asp-action="Index">
-                            <i class="fas fa-plane"></i> Aeronaves
+                           asp-controller="Aircrafts" asp-action="Index"
+                           data-title="Aeronaves">
+                            <i class="fas fa-plane"></i> <span>Aeronaves</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Airports" ? "active" : "")"
-                           asp-controller="Airports" asp-action="Index">
-                            <i class="fas fa-building"></i> Aeroportos
+                           asp-controller="Airports" asp-action="Index"
+                           data-title="Aeroportos">
+                            <i class="fas fa-building"></i> <span>Aeroportos</span>
                         </a>
                     </li>
                 </ul>
@@ -370,17 +464,17 @@
     }
 
     <!-- Conteúdo Principal -->
-    <div class="main-content">
+    <div class="main-content" id="mainContent">
         <!-- Navbar Top - só aparece se o usuário estiver autenticado -->
         @if (User.Identity.IsAuthenticated)
         {
             <nav class="navbar-top">
                 <div class="d-flex justify-content-between align-items-center w-100">
-                    <div>
-                        <button class="btn btn-outline-primary btn-modern mobile-menu-btn d-md-none">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-primary btn-modern mobile-menu-btn d-md-none me-3">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <h4 class="mb-0 text-dark">@ViewData["Title"]</h4>
+                        <h4 class="mb-0 text-dark page-title">@ViewData["Title"]</h4>
                     </div>
                     <div class="d-flex align-items-center">
                         <span class="text-muted me-3">@DateTime.Now.ToString("dd/MM/yyyy")</span>
@@ -391,7 +485,7 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
                                     <div class="user-info">
-                                        <div class="user-name">@(User.Identity.Name)</div>
+                                        <div class="user-name">@(User.Identity.Name?.Split('@')[0] ?? "Usuário")</div>
                                         <div class="user-email">@(User.Identity.Name)</div>
                                     </div>
                                 </li>
@@ -439,6 +533,9 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
+    <script src="~/js/show-password.js"></script>
+    <script src="~/js/cep.js"></script>
+
     <script>
         // Menu Mobile
         const mobileBtn = document.querySelector('.mobile-menu-btn');
@@ -448,14 +545,49 @@
         });
         }
 
-        // Animações suaves - CORRIGIDO para verificar se os elementos existem
+        // Sidebar Collapse
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const collapseBtn = document.getElementById('sidebarCollapseBtn');
+
+        if (collapseBtn) {
+        collapseBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+
+        // Salvar estado no localStorage
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+
+        // Mudar ícone do botão
+        const icon = collapseBtn.querySelector('i');
+        if (isCollapsed) {
+        icon.classList.remove('fa-chevron-left');
+        icon.classList.add('fa-chevron-right');
+        } else {
+        icon.classList.remove('fa-chevron-right');
+        icon.classList.add('fa-chevron-left');
+        }
+        });
+
+        // Restaurar estado salvo
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+        sidebar.classList.add('collapsed');
+        mainContent.classList.add('expanded');
+        const icon = collapseBtn.querySelector('i');
+        icon.classList.remove('fa-chevron-left');
+        icon.classList.add('fa-chevron-right');
+        }
+        }
+
+        // Animações suaves
         document.addEventListener('DOMContentLoaded', function() {
         const cards = document.querySelectorAll('.card-modern, .stat-card');
         if (cards.length > 0) {
         cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-
         setTimeout(() => {
         card.style.transition = 'all 0.5s ease';
         card.style.opacity = '1';

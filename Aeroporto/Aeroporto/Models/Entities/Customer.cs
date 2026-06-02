@@ -29,6 +29,10 @@ namespace SistemaAereo.Models.Entities
         [Display(Name = "Data de Nascimento")]
         public DateTime? BirthDate { get; set; }
 
+        [StringLength(1)]
+        [Display(Name = "Sexo")]
+        public string Gender { get; set; } // M, F, O
+
         [StringLength(200)]
         [Display(Name = "Endereço")]
         public string Address { get; set; }

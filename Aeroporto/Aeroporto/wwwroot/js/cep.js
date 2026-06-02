@@ -1,6 +1,5 @@
 ﻿// CEP Auto Complete
 function buscarCep() {
-    // CORRIGIDO: Usando ZipCode (padrão do Customer)
     const cepInput = document.getElementById('ZipCode');
     if (!cepInput) {
         console.log('Campo CEP não encontrado');
@@ -40,7 +39,6 @@ function buscarCep() {
 }
 
 function preencherCamposEndereco(endereco) {
-    // CORRIGIDO: Usando Address, City, State (padrão do Customer)
     const addressInput = document.getElementById('Address');
     const cityInput = document.getElementById('City');
     const stateSelect = document.getElementById('State');
@@ -53,10 +51,14 @@ function preencherCamposEndereco(endereco) {
             enderecoCompleto += ` - ${endereco.complement || endereco.complemento}`;
         }
         addressInput.value = enderecoCompleto;
+        addressInput.readOnly = true;
+        addressInput.style.backgroundColor = '#f8f9fa';
     }
 
     if (cityInput) {
         cityInput.value = endereco.city || endereco.cidade || '';
+        cityInput.readOnly = true;
+        cityInput.style.backgroundColor = '#f8f9fa';
     }
 
     if (stateSelect && (endereco.state || endereco.uf)) {
@@ -67,7 +69,30 @@ function preencherCamposEndereco(endereco) {
                 break;
             }
         }
+        // NÃO desabilitar o select - apenas manter como readonly visual
+        // stateSelect.disabled = true;  // REMOVER ESTA LINHA
+        stateSelect.style.backgroundColor = '#f8f9fa';
     }
+}
+
+function liberarEdicaoEndereco() {
+    const addressInput = document.getElementById('Address');
+    const cityInput = document.getElementById('City');
+    const stateSelect = document.getElementById('State');
+
+    if (addressInput) {
+        addressInput.readOnly = false;
+        addressInput.style.backgroundColor = '';
+    }
+    if (cityInput) {
+        cityInput.readOnly = false;
+        cityInput.style.backgroundColor = '';
+    }
+    if (stateSelect) {
+        stateSelect.disabled = false;
+        stateSelect.style.backgroundColor = '';
+    }
+    mostrarMensagemSucesso('Edição de endereço liberada!');
 }
 
 function limparCamposEndereco() {
@@ -75,11 +100,21 @@ function limparCamposEndereco() {
     const cityInput = document.getElementById('City');
     const stateSelect = document.getElementById('State');
 
-    if (addressInput && addressInput.value === '') return;
-
-    if (addressInput) addressInput.value = '';
-    if (cityInput) cityInput.value = '';
-    if (stateSelect) stateSelect.selectedIndex = 0;
+    if (addressInput) {
+        addressInput.value = '';
+        addressInput.readOnly = false;
+        addressInput.style.backgroundColor = '';
+    }
+    if (cityInput) {
+        cityInput.value = '';
+        cityInput.readOnly = false;
+        cityInput.style.backgroundColor = '';
+    }
+    if (stateSelect) {
+        stateSelect.disabled = false;
+        stateSelect.selectedIndex = 0;
+        stateSelect.style.backgroundColor = '';
+    }
 }
 
 function mostrarLoadingCep(show) {
@@ -115,7 +150,6 @@ function mostrarMensagemErro(mensagem) {
     setTimeout(() => alertDiv.remove(), 3000);
 }
 
-// Máscara para CEP
 function aplicarMascaraCep() {
     const cepInput = document.getElementById('ZipCode');
     if (cepInput) {
@@ -129,7 +163,6 @@ function aplicarMascaraCep() {
     }
 }
 
-// Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function () {
     console.log('DOM carregado - Inicializando CEP');
     aplicarMascaraCep();

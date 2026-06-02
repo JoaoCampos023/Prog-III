@@ -67,7 +67,8 @@
                             <label asp-for="RegistrationDate" class="form-label">
                                 <i class="fas fa-calendar me-2"></i>Data de Cadastro
                             </label>
-                            <input asp-for="RegistrationDate" class="form-control" readonly disabled />
+                            <input asp-for="RegistrationDate" class="form-control" readonly disabled
+                                   value="@Model.RegistrationDate.ToString("dd/MM/yyyy HH:mm:ss")" />
                         </div>
 
                         <button type="submit" class="btn btn-primary">

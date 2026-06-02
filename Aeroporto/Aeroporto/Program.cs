@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SistemaAereo.Data.Context;
 using SistemaAereo.Facades.Implementations;
 using SistemaAereo.Facades.Interfaces;
@@ -8,36 +9,44 @@ using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
 using SistemaAereo.Services;
 using SistemaAereo.Services.Interfaces;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Adicionar localização para mensagens em português
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("pt-BR") };
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("pt-BR");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
 // Configuração do Entity Framework
 builder.Services.AddDbContext<AirportsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configuração do Identity
+// Configuração do Identity com mensagens em português
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    // Configurações de senha
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
-
-    // Configurações de lockout
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
-
-    // Configurações de usuário
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<AirportsContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddErrorDescriber<PortugueseIdentityErrorDescriber>(); // Adicionar descritor em português
 
 // Configurar Cookie de Autenticação
 builder.Services.ConfigureApplicationCookie(options =>
@@ -49,10 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// =============================================
-// REGISTRO DOS REPOSITÓRIOS
-// =============================================
-
+// Registro dos repositórios
 builder.Services.AddScoped<IAircraftRepository, AircraftRepository>();
 builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -60,10 +66,7 @@ builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
-// =============================================
-// REGISTRO DOS SERVIÇOS
-// =============================================
-
+// Registro dos serviços
 builder.Services.AddScoped<ISeatService, SeatService>();
 
 // Registro do serviço ViaCEP
@@ -74,14 +77,15 @@ builder.Services.AddHttpClient<IViaCepService, ViaCepService>(client =>
 });
 builder.Services.AddScoped<IViaCepService, ViaCepService>();
 
-// =============================================
-// REGISTRO DAS FACADES
-// =============================================
-
+// Registro das Facades
 builder.Services.AddScoped<ITicketFacade, TicketFacade>();
 builder.Services.AddScoped<IFlightFacade, FlightFacade>();
 
 var app = builder.Build();
+
+// Configurar localização
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
 
 // Inicializar banco de dados e criar usuário admin
 using (var scope = app.Services.CreateScope())

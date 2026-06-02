@@ -6,8 +6,11 @@
 }
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2"><i class="fas fa-user-plus"></i> @ViewData["Title"]</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">Novo Cliente</h1>
+            <p class="text-muted mb-0">Preencha os dados do cliente</p>
+        </div>
         <a asp-action="Index" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Voltar
         </a>
@@ -42,18 +45,37 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label asp-for="Phone" class="form-label">Telefone</label>
                                     <input asp-for="Phone" class="form-control telefone" placeholder="(11) 99999-9999" />
                                     <span asp-validation-for="Phone" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label asp-for="CPF" class="form-label">CPF</label>
                                     <input asp-for="CPF" class="form-control cpf" placeholder="000.000.000-00" />
                                     <span asp-validation-for="CPF" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group mb-3">
+                                    <label asp-for="BirthDate" class="form-label">Data de Nascimento</label>
+                                    <input asp-for="BirthDate" type="date" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Gender" class="form-label">Sexo</label>
+                                    <select asp-for="Gender" class="form-select">
+                                        <option value="">Selecione</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
+                                        <option value="O">Outro</option>
+                                    </select>
+                                    <span asp-validation-for="Gender" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -76,6 +98,14 @@
                                             </div>
                                             <span asp-validation-for="ZipCode" class="text-danger"></span>
                                             <small class="text-muted">Digite o CEP para buscar endereço automaticamente</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-outline-secondary form-control" id="btnLiberarEdicao" onclick="liberarEdicaoEndereco()">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -134,22 +164,8 @@
                                             <span asp-validation-for="State" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group mb-3">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button type="button" class="btn btn-outline-secondary form-control" id="btnClearAddress">
-                                                <i class="fas fa-eraser"></i> Limpar Endereço
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="BirthDate" class="form-label">Data de Nascimento</label>
-                            <input asp-for="BirthDate" type="date" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                            <span asp-validation-for="BirthDate" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
@@ -192,22 +208,11 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script src="~/js/cep.js"></script>
-
     <script>
         $(document).ready(function() {
-        // Máscaras
-        $('.telefone').inputmask('(99) 99999-9999');
-        $('.cpf').inputmask('999.999.999-99');
-        $('.cep-mask').inputmask('99999-999');
-
-        // Botão limpar endereço
-        $('#btnClearAddress').click(function() {
-        $('#Address').val('');
-        $('#City').val('');
-        $('#State').val('');
-        $('#ZipCode').val('').focus();
-        });
+            $('.telefone').inputmask('(99) 99999-9999');
+            $('.cpf').inputmask('999.999.999-99');
+            $('.cep-mask').inputmask('99999-999');
         });
     </script>
 }

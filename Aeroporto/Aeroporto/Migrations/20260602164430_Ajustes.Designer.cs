@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaAereo.Data.Context;
 
@@ -11,9 +12,11 @@ using SistemaAereo.Data.Context;
 namespace SistemaAereo.Migrations
 {
     [DbContext(typeof(AirportsContext))]
-    partial class AeroportoContextModelSnapshot : ModelSnapshot
+    [Migration("20260602164430_Ajustes")]
+    partial class Ajustes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,11 +244,6 @@ namespace SistemaAereo.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
