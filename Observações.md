@@ -49,6 +49,9 @@ Observações - Kalil:
 * Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
 
+Observações - João:
+
+* Aba relatorios ainda nao esta 100% funcional, ainda em processo de ajuste.
 
 Ja ajustados:
 
