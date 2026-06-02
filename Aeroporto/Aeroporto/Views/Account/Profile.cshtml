@@ -12,6 +12,12 @@
             <a asp-action="ChangePassword" class="btn btn-warning me-2">
                 <i class="fas fa-key"></i> Alterar Senha
             </a>
+            <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                <i class="fas fa-palette"></i> Trocar Estilo
+            </button>
+            <a href="/api/avatar/download" class="btn btn-secondary me-2">
+                <i class="fas fa-download"></i> Baixar Avatar
+            </a>
             <form asp-action="Logout" asp-controller="Account" method="post" class="d-inline" id="logoutForm">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-danger">
@@ -29,8 +35,40 @@
         </div>
     }
 
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="card shadow mb-4 text-center">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Avatar</h6>
+                </div>
+                <div class="card-body">
+                    <img src="/api/avatar/current?size=180&t=@DateTime.Now.Ticks"
+                         alt="Avatar"
+                         class="rounded-circle img-fluid mb-3"
+                         id="avatarImage"
+                         style="width: 180px; height: 180px; object-fit: cover; border: 3px solid #667eea;" />
+                    <p class="text-muted small">
+                        Seu avatar é gerado automaticamente baseado no seu nome.
+                        <br>Clique em "Trocar Estilo" para alterar o visual.
+                    </p>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Você também pode baixar seu avatar clicando no botão "Baixar Avatar".
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Informações Pessoais</h6>
@@ -53,13 +91,14 @@
                             </label>
                             <input asp-for="FullName" class="form-control" />
                             <span asp-validation-for="FullName" class="text-danger"></span>
+                            <small class="text-muted">O nome é usado para gerar seu avatar.</small>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Phone" class="form-label">
                                 <i class="fas fa-phone me-2"></i>Telefone
                             </label>
-                            <input asp-for="Phone" class="form-control" placeholder="(00) 00000-0000" />
+                            <input asp-for="Phone" class="form-control" placeholder="(00) 00000-0000" id="Phone" />
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
 
@@ -71,6 +110,11 @@
                                    value="@Model.RegistrationDate.ToString("dd/MM/yyyy HH:mm:ss")" />
                         </div>
 
+                        <div class="alert alert-info small">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Dica:</strong> Após alterar seu nome, gere um novo avatar para atualizá-lo.
+                        </div>
+
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Salvar Alterações
                         </button>
@@ -80,3 +124,174 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para escolher estilo do avatar -->
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avatarModalLabel">
+                    <i class="fas fa-palette"></i> Escolha o Estilo do Avatar
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-3">Selecione um estilo para seu avatar:</p>
+                <div class="row g-3" id="avatarStylesContainer">
+                    <!-- Estilos serão carregados via JavaScript -->
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando estilos...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Máscara para o telefone
+        $(document).ready(function() {
+            $('#Phone').inputmask('(99) 99999-9999');
+        });
+
+        // Função para atualizar o avatar
+        function atualizarAvatar() {
+            const img = document.getElementById('avatarImage');
+            if (img) {
+                const timestamp = new Date().getTime();
+                img.src = '/api/avatar/current?size=180&t=' + timestamp;
+            }
+
+            // Atualizar também os avatares no dropdown
+            const dropdownAvatars = document.querySelectorAll('.dropdown img');
+            dropdownAvatars.forEach(avatar => {
+                const timestamp = new Date().getTime();
+                avatar.src = '/api/avatar/current?size=40&t=' + timestamp;
+            });
+        }
+
+        // Carregar estilos de avatar
+        async function carregarEstilos() {
+            try {
+                const response = await fetch('/api/avatar/styles');
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const container = document.getElementById('avatarStylesContainer');
+                    container.innerHTML = '';
+
+                    data.data.forEach(estilo => {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-3 text-center';
+                        col.innerHTML = `
+                            <div class="avatar-style-item p-2 rounded-3" style="cursor: pointer; transition: all 0.3s;" onclick="alterarEstilo('${estilo}')">
+                                <img src="/api/avatar/preview/${estilo}?size=80&t=${new Date().getTime()}"
+                                     alt="${estilo}"
+                                     class="rounded-circle mb-2"
+                                     style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #ddd;"
+                                     onerror="this.src='https://api.dicebear.com/9.x/avataaars/svg?seed=user&size=80'" />
+                                <div class="small text-muted">${estilo}</div>
+                            </div>
+                        `;
+                        container.appendChild(col);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar estilos:', error);
+                const container = document.getElementById('avatarStylesContainer');
+                container.innerHTML = '<div class="alert alert-danger">Erro ao carregar estilos</div>';
+            }
+        }
+
+        // Alterar estilo do avatar
+        async function alterarEstilo(estilo) {
+            try {
+                const response = await fetch('/api/avatar/change-style', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ style: estilo })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Fechar modal e atualizar avatar
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('avatarModal'));
+                    modal.hide();
+                    atualizarAvatar();
+
+                    // Mostrar toast de sucesso
+                    mostrarToast('Estilo alterado com sucesso!', 'success');
+                } else {
+                    mostrarToast(data.message || 'Erro ao alterar estilo', 'danger');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarToast('Erro ao alterar estilo', 'danger');
+            }
+        }
+
+        // Mostrar toast de notificação
+        function mostrarToast(mensagem, tipo) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${tipo} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${mensagem}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Regenerar avatar
+        async function regenerarAvatar() {
+            try {
+                const response = await fetch('/api/avatar/regenerate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    atualizarAvatar();
+                    mostrarToast('Avatar regenerado com sucesso!', 'success');
+                } else {
+                    mostrarToast(data.message || 'Erro ao regenerar avatar', 'danger');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarToast('Erro ao regenerar avatar', 'danger');
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarEstilos();
+
+            // Adicionar botão de regenerar no modal
+            const modalFooter = document.querySelector('#avatarModal .modal-footer');
+            const regenerateBtn = document.createElement('button');
+            regenerateBtn.type = 'button';
+            regenerateBtn.className = 'btn btn-outline-info';
+            regenerateBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Regenerar Avatar';
+            regenerateBtn.onclick = regenerarAvatar;
+            modalFooter.insertBefore(regenerateBtn, modalFooter.firstChild);
+        });
+    </script>
+}

@@ -1,3 +1,40 @@
+O QUE JA FOI USADO NO PROJETO:
+
+BACKEND
+Tecnologia		Versão	Descrição
+.NET			9.0	Framework principal
+ASP.NET Core MVC	9.0	Framework web
+Entity Framework Core	9.0	ORM para acesso a dados
+SQL Server		-	Banco de dados relacional
+ASP.NET Core Identity	9.0	Autenticação e autorização
+
+FRONTEND
+Tecnologia		Descrição
+* Bootstrap 5		Framework CSS responsivo
+* jQuery			Manipulação do DOM
+* DataTables		Tabelas interativas com paginação
+* Font Awesome 6		Ícones vetoriais
+* InputMask		Máscaras para campos de formulário
+* Google Fonts (Inter)	Fonte personalizada
+
+APIs Integradas
+API		Descrição				Endpoint
+ViaCEP		Busca de endereços por CEP		https://viacep.com.br/ws/{cep}/json/
+DiceBear	Geração de avatares personalizados	https://api.dicebear.com/9.x/{style}/svg
+
+DESIGN PATTERNS IMPLEMENTADOS
+
+* Repository Pattern
+* Dependency Injection
+* Service Layer
+* DTO (Data Transfer Object)
+* Facade Pattern
+* Strategy Pattern (parcial)
+* Builder Pattern (parcial)
+
+
+OBSERVAÇÕES:
+
 No pc:
 
 * no perfil a data ta sem formatação - ??
@@ -7,13 +44,8 @@ No pc:
 * Os status nos voos estão com letras minúsculas
 
 
+Observações - Kalil:
 
-
-Minhas observações:
-
-* Não vou verificar a parte da mala direta - ok
-* Acho que as outras telas devem seguir o padrão do cliente, ela ficou muito boa
-* Aeronaves e aeroportos poderia ter algum tipo de filtra ou busca por nome, como nos outros menus - ja ok
 * Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
 
@@ -33,3 +65,5 @@ Ja ajustados:
 * seria interessante uma forma de recolher o menu
 * não faz sentido poder alterar o estado depois do cep já estar colocado
 * acho que a data de nascimento pode ser jogada pra cima, e talvez para ficar par adicionar o sexo
+* Aeronaves e aeroportos poderia ter algum tipo de filtra ou busca por nome, como nos outros menus
+* Acho que as outras telas devem seguir o padrão do cliente, ela ficou muito boa

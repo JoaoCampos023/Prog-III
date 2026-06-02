@@ -1,0 +1,121 @@
+﻿@model SistemaAereo.Models.ViewModels.FlightOccupancyReportViewModel
+
+@{
+    ViewData["Title"] = "Ocupação de Voos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Ocupação de Voos</h1>
+        <p class="text-muted mb-0">Taxa de ocupação dos voos no período</p>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Data Início</label>
+                <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Data Fim</label>
+                <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Aplicar Filtros
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Cards de Resumo -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="mb-0">Total de Voos</h6>
+                <h2 class="mb-0">@Model.TotalFlights</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h6 class="mb-0">Total de Passageiros</h6>
+                <h2 class="mb-0">@Model.TotalPassengers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="mb-0">Ocupação Média</h6>
+                <h2 class="mb-0">@Model.AverageOccupancy.ToString("F1")%</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Voos -->
+<div class="card shadow">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Voos</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Voo</th>
+                        <th>Rota</th>
+                        <th>Data Saída</th>
+                        <th>Total Poltronas</th>
+                        <th>Ocupadas</th>
+                        <th>Ocupação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var flight in Model.Flights)
+                    {
+                        <tr>
+                            <td>@flight.FlightNumber</td>
+                            <td>@flight.Origin → @flight.Destination</td>
+                            <td>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@flight.TotalSeats</td>
+                            <td>@flight.OccupiedSeats</td>
+                            <td>
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar @(flight.OccupancyPercentage >= 80 ? "bg-success" : flight.OccupancyPercentage >= 50 ? "bg-warning" : "bg-danger")"
+                                         role="progressbar"
+                                         style="width: @flight.OccupancyPercentage%"
+                                         aria-valuenow="@flight.OccupancyPercentage" aria-valuemin="0" aria-valuemax="100">
+                                        @flight.OccupancyPercentage%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Flights.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-plane-slash fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Nenhum voo encontrado no período</h5>
+                <p class="text-muted">Tente ajustar os filtros de data.</p>
+            </div>
+        }
+    </div>
+</div>

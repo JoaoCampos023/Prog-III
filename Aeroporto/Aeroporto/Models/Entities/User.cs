@@ -13,5 +13,8 @@ namespace SistemaAereo.Models.Entities
 
         [Display(Name = "Ativo")]
         public bool IsActive { get; set; } = true;
+
+        [Display(Name = "Avatar")]
+        public string AvatarUrl { get; set; }
     }
 }

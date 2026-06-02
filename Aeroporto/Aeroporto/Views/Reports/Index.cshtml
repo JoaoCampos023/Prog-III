@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Relatórios";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Relatórios</h1>
+        <p class="text-muted mb-0">Análise de dados do sistema</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-chart-line fa-3x text-primary"></i>
+                </div>
+                <h4>Relatório de Faturamento</h4>
+                <p class="text-muted">Analise o faturamento por período, ticket médio e evolução mensal</p>
+                <a asp-action="Revenue" class="btn btn-primary">Acessar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="rounded-circle bg-success bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-plane fa-3x text-success"></i>
+                </div>
+                <h4>Ocupação de Voos</h4>
+                <p class="text-muted">Visualize a taxa de ocupação dos voos no período selecionado</p>
+                <a asp-action="FlightOccupancy" class="btn btn-success">Acessar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="rounded-circle bg-warning bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-trophy fa-3x text-warning"></i>
+                </div>
+                <h4>Clientes Mais Frequentes</h4>
+                <p class="text-muted">Ranking dos clientes que mais viajam com a empresa</p>
+                <a asp-action="TopCustomers" class="btn btn-warning">Acessar</a>
+            </div>
+        </div>
+    </div>
+</div>

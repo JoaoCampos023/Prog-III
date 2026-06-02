@@ -46,7 +46,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AirportsContext>()
 .AddDefaultTokenProviders()
-.AddErrorDescriber<PortugueseIdentityErrorDescriber>(); // Adicionar descritor em português
+.AddErrorDescriber<PortugueseIdentityErrorDescriber>();
 
 // Configurar Cookie de Autenticação
 builder.Services.ConfigureApplicationCookie(options =>
@@ -58,7 +58,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Registro dos repositórios
+// =============================================
+// REGISTRO DOS REPOSITÓRIOS
+// =============================================
+
 builder.Services.AddScoped<IAircraftRepository, AircraftRepository>();
 builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -66,7 +69,10 @@ builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
-// Registro dos serviços
+// =============================================
+// REGISTRO DOS SERVIÇOS
+// =============================================
+
 builder.Services.AddScoped<ISeatService, SeatService>();
 
 // Registro do serviço ViaCEP
@@ -77,7 +83,18 @@ builder.Services.AddHttpClient<IViaCepService, ViaCepService>(client =>
 });
 builder.Services.AddScoped<IViaCepService, ViaCepService>();
 
-// Registro das Facades
+// Registro do serviço de Avatar
+builder.Services.AddHttpClient<IAvatarService, AvatarService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.Add("Accept", "image/svg+xml");
+});
+builder.Services.AddScoped<IAvatarService, AvatarService>();
+
+// =============================================
+// REGISTRO DAS FACADES
+// =============================================
+
 builder.Services.AddScoped<ITicketFacade, TicketFacade>();
 builder.Services.AddScoped<IFlightFacade, FlightFacade>();
 

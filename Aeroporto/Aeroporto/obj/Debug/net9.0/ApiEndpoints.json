@@ -1,5 +1,115 @@
 [
   {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "ChangeAvatarStyle",
+    "RelativePath": "api/Avatar/change-style",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "SistemaAereo.Controllers.Api.ChangeStyleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetCurrentAvatar",
+    "RelativePath": "api/Avatar/current",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "DownloadAvatar",
+    "RelativePath": "api/Avatar/download",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetStylePreview",
+    "RelativePath": "api/Avatar/preview/{style}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "style",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "RegenerateAvatar",
+    "RelativePath": "api/Avatar/regenerate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetStyles",
+    "RelativePath": "api/Avatar/styles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetUserAvatar",
+    "RelativePath": "api/Avatar/user/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SistemaAereo.Controllers.Api.CepController",
     "Method": "GetAddressByZipCode",
     "RelativePath": "api/Cep/{zipCode}",

@@ -116,11 +116,6 @@
                     transform: translateY(-50%) scale(1.1);
                 }
 
-            /* Quando o sidebar está colapsado, o botão muda de posição */
-            .sidebar.collapsed .sidebar-collapse-btn {
-                right: -12px;
-            }
-
             .sidebar-nav {
                 padding: 0 10px;
             }
@@ -458,6 +453,13 @@
                             <i class="fas fa-building"></i> <span>Aeroportos</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")"
+                           asp-controller="Reports" asp-action="Index"
+                           data-title="Relatórios">
+                            <i class="fas fa-chart-bar"></i> <span>Relatórios</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -479,14 +481,26 @@
                     <div class="d-flex align-items-center">
                         <span class="text-muted me-3">@DateTime.Now.ToString("dd/MM/yyyy")</span>
                         <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-modern dropdown-toggle" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-2"></i>@(User.Identity.Name?.Split('@')[0] ?? "Usuário")
+                            <button class="btn btn-outline-secondary btn-modern dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                                <img src="/api/avatar/current?size=32&t=@DateTime.Now.Ticks"
+                                     alt="Avatar"
+                                     class="rounded-circle"
+                                     style="width: 28px; height: 28px; object-fit: cover;"
+                                     onerror="this.src='https://api.dicebear.com/9.x/avataaars/svg?seed=user&size=32'" />
+                                <span>@(User.Identity.Name?.Split('@')[0] ?? "Usuário")</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <div class="user-info">
-                                        <div class="user-name">@(User.Identity.Name?.Split('@')[0] ?? "Usuário")</div>
-                                        <div class="user-email">@(User.Identity.Name)</div>
+                                    <div class="user-info d-flex align-items-center gap-3">
+                                        <img src="/api/avatar/current?size=40&t=@DateTime.Now.Ticks"
+                                             alt="Avatar"
+                                             class="rounded-circle"
+                                             style="width: 40px; height: 40px; object-fit: cover;"
+                                             onerror="this.src='https://api.dicebear.com/9.x/avataaars/svg?seed=user&size=40'" />
+                                        <div>
+                                            <div class="user-name">@(User.Identity.Name?.Split('@')[0] ?? "Usuário")</div>
+                                            <div class="user-email">@(User.Identity.Name)</div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>

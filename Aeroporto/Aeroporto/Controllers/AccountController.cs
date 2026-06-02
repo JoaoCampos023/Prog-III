@@ -111,7 +111,8 @@ namespace SistemaAereo.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     FullName = model.FullName,
-                    IsActive = true
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
