@@ -45,6 +45,17 @@ namespace SistemaAereo.Controllers
                     .Include(t => t.Seat)
                     .AsQueryable();
 
+                // Se for usuário comum (User), mostrar apenas suas próprias passagens
+                if (User.IsInRole("User") && !User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer != null)
+                    {
+                        query = query.Where(t => t.CustomerId == customer.CustomerId);
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(status) && TicketStatus.IsValid(status))
                 {
                     query = query.Where(t => t.Status == status);
@@ -75,7 +86,7 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Detalhes de uma passagem
+        /// Detalhes de uma passagem - User pode ver apenas suas próprias
         /// </summary>
         public async Task<IActionResult> Details(int id)
         {
@@ -87,6 +98,19 @@ namespace SistemaAereo.Controllers
                     TempData["Erro"] = "Passagem não encontrada";
                     return RedirectToAction(nameof(Index));
                 }
+
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer == null || ticket.CustomerId != customer.CustomerId)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para ver esta passagem.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
                 return View(ticket);
             }
             catch (Exception ex)
@@ -145,51 +169,177 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Realiza check-in - apenas Admin e Funcionario
+        /// Realiza check-in - User pode fazer apenas nas suas próprias passagens
         /// </summary>
-        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Checkin(int id)
         {
-            var result = await _ticketFacade.CheckinAsync(new CheckinRequestDto { TicketId = id });
+            try
+            {
+                var ticket = await _context.Tickets
+                    .Include(t => t.Flight)
+                    .FirstOrDefaultAsync(t => t.TicketId == id);
 
-            if (result.Success)
-                TempData["Sucesso"] = result.Message;
-            else
-                TempData["Erro"] = result.ErrorMessage;
+                if (ticket == null)
+                {
+                    TempData["Erro"] = "Passagem não encontrada";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            return RedirectToAction(nameof(Details), new { id = id });
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer == null || ticket.CustomerId != customer.CustomerId)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para fazer check-in desta passagem.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                if (ticket.Status != TicketStatus.Confirmed)
+                {
+                    TempData["Erro"] = $"Check-in não permitido. Status atual: {ticket.Status}";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                if (ticket.Flight != null && ticket.Flight.DepartureTime < DateTime.Now)
+                {
+                    TempData["Erro"] = "Não é possível fazer check-in de um voo que já partiu.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                var result = await _ticketFacade.CheckinAsync(new CheckinRequestDto { TicketId = id });
+
+                if (result.Success)
+                    TempData["Sucesso"] = result.Message;
+                else
+                    TempData["Erro"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao realizar check-in da passagem {TicketId}", id);
+                TempData["Erro"] = "Erro ao realizar check-in";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         /// <summary>
-        /// Registra embarque - apenas Admin e Funcionario
+        /// Registra embarque - User pode fazer apenas nas suas próprias passagens
         /// </summary>
-        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Boarding(int id)
         {
-            var result = await _ticketFacade.RegisterBoardingAsync(id);
+            try
+            {
+                var ticket = await _context.Tickets
+                    .Include(t => t.Flight)
+                    .FirstOrDefaultAsync(t => t.TicketId == id);
 
-            if (result.Success)
-                TempData["Sucesso"] = result.Message;
-            else
-                TempData["Erro"] = result.ErrorMessage;
+                if (ticket == null)
+                {
+                    TempData["Erro"] = "Passagem não encontrada";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            return RedirectToAction(nameof(Details), new { id = id });
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer == null || ticket.CustomerId != customer.CustomerId)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para registrar embarque desta passagem.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                if (ticket.Status != TicketStatus.CheckIn)
+                {
+                    TempData["Erro"] = $"Embarque não permitido. Status atual: {ticket.Status}. É necessário fazer check-in primeiro.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                var result = await _ticketFacade.RegisterBoardingAsync(id);
+
+                if (result.Success)
+                    TempData["Sucesso"] = result.Message;
+                else
+                    TempData["Erro"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao registrar embarque da passagem {TicketId}", id);
+                TempData["Erro"] = "Erro ao registrar embarque";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         /// <summary>
-        /// Cancela uma passagem - apenas Admin e Funcionario
+        /// Cancela uma passagem - User pode cancelar apenas suas próprias passagens
         /// </summary>
-        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Cancel(int id)
         {
-            var result = await _ticketFacade.CancelTicketAsync(new CancelTicketRequestDto { TicketId = id });
+            try
+            {
+                var ticket = await _context.Tickets
+                    .Include(t => t.Flight)
+                    .FirstOrDefaultAsync(t => t.TicketId == id);
 
-            if (result.Success)
-                TempData["Sucesso"] = result.Message;
-            else
-                TempData["Erro"] = result.ErrorMessage;
+                if (ticket == null)
+                {
+                    TempData["Erro"] = "Passagem não encontrada";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            return RedirectToAction(nameof(Index));
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer == null || ticket.CustomerId != customer.CustomerId)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para cancelar esta passagem.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                if (ticket.Status == TicketStatus.Cancelled)
+                {
+                    TempData["Info"] = "Esta passagem já está cancelada.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                if (ticket.Status == TicketStatus.Boarded)
+                {
+                    TempData["Erro"] = "Não é possível cancelar uma passagem já embarcada.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                if (ticket.Flight != null && ticket.Flight.DepartureTime < DateTime.Now)
+                {
+                    TempData["Erro"] = "Não é possível cancelar uma passagem de um voo que já partiu.";
+                    return RedirectToAction(nameof(Details), new { id = id });
+                }
+
+                var result = await _ticketFacade.CancelTicketAsync(new CancelTicketRequestDto { TicketId = id });
+
+                if (result.Success)
+                    TempData["Sucesso"] = result.Message;
+                else
+                    TempData["Erro"] = result.ErrorMessage;
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao cancelar passagem {TicketId}", id);
+                TempData["Erro"] = "Erro ao cancelar passagem";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         /// <summary>
@@ -204,6 +354,18 @@ namespace SistemaAereo.Controllers
                 {
                     TempData["Erro"] = "Cliente não encontrado";
                     return RedirectToAction(nameof(Index));
+                }
+
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var currentCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (currentCustomer == null || currentCustomer.CustomerId != id)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para ver passagens de outros clientes.";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
 
                 ViewBag.CustomerName = customer.Name;
@@ -240,8 +402,9 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Passagens por voo
+        /// Passagens por voo - apenas Admin e Funcionario
         /// </summary>
+        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> ByFlight(int id, int page = 1, int itemsPerPage = 10)
         {
             try

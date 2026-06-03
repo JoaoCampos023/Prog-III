@@ -5,84 +5,129 @@
     ViewData["Title"] = "Aeronaves";
 }
 
-<div class="d-flex justify-content-end mb-4">
-    <a asp-action="Create" class="btn btn-success">
-        <i class="fas fa-plus me-2"></i>Nova Aeronave
-    </a>
-</div>
-
-@if (TempData["Sucesso"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="container-fluid">
+    <div class="d-flex justify-content-end mb-4">
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>Nova Aeronave
+        </a>
     </div>
-}
 
-@if (TempData["Erro"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Lista de Aeronaves</h6>
-    </div>
-    <div class="card-body">
-        @if (Model.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Poltronas</th>
-                            <th>Voos</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var aircraft in Model)
-                        {
-                            <tr>
-                                <td>@aircraft.AircraftType</td>
-                                <td>@aircraft.NumberOfSeats</td>
-                                <td>@(aircraft.Flights?.Count ?? 0)</td>
-                                <td>
-                                    <div class="btn-group-action">
-                                        <a asp-action="Edit" asp-route-id="@aircraft.AircraftId" class="btn btn-edit btn-sm-action" title="Editar">
-                                            <i class="fas fa-edit"></i> Editar
-                                        </a>
-                                        <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta aeronave?')">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@aircraft.AircraftId" />
-                                            <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
-                                                <i class="fas fa-trash"></i> Excluir
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="text-center py-5">
-                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
-                    <i class="fas fa-plane fa-2x text-muted"></i>
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Cards de Estatísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total de Aeronaves</h6>
+                            <h2 class="mb-0">@Model.Count()</h2>
+                        </div>
+                        <i class="fas fa-plane fa-2x opacity-50"></i>
+                    </div>
                 </div>
-                <h5 class="text-muted">Nenhuma aeronave cadastrada</h5>
-                <p class="text-muted mb-4">Comece cadastrando a primeira aeronave do sistema.</p>
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Cadastrar Primeira Aeronave
-                </a>
             </div>
-        }
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Capacidade Total</h6>
+                            <h2 class="mb-0">@Model.Sum(a => a.NumberOfSeats)</h2>
+                        </div>
+                        <i class="fas fa-chair fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Média de Poltronas</h6>
+                            <h2 class="mb-0">@(Model.Any() ? Math.Round(Model.Average(a => a.NumberOfSeats), 0) : 0)</h2>
+                        </div>
+                        <i class="fas fa-chart-line fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Aeronaves</h6>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Poltronas</th>
+                                <th>Voos</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var aircraft in Model)
+                            {
+                                <tr>
+                                    <td>@aircraft.AircraftType</td>
+                                    <td class="text-center">@aircraft.NumberOfSeats</td>
+                                    <td class="text-center">@(aircraft.Flights?.Count ?? 0)</td>
+                                    <td>
+                                        <div class="btn-group-action">
+                                            <a asp-action="Edit" asp-route-id="@aircraft.AircraftId" class="btn btn-edit btn-sm-action" title="Editar">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta aeronave?')">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@aircraft.AircraftId" />
+                                                <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
+                                                    <i class="fas fa-trash"></i> Excluir
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                        <i class="fas fa-plane fa-2x text-muted"></i>
+                    </div>
+                    <h5 class="text-muted">Nenhuma aeronave cadastrada</h5>
+                    <p class="text-muted mb-4">Comece cadastrando a primeira aeronave do sistema.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Cadastrar Primeira Aeronave
+                    </a>
+                </div>
+            }
+        </div>
     </div>
 </div>

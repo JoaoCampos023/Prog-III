@@ -7,9 +7,6 @@ using SistemaAereo.Models.ViewModels;
 
 namespace SistemaAereo.Controllers
 {
-    /// <summary>
-    /// Controller responsável pelos relatórios do sistema
-    /// </summary>
     [Authorize(Roles = "Admin,Funcionario")]
     public class ReportsController : Controller
     {
@@ -22,19 +19,13 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Página principal de relatórios
-        /// </summary>
+        // GET: Reports
         public IActionResult Index()
         {
             return View();
         }
 
-        /// <summary>
-        /// Relatório de faturamento por período
-        /// </summary>
-        /// <param name="startDate">Data inicial do período</param>
-        /// <param name="endDate">Data final do período</param>
+        // GET: Reports/Revenue
         public async Task<IActionResult> Revenue(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;
@@ -48,7 +39,7 @@ namespace SistemaAereo.Controllers
                 MonthlyRevenue = new List<MonthlyRevenueDto>()
             };
 
-            // Buscar faturamento diário
+            // Daily revenue - CORRIGIDO
             var dailyRevenue = await _context.Tickets
                 .Where(t => t.IssueDate >= start && t.IssueDate <= end && t.Status != TicketStatus.Cancelled)
                 .GroupBy(t => t.IssueDate.Date)
@@ -66,30 +57,36 @@ namespace SistemaAereo.Controllers
             model.TotalTickets = dailyRevenue.Sum(r => r.Quantity);
             model.AverageTicketPrice = model.TotalTickets > 0 ? model.TotalRevenue / model.TotalTickets : 0;
 
-            // Buscar faturamento mensal (últimos 12 meses)
+            // Monthly revenue - CORRIGIDO (últimos 12 meses)
             var last12Months = DateTime.Now.AddMonths(-11);
-            var monthlyRevenue = await _context.Tickets
-                .Where(t => t.IssueDate >= last12Months && t.Status != TicketStatus.Cancelled)
+            var startOfMonth = new DateTime(last12Months.Year, last12Months.Month, 1);
+
+            // Buscar tickets agrupados por mês usando DbFunctions
+            var monthlyRevenueRaw = await _context.Tickets
+                .Where(t => t.IssueDate >= startOfMonth && t.Status != TicketStatus.Cancelled)
                 .GroupBy(t => new { t.IssueDate.Year, t.IssueDate.Month })
-                .Select(g => new MonthlyRevenueDto
+                .Select(g => new
                 {
-                    Month = $"{g.Key.Year}-{g.Key.Month:D2}",
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
                     Amount = g.Sum(t => t.Price),
                     Quantity = g.Count()
                 })
-                .OrderBy(m => m.Month)
+                .OrderBy(m => m.Year)
+                .ThenBy(m => m.Month)
                 .ToListAsync();
 
-            model.MonthlyRevenue = monthlyRevenue;
+            model.MonthlyRevenue = monthlyRevenueRaw.Select(m => new MonthlyRevenueDto
+            {
+                Month = $"{m.Year}-{m.Month:D2}",
+                Amount = m.Amount,
+                Quantity = m.Quantity
+            }).ToList();
 
             return View(model);
         }
 
-        /// <summary>
-        /// Relatório de ocupação de voos
-        /// </summary>
-        /// <param name="startDate">Data inicial do período</param>
-        /// <param name="endDate">Data final do período</param>
+        // GET: Reports/FlightOccupancy
         public async Task<IActionResult> FlightOccupancy(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;
@@ -136,10 +133,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// Relatório de clientes mais frequentes
-        /// </summary>
-        /// <param name="quantity">Quantidade de clientes a exibir</param>
+        // GET: Reports/TopCustomers
         public async Task<IActionResult> TopCustomers(int quantity = 10)
         {
             var customers = await _context.Tickets
@@ -172,9 +166,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// Exporta o relatório de faturamento para CSV
-        /// </summary>
+        // GET: Reports/ExportRevenueToCsv
         public async Task<IActionResult> ExportRevenueToCsv(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;

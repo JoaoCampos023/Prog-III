@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\controllers\\ticketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\ticketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,14 +23,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAADYDAAAAAAAAAAAiwFsDAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-03T19:25:02.928Z",
+              "Title": "TicketsController.cs",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\TicketsController.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Controllers\\TicketsController.cs",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\TicketsController.cs",
+              "RelativeToolTip": "Aeroporto\\Controllers\\TicketsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUCAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-03T19:48:45.274Z",
               "EditorCaption": ""
             }
           ]

@@ -35,25 +35,15 @@ DESIGN PATTERNS IMPLEMENTADOS
 
 OBSERVAÇÕES:
 
-No pc:
-
-* no perfil a data ta sem formatação - ??
-* Ao digitar a senha ele pede 6 caracteres, mas ao tentar enviar ele pede que tenha pelo menos 1 digito e uma letra maiscula - ??
-* a barra de pesquisa de pessoa não funciona - ??
-* O botão de novo cliente é azul e o outros como aeronave e aeroportos são verdes - ??
-* Os status nos voos estão com letras minúsculas -??
-
-
 Observações - Kalil:
 
 * Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
-* É interessante fazer um readme, nele dá para falar que tem que mudar a string de conexão, também é interessante falar o que precisa para o projeto rodar e a versão dos programas usados, como vc fez aqui em cimaa
-
+* É interessante fazer um readme, nele dá para falar que tem que mudar a string de conexão, também é interessante falar o que precisa para o projeto rodar e a versão dos programas usados, como vc fez aqui em cima
 
 Observações - João:
 
-* Aba relatorios ainda nao esta 100% funcional, ainda em processo de ajuste.
+
 
 Ja ajustados:
 
@@ -79,3 +69,7 @@ Ja ajustados:
 * Trocar de avatar ainda não ta funcionando (arrumado)
 * A coluna AvatarUrl na tabela AspNetUsers não aceita valores nulos, mas o método de criação do usuário administrador está enviando um valor vazio, talvez seja interessante ter uma imagem placeholder para esses casos
 * Ele não deixa registrar novos usuários pelo mesmo motivo
+* a barra de pesquisa de pessoa não funciona
+* Os status nos voos estão com letras minúsculas
+* O botão de novo cliente é azul e o outros como aeronave e aeroportos são verdes
+* Aba relatorios ainda nao esta 100% funcional, ainda em processo de ajuste - ja esta funcionando
