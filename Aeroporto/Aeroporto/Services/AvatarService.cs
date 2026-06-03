@@ -3,7 +3,7 @@
 namespace SistemaAereo.Services
 {
     /// <summary>
-    /// Serviço para geração de avatares usando a API DiceBear
+    /// Serviço para geração de avatares usando várias APIs
     /// </summary>
     public class AvatarService : IAvatarService
     {
@@ -13,16 +13,30 @@ namespace SistemaAereo.Services
         // Estilos disponíveis na API DiceBear
         private readonly List<string> _estilosDisponiveis = new List<string>
         {
-            "avataaars",      // Estilo padrão de pessoas
-            "bottts",         // Estilo de robôs
-            "identicon",      // Estilo geométrico
+            "avataaars",      // Pessoas (padrão)
+            "bottts",         // Robôs
+            "identicon",      // Geométrico
             "initials",       // Iniciais do nome
-            "thumbs",         // Estilo emoji/polegares
+            "thumbs",         // Emoji/polegares
             "adventurer",     // Aventureiro
-            "micah",          // Estilo minimalista
+            "micah",          // Minimalista
             "open-peeps",     // Pessoas diversas
             "pixel-art",      // Arte em pixel
-            "lorelei"         // Estilo cartoon
+            "lorelei",        // Cartoon
+            "fun-emoji",      // Emojis divertidos
+            "glass",          // Estilo vidro
+            "croodles",       // Desenho animado
+            "miniavs",        // Minimalista
+            "big-ears",       // Orelhas grandes
+            "big-smile"       // Sorriso grande
+        };
+
+        // Provedores alternativos de avatar
+        private readonly List<string> _provedores = new List<string>
+        {
+            "dicebear",   // DiceBear (padrão)
+            "ui-avatars", // UI Avatars (iniciais)
+            "multiavatar" // MultiAvatar
         };
 
         public AvatarService(HttpClient httpClient, ILogger<AvatarService> logger)
@@ -46,26 +60,13 @@ namespace SistemaAereo.Services
             }
 
             // Limpar o nome para usar como seed
-            var seed = nome.ToLower()
-                .Replace(" ", "")
-                .Replace("@", "")
-                .Replace(".", "")
-                .Replace("-", "")
-                .Replace("_", "")
-                .Replace("ç", "c")
-                .Replace("ã", "a")
-                .Replace("á", "a")
-                .Replace("é", "e")
-                .Replace("í", "i")
-                .Replace("ó", "o")
-                .Replace("ú", "u");
+            var seed = LimparSeed(nome);
 
             // Gerar URL com base no estilo selecionado
             string url;
             switch (estilo)
             {
                 case "initials":
-                    // Para estilo de iniciais, usar as primeiras letras do nome
                     var iniciais = ObterIniciais(nome);
                     url = $"https://api.dicebear.com/9.x/initials/svg?seed={iniciais}&size={tamanho}&backgroundColor=b6e3f4&radius=50";
                     break;
@@ -81,6 +82,32 @@ namespace SistemaAereo.Services
             }
 
             return url;
+        }
+
+        /// <summary>
+        /// Gera URL de avatar usando UI Avatars (iniciais com fundo)
+        /// </summary>
+        public string GerarAvatarUI(string nome, int tamanho = 128)
+        {
+            if (string.IsNullOrEmpty(nome))
+                nome = "U";
+
+            var iniciais = ObterIniciais(nome);
+            var cor = GerarCorDoNome(nome);
+
+            return $"https://ui-avatars.com/api/?name={iniciais}&size={tamanho}&background={cor}&color=fff&bold=true&length=2";
+        }
+
+        /// <summary>
+        /// Gera URL de avatar usando MultiAvatar
+        /// </summary>
+        public string GerarAvatarMulti(string nome, int tamanho = 128)
+        {
+            if (string.IsNullOrEmpty(nome))
+                nome = "user";
+
+            var seed = LimparSeed(nome);
+            return $"https://api.multiavatar.com/{seed}.svg?size={tamanho}";
         }
 
         /// <summary>
@@ -129,6 +156,27 @@ namespace SistemaAereo.Services
         }
 
         /// <summary>
+        /// Obtém uma lista de provedores disponíveis
+        /// </summary>
+        public List<string> ObterProvedoresDisponiveis()
+        {
+            return _provedores;
+        }
+
+        /// <summary>
+        /// Gera avatar completo com provedor e estilo
+        /// </summary>
+        public string GerarAvatarCompleto(string nome, int tamanho = 128, string provedor = "dicebear", string estilo = null)
+        {
+            return provedor?.ToLower() switch
+            {
+                "ui-avatars" => GerarAvatarUI(nome, tamanho),
+                "multiavatar" => GerarAvatarMulti(nome, tamanho),
+                _ => GerarAvatarUrl(nome, tamanho, estilo)
+            };
+        }
+
+        /// <summary>
         /// Obtém as iniciais de um nome
         /// </summary>
         private string ObterIniciais(string nome)
@@ -146,6 +194,37 @@ namespace SistemaAereo.Services
                     iniciais += partes[i][0];
             }
             return iniciais.ToUpper();
+        }
+
+        /// <summary>
+        /// Gera uma cor baseada no nome
+        /// </summary>
+        private string GerarCorDoNome(string nome)
+        {
+            var cores = new[] { "3b82f6", "ef4444", "10b981", "f59e0b", "8b5cf6", "06b6d4", "ec4899", "14b8a6" };
+            var hash = nome.GetHashCode();
+            var index = Math.Abs(hash) % cores.Length;
+            return cores[index];
+        }
+
+        /// <summary>
+        /// Limpa o seed para URL
+        /// </summary>
+        private string LimparSeed(string nome)
+        {
+            return nome.ToLower()
+                .Replace(" ", "")
+                .Replace("@", "")
+                .Replace(".", "")
+                .Replace("-", "")
+                .Replace("_", "")
+                .Replace("ç", "c")
+                .Replace("ã", "a")
+                .Replace("á", "a")
+                .Replace("é", "e")
+                .Replace("í", "i")
+                .Replace("ó", "o")
+                .Replace("ú", "u");
         }
     }
 }

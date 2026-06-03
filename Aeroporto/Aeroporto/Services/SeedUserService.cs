@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SistemaAereo.Data.Context;
 using SistemaAereo.Models.Entities;
+using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Services
 {
@@ -14,6 +15,7 @@ namespace SistemaAereo.Services
             using var scope = serviceProvider.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var avatarService = scope.ServiceProvider.GetRequiredService<IAvatarService>();
             var context = scope.ServiceProvider.GetRequiredService<AirportsContext>();
 
             // Garantir que o banco de dados foi criado
@@ -36,13 +38,16 @@ namespace SistemaAereo.Services
 
             if (adminUser == null)
             {
+                var avatarUrl = avatarService.GerarAvatarUrl("Administrador", 128);
+
                 adminUser = new User
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
                     FullName = "Administrador do Sistema",
                     EmailConfirmed = true,
-                    IsActive = true
+                    IsActive = true,
+                    AvatarUrl = avatarUrl
                 };
 
                 var result = await userManager.CreateAsync(adminUser, "Admin@123");
@@ -59,13 +64,16 @@ namespace SistemaAereo.Services
 
             if (funcionarioUser == null)
             {
+                var avatarUrl = avatarService.GerarAvatarUrl("Funcionario", 128);
+
                 funcionarioUser = new User
                 {
                     UserName = funcionarioEmail,
                     Email = funcionarioEmail,
                     FullName = "Funcionário do Sistema",
                     EmailConfirmed = true,
-                    IsActive = true
+                    IsActive = true,
+                    AvatarUrl = avatarUrl
                 };
 
                 var result = await userManager.CreateAsync(funcionarioUser, "Func@123");

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Models.ViewModels;
+using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Controllers
 {
@@ -10,15 +11,18 @@ namespace SistemaAereo.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IAvatarService _avatarService;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
+            IAvatarService avatarService,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _avatarService = avatarService;
             _logger = logger;
         }
 
@@ -106,13 +110,17 @@ namespace SistemaAereo.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Gerar avatar para o novo usuário
+                var avatarUrl = _avatarService.GerarAvatarUrl(model.FullName ?? model.Email, 128);
+
                 var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email,
                     FullName = model.FullName,
                     IsActive = true,
-                    RegistrationDate = DateTime.Now
+                    RegistrationDate = DateTime.Now,
+                    AvatarUrl = avatarUrl
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -177,21 +185,31 @@ namespace SistemaAereo.Controllers
         [Authorize]
         public async Task<IActionResult> Profile()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    _logger.LogWarning("Usuário não encontrado no Profile");
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var model = new ProfileViewModel
+                {
+                    Email = user.Email,
+                    FullName = user.FullName ?? string.Empty,
+                    Phone = user.PhoneNumber ?? string.Empty,
+                    RegistrationDate = user.RegistrationDate
+                };
+
+                return View(model);
             }
-
-            var model = new ProfileViewModel
+            catch (Exception ex)
             {
-                Email = user.Email,
-                FullName = user.FullName,
-                Phone = user.PhoneNumber,
-                RegistrationDate = user.RegistrationDate
-            };
-
-            return View(model);
+                _logger.LogError(ex, "Erro ao carregar perfil do usuário");
+                TempData["Erro"] = "Erro ao carregar perfil. Tente novamente.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         /// <summary>
@@ -202,32 +220,41 @@ namespace SistemaAereo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
+                if (ModelState.IsValid)
                 {
-                    return NotFound();
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user == null)
+                    {
+                        return NotFound();
+                    }
+
+                    user.FullName = model.FullName;
+                    user.PhoneNumber = model.Phone;
+
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        TempData["Sucesso"] = "Perfil atualizado com sucesso!";
+                        return RedirectToAction("Profile");
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
 
-                user.FullName = model.FullName;
-                user.PhoneNumber = model.Phone;
-
-                var result = await _userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
-                {
-                    TempData["Sucesso"] = "Perfil atualizado com sucesso!";
-                    return RedirectToAction("Profile");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return View(model);
             }
-
-            return View(model);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar perfil");
+                TempData["Erro"] = "Erro ao atualizar perfil. Tente novamente.";
+                return View(model);
+            }
         }
 
         /// <summary>

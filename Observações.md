@@ -49,13 +49,7 @@ Observações - Kalil:
 * Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
 * É interessante fazer um readme, nele dá para falar que tem que mudar a string de conexão, também é interessante falar o que precisa para o projeto rodar e a versão dos programas usados, como vc fez aqui em cimaa
-* O nome do banco ta em português e as tabelas em ingles
-* A coluna AvatarUrl na tabela AspNetUsers não aceita valores nulos, mas o método de criação do usuário administrador está enviando um valor vazio, talvez seja interessante ter uma imagem placeholder para esses casos
-* Ele não deixa registrar novos usuários pelo mesmo motivo
-* Reports/Revenue está crashando
-* Criar dados testes não funcionou para mim
-* Menu de novo cliente ainda ta um pouco estranho
-* Trocar de avatar ainda não ta funcionando
+
 
 Observações - João:
 
@@ -78,3 +72,10 @@ Ja ajustados:
 * acho que a data de nascimento pode ser jogada pra cima, e talvez para ficar par adicionar o sexo
 * Aeronaves e aeroportos poderia ter algum tipo de filtra ou busca por nome, como nos outros menus
 * Acho que as outras telas devem seguir o padrão do cliente, ela ficou muito boa
+* Menu de novo cliente ainda ta um pouco estranho
+* Reports/Revenue está crashando - resolvido
+* O nome do banco ta em português e as tabelas em ingles - nao vou mexer nisso (nao importa muito)
+* Criar dados testes não funcionou para mim (funciona agora, mas o banco de dados deve estar vazio)
+* Trocar de avatar ainda não ta funcionando (arrumado)
+* A coluna AvatarUrl na tabela AspNetUsers não aceita valores nulos, mas o método de criação do usuário administrador está enviando um valor vazio, talvez seja interessante ter uma imagem placeholder para esses casos
+* Ele não deixa registrar novos usuários pelo mesmo motivo

@@ -14,7 +14,10 @@ namespace SistemaAereo.Models.Entities
         [Display(Name = "Ativo")]
         public bool IsActive { get; set; } = true;
 
+        /// <summary>
+        /// URL do avatar do usuário (pode ser nulo)
+        /// </summary>
         [Display(Name = "Avatar")]
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }  // ← TORNAR NULLABLE com '?'
     }
 }

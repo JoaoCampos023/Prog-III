@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaAereo.Data.Context;
 using SistemaAereo.Models.Entities;
+using SistemaAereo.Models.ViewModels;
 using SistemaAereo.Repositories.Interfaces;
 
 namespace SistemaAereo.Controllers
@@ -11,13 +12,16 @@ namespace SistemaAereo.Controllers
     public class CustomersController : Controller
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly AirportsContext _context;
         private readonly ILogger<CustomersController> _logger;
 
         public CustomersController(
             ICustomerRepository customerRepository,
+            AirportsContext context,
             ILogger<CustomersController> logger)
         {
             _customerRepository = customerRepository;
+            _context = context;
             _logger = logger;
         }
 
@@ -32,14 +36,63 @@ namespace SistemaAereo.Controllers
         {
             try
             {
-                var customers = await _customerRepository.GetActiveCustomersAsync();
-                return View(customers);
+                // Buscar clientes ativos
+                var activeCustomers = await _customerRepository.GetActiveCustomersAsync();
+
+                // Buscar todos os clientes para estatísticas
+                var allCustomers = await _customerRepository.GetAllCustomersAsync();
+
+                var activeCount = activeCustomers.Count();
+                var inactiveCount = allCustomers.Count() - activeCount;
+
+                var model = new CustomerDashboardViewModel
+                {
+                    Customers = activeCustomers,
+                    TotalCustomers = allCustomers.Count(),
+                    ActiveCustomers = activeCount,
+                    InactiveCustomers = inactiveCount
+                };
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao carregar clientes");
                 TempData["Erro"] = "Erro ao carregar lista de clientes";
-                return View(new List<Customer>());
+                return View(new CustomerDashboardViewModel
+                {
+                    Customers = new List<Customer>()
+                });
+            }
+        }
+
+        /// <summary>
+        /// Retorna todos os clientes em formato JSON para o front-end (filtros e paginação)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAllCustomersJson()
+        {
+            try
+            {
+                var customers = await _customerRepository.GetAllCustomersAsync();
+                var result = customers.Select(c => new
+                {
+                    customerId = c.CustomerId,
+                    name = c.Name,
+                    email = c.Email,
+                    phone = c.Phone,
+                    city = c.City,
+                    state = c.State,
+                    registrationDate = c.RegistrationDate.ToString("dd/MM/yyyy"),
+                    isActive = c.IsActive
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar clientes para JSON");
+                return StatusCode(500, new { error = "Erro ao carregar clientes" });
             }
         }
 

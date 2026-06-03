@@ -116,25 +116,7 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Página de privacidade
-        /// </summary>
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// Página de erro genérica
-        /// </summary>
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        /// <summary>
-        /// Método temporário para popular o banco com dados de teste
-        /// Acesse: /Home/SeedData
+        /// Cria dados de teste no sistema (apenas para Admin)
         /// </summary>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SeedData()
@@ -144,7 +126,7 @@ namespace SistemaAereo.Controllers
                 // Verificar se já existem dados
                 if (await _context.Flights.AnyAsync())
                 {
-                    TempData["Info"] = "O banco de dados já possui dados.";
+                    TempData["Info"] = "O banco de dados já possui dados. Para criar novos dados, limpe o banco primeiro.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -185,10 +167,11 @@ namespace SistemaAereo.Controllers
                 {
                     var customers = new[]
                     {
-                        new Customer { Name = "João Silva", Email = "joao.silva@email.com", Phone = "(11) 99999-9999", CPF = "123.456.789-00", City = "São Paulo", State = "SP", IsActive = true },
-                        new Customer { Name = "Maria Santos", Email = "maria.santos@email.com", Phone = "(21) 98888-8888", CPF = "987.654.321-00", City = "Rio de Janeiro", State = "RJ", IsActive = true },
-                        new Customer { Name = "Pedro Oliveira", Email = "pedro.oliveira@email.com", Phone = "(31) 97777-7777", CPF = "456.789.123-00", City = "Belo Horizonte", State = "MG", IsActive = true },
-                        new Customer { Name = "Ana Costa", Email = "ana.costa@email.com", Phone = "(61) 96666-6666", CPF = "789.123.456-00", City = "Brasília", State = "DF", IsActive = true }
+                        new Customer { Name = "João Silva", Email = "joao.silva@email.com", Phone = "(11) 99999-9999", CPF = "123.456.789-00", City = "São Paulo", State = "SP", IsActive = true, RegistrationDate = DateTime.Now },
+                        new Customer { Name = "Maria Santos", Email = "maria.santos@email.com", Phone = "(21) 98888-8888", CPF = "987.654.321-00", City = "Rio de Janeiro", State = "RJ", IsActive = true, RegistrationDate = DateTime.Now },
+                        new Customer { Name = "Pedro Oliveira", Email = "pedro.oliveira@email.com", Phone = "(31) 97777-7777", CPF = "456.789.123-00", City = "Belo Horizonte", State = "MG", IsActive = true, RegistrationDate = DateTime.Now },
+                        new Customer { Name = "Ana Costa", Email = "ana.costa@email.com", Phone = "(61) 96666-6666", CPF = "789.123.456-00", City = "Brasília", State = "DF", IsActive = true, RegistrationDate = DateTime.Now },
+                        new Customer { Name = "Carlos Pereira", Email = "carlos.pereira@email.com", Phone = "(85) 95555-5555", CPF = "321.654.987-00", City = "Fortaleza", State = "CE", IsActive = true, RegistrationDate = DateTime.Now }
                     };
                     _context.Customers.AddRange(customers);
                     await _context.SaveChangesAsync();
@@ -201,7 +184,11 @@ namespace SistemaAereo.Controllers
                     var gru = await _context.Airports.FirstAsync(a => a.IATACode == "GRU");
                     var sdu = await _context.Airports.FirstAsync(a => a.IATACode == "SDU");
                     var bsb = await _context.Airports.FirstAsync(a => a.IATACode == "BSB");
-                    var aircraft = await _context.Aircrafts.FirstAsync();
+                    var cnf = await _context.Airports.FirstAsync(a => a.IATACode == "CNF");
+                    var ssa = await _context.Airports.FirstAsync(a => a.IATACode == "SSA");
+                    var aircraft737 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("737"));
+                    var aircraft320 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("320"));
+                    var aircraft195 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("195"));
 
                     var flights = new[]
                     {
@@ -210,7 +197,7 @@ namespace SistemaAereo.Controllers
                             FlightNumber = "LA1234",
                             DepartureAirportId = gru.AirportId,
                             ArrivalAirportId = sdu.AirportId,
-                            AircraftId = aircraft.AircraftId,
+                            AircraftId = aircraft737.AircraftId,
                             DepartureTime = DateTime.Now.AddDays(1).AddHours(8),
                             EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(10)
                         },
@@ -219,7 +206,7 @@ namespace SistemaAereo.Controllers
                             FlightNumber = "LA5678",
                             DepartureAirportId = gru.AirportId,
                             ArrivalAirportId = bsb.AirportId,
-                            AircraftId = aircraft.AircraftId,
+                            AircraftId = aircraft320.AircraftId,
                             DepartureTime = DateTime.Now.AddDays(2).AddHours(14),
                             EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(17)
                         },
@@ -227,10 +214,28 @@ namespace SistemaAereo.Controllers
                         {
                             FlightNumber = "LA9012",
                             DepartureAirportId = sdu.AirportId,
-                            ArrivalAirportId = bsb.AirportId,
-                            AircraftId = aircraft.AircraftId,
+                            ArrivalAirportId = cnf.AirportId,
+                            AircraftId = aircraft195.AircraftId,
                             DepartureTime = DateTime.Now.AddDays(3).AddHours(10),
                             EstimatedArrivalTime = DateTime.Now.AddDays(3).AddHours(13)
+                        },
+                        new Flight
+                        {
+                            FlightNumber = "LA3456",
+                            DepartureAirportId = bsb.AirportId,
+                            ArrivalAirportId = ssa.AirportId,
+                            AircraftId = aircraft737.AircraftId,
+                            DepartureTime = DateTime.Now.AddDays(4).AddHours(6),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(4).AddHours(9)
+                        },
+                        new Flight
+                        {
+                            FlightNumber = "LA7890",
+                            DepartureAirportId = ssa.AirportId,
+                            ArrivalAirportId = gru.AirportId,
+                            AircraftId = aircraft320.AircraftId,
+                            DepartureTime = DateTime.Now.AddDays(5).AddHours(20),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(6).AddHours(1)
                         }
                     };
                     _context.Flights.AddRange(flights);
@@ -240,14 +245,54 @@ namespace SistemaAereo.Controllers
                     // 5. Criar poltronas para cada voo
                     foreach (var flight in flights)
                     {
+                        var aircraft = await _context.Aircrafts.FindAsync(flight.AircraftId);
                         await CreateSeatsForFlight(flight.FlightId, aircraft.NumberOfSeats);
                     }
                     _logger.LogInformation("Poltronas criadas com sucesso");
                 }
 
+                // 6. Criar algumas passagens de exemplo
+                if (!await _context.Tickets.AnyAsync())
+                {
+                    var customers = await _context.Customers.Take(3).ToListAsync();
+                    var flights = await _context.Flights.Take(3).ToListAsync();
+                    var random = new Random();
+
+                    foreach (var flight in flights)
+                    {
+                        var availableSeats = await _context.Seats
+                            .Where(s => s.FlightId == flight.FlightId && s.IsAvailable)
+                            .Take(2)
+                            .ToListAsync();
+
+                        for (int i = 0; i < availableSeats.Count && i < customers.Count; i++)
+                        {
+                            var seat = availableSeats[i];
+                            var customer = customers[i];
+
+                            var ticket = new Ticket
+                            {
+                                FlightId = flight.FlightId,
+                                CustomerId = customer.CustomerId,
+                                SeatId = seat.SeatId,
+                                TicketNumber = Guid.NewGuid().ToString("N").Substring(0, 16).ToUpper(),
+                                IssueDate = DateTime.Now.AddDays(-random.Next(1, 10)),
+                                Price = seat.Price,
+                                Status = TicketStatus.Confirmed,
+                                Class = seat.Class
+                            };
+
+                            _context.Tickets.Add(ticket);
+                            seat.IsAvailable = false;
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Passagens criadas com sucesso");
+                }
+
                 await transaction.CommitAsync();
 
-                TempData["Sucesso"] = "Dados de teste criados com sucesso!";
+                TempData["Sucesso"] = "Dados de teste criados com sucesso! Voos, aeronaves, aeroportos, clientes e passagens foram adicionados ao sistema.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -274,24 +319,24 @@ namespace SistemaAereo.Controllers
 
                 string seatClass;
                 if (i <= numberOfSeats * 0.05)
-                    seatClass = SeatClass.FirstClass;
+                    seatClass = "Primeira";
                 else if (i <= numberOfSeats * 0.2)
-                    seatClass = SeatClass.Executive;
+                    seatClass = "Executiva";
                 else
-                    seatClass = SeatClass.Economy;
+                    seatClass = "Econômica";
 
                 string location = position switch
                 {
-                    1 or 6 => SeatLocation.Window,
-                    2 or 5 => SeatLocation.Middle,
-                    3 or 4 => SeatLocation.Aisle,
-                    _ => SeatLocation.Aisle
+                    1 or 6 => "Janela",
+                    2 or 5 => "Meio",
+                    3 or 4 => "Corredor",
+                    _ => "Corredor"
                 };
 
                 decimal price = seatClass switch
                 {
-                    SeatClass.FirstClass => 800.00m,
-                    SeatClass.Executive => 500.00m,
+                    "Primeira" => 800.00m,
+                    "Executiva" => 500.00m,
                     _ => 300.00m
                 };
 
@@ -312,6 +357,23 @@ namespace SistemaAereo.Controllers
 
             await _context.Seats.AddRangeAsync(seats);
             await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Página de privacidade
+        /// </summary>
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Página de erro genérica
+        /// </summary>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

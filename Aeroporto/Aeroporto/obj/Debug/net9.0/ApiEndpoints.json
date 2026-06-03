@@ -49,6 +49,22 @@
   },
   {
     "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetPlaceholderAvatar",
+    "RelativePath": "api/Avatar/placeholder",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
     "Method": "GetStylePreview",
     "RelativePath": "api/Avatar/preview/{style}",
     "HttpMethod": "GET",
@@ -70,6 +86,42 @@
   },
   {
     "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetAvatarByProvider",
+    "RelativePath": "api/Avatar/provider/{provider}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "provider",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "style",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetProviders",
+    "RelativePath": "api/Avatar/providers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
     "Method": "RegenerateAvatar",
     "RelativePath": "api/Avatar/regenerate",
     "HttpMethod": "POST",
@@ -86,6 +138,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaAereo.Controllers.Api.AvatarController",
+    "Method": "GetUIAvatar",
+    "RelativePath": "api/Avatar/ui",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "size",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
