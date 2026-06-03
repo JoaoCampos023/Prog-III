@@ -27,49 +27,6 @@
     </div>
 }
 
-<!-- Cards de Estatísticas -->
-<div class="row g-4 mb-4">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-0">Total de Aeronaves</h6>
-                        <h2 class="mb-0">@Model.Count()</h2>
-                    </div>
-                    <i class="fas fa-plane fa-2x opacity-50"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-0">Capacidade Total</h6>
-                        <h2 class="mb-0">@Model.Sum(a => a.NumberOfSeats)</h2>
-                    </div>
-                    <i class="fas fa-chair fa-2x opacity-50"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-0">Média de Poltronas</h6>
-                        <h2 class="mb-0">@(Model.Any() ? Math.Round(Model.Average(a => a.NumberOfSeats), 0) : 0)</h2>
-                    </div>
-                    <i class="fas fa-chart-line fa-2x opacity-50"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Lista de Aeronaves</h6>
@@ -84,7 +41,7 @@
                             <th>Tipo</th>
                             <th>Poltronas</th>
                             <th>Voos</th>
-                            <th width="100">Ações</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,15 +52,15 @@
                                 <td>@aircraft.NumberOfSeats</td>
                                 <td>@(aircraft.Flights?.Count ?? 0)</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@aircraft.AircraftId" class="btn btn-warning btn-sm" title="Editar">
-                                            <i class="fas fa-edit"></i>
+                                    <div class="btn-group-action">
+                                        <a asp-action="Edit" asp-route-id="@aircraft.AircraftId" class="btn btn-edit btn-sm-action" title="Editar">
+                                            <i class="fas fa-edit"></i> Editar
                                         </a>
                                         <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta aeronave?')">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@aircraft.AircraftId" />
-                                            <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
-                                                <i class="fas fa-trash"></i>
+                                            <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
+                                                <i class="fas fa-trash"></i> Excluir
                                             </button>
                                         </form>
                                     </div>

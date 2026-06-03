@@ -28,10 +28,6 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        // =============================================
-        // MÉTODOS PRINCIPAIS
-        // =============================================
-
         /// <summary>
         /// Lista todas as passagens com paginação
         /// </summary>
@@ -101,13 +97,10 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        // =============================================
-        // EMISSÃO DE PASSAGENS
-        // =============================================
-
         /// <summary>
-        /// Formulário de emissão de passagem
+        /// Formulário de emissão de passagem - apenas Admin e Funcionario
         /// </summary>
+        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Create()
         {
             await LoadViewBags();
@@ -115,16 +108,15 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Emite uma nova passagem
+        /// Emite uma nova passagem - apenas Admin e Funcionario
         /// </summary>
         [HttpPost]
+        [Authorize(Roles = "Admin,Funcionario")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IssueTicketRequestDto request)
         {
             try
             {
-                _logger.LogInformation("=== TENTATIVA DE CRIAÇÃO DE PASSAGEM VIA FACADE ===");
-
                 if (!ModelState.IsValid)
                 {
                     await LoadViewBags();
@@ -152,13 +144,10 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        // =============================================
-        // OPERAÇÕES DE PASSAGEM
-        // =============================================
-
         /// <summary>
-        /// Realiza check-in
+        /// Realiza check-in - apenas Admin e Funcionario
         /// </summary>
+        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Checkin(int id)
         {
             var result = await _ticketFacade.CheckinAsync(new CheckinRequestDto { TicketId = id });
@@ -172,8 +161,9 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Registra embarque
+        /// Registra embarque - apenas Admin e Funcionario
         /// </summary>
+        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Boarding(int id)
         {
             var result = await _ticketFacade.RegisterBoardingAsync(id);
@@ -187,8 +177,9 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
-        /// Cancela uma passagem
+        /// Cancela uma passagem - apenas Admin e Funcionario
         /// </summary>
+        [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Cancel(int id)
         {
             var result = await _ticketFacade.CancelTicketAsync(new CancelTicketRequestDto { TicketId = id });
@@ -200,10 +191,6 @@ namespace SistemaAereo.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        // =============================================
-        // CONSULTAS ESPECÍFICAS
-        // =============================================
 
         /// <summary>
         /// Passagens por cliente
@@ -295,10 +282,6 @@ namespace SistemaAereo.Controllers
                 return View(new PaginationViewModel<Ticket>());
             }
         }
-
-        // =============================================
-        // MÉTODOS AJAX
-        // =============================================
 
         /// <summary>
         /// Busca poltronas disponíveis via AJAX

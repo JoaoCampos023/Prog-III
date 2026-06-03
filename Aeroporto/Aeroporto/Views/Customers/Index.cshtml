@@ -7,7 +7,6 @@
 }
 
 <div class="container-fluid">
-    <!-- Botões de ação superiores -->
     <div class="d-flex justify-content-end gap-2 mb-4">
         <a asp-action="Inactive" class="btn btn-outline-secondary">
             <i class="fas fa-user-slash me-2"></i>Clientes Inativos
@@ -88,7 +87,7 @@
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select class="form-select" id="statusFilter">
+                    <select class="form-select" id="statusFilter" onchange="filtrarPorStatus()">
                         <option value="todos">Todos</option>
                         <option value="ativos">Ativos</option>
                         <option value="inativos">Inativos</option>
@@ -139,8 +138,8 @@
                             <th>Cidade/UF</th>
                             <th>Cadastro</th>
                             <th>Status</th>
-                            <th width="100">Ações</th>
-                        </td>
+                            <th>Ações</th>
+                        </tr>
                     </thead>
                     <tbody id="customersTableBody">
                         @foreach (var customer in Model.Customers)
@@ -163,17 +162,17 @@
                                     }
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-warning btn-sm" title="Editar">
-                                            <i class="fas fa-edit"></i>
+                                    <div class="btn-group-action">
+                                        <a asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-edit btn-sm-action" title="Editar">
+                                            <i class="fas fa-edit"></i> Editar
                                         </a>
                                         @if (customer.IsActive)
                                         {
                                             <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este cliente?')">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@customer.CustomerId" />
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
-                                                    <i class="fas fa-trash"></i>
+                                                <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
+                                                    <i class="fas fa-trash"></i> Excluir
                                                 </button>
                                             </form>
                                         }
@@ -182,8 +181,8 @@
                                             <form asp-action="Reactivate" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja reativar este cliente?')">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@customer.CustomerId" />
-                                                <button type="submit" class="btn btn-success btn-sm" title="Reativar">
-                                                    <i class="fas fa-user-check"></i>
+                                                <button type="submit" class="btn btn-reactivate btn-sm-action" title="Reativar">
+                                                    <i class="fas fa-user-check"></i> Reativar
                                                 </button>
                                             </form>
                                         }
@@ -195,7 +194,6 @@
                 </table>
             </div>
 
-            <!-- Paginação -->
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div class="text-muted small">
                     Mostrando <span id="showingStart">0</span> a <span id="showingEnd">0</span> de <span id="totalCount">0</span> clientes
@@ -216,7 +214,6 @@
         let currentStatus = 'todos';
         let currentSearch = '';
 
-        // Carregar dados dos clientes do servidor
         async function loadCustomers() {
             try {
                 const response = await fetch('/Customers/GetAllCustomersJson');
@@ -260,14 +257,12 @@
 
             let filtered = [...allCustomers];
 
-            // Filtrar por status
             if (currentStatus === 'ativos') {
                 filtered = filtered.filter(c => c.isActive === true);
             } else if (currentStatus === 'inativos') {
                 filtered = filtered.filter(c => c.isActive === false);
             }
 
-            // Filtrar por busca
             if (currentSearch) {
                 filtered = filtered.filter(c =>
                     c.name.toLowerCase().includes(currentSearch) ||
@@ -277,10 +272,8 @@
                 );
             }
 
-            // Atualizar contagem total
             document.getElementById('totalCount').innerText = filtered.length;
 
-            // Paginar
             const totalPages = Math.ceil(filtered.length / itemsPerPage);
             if (currentPage > totalPages) currentPage = 1;
 
@@ -288,14 +281,10 @@
             const end = start + itemsPerPage;
             const paginated = filtered.slice(start, end);
 
-            // Atualizar indicadores
             document.getElementById('showingStart').innerText = filtered.length === 0 ? 0 : start + 1;
             document.getElementById('showingEnd').innerText = Math.min(end, filtered.length);
 
-            // Renderizar tabela
             renderTable(paginated);
-
-            // Renderizar paginação
             renderPagination(totalPages);
         }
 
@@ -304,15 +293,7 @@
             tbody.innerHTML = '';
 
             if (customers.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="text-center py-5">
-                            <i class="fas fa-users fa-2x text-muted mb-3 d-block"></i>
-                            <h5 class="text-muted">Nenhum cliente encontrado</h5>
-                            <p class="text-muted">Tente ajustar os filtros ou cadastre um novo cliente.</p>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5"><i class="fas fa-users fa-2x text-muted mb-3 d-block"></i><h5 class="text-muted">Nenhum cliente encontrado</h5><p class="text-muted">Tente ajustar os filtros ou cadastre um novo cliente.</p></td></tr>`;
                 return;
             }
 
@@ -325,29 +306,25 @@
                     <td>${customer.phone || '—'}</td>
                     <td>${customer.city || '—'}/${customer.state || '—'}</td>
                     <td>${customer.registrationDate}</td>
+                    <td>${customer.isActive ? '<span class="badge bg-success">Ativo</span>' : '<span class="badge bg-danger">Inativo</span>'}</td>
                     <td>
-                        ${customer.isActive
-                            ? '<span class="badge bg-success">Ativo</span>'
-                            : '<span class="badge bg-danger">Inativo</span>'}
-                    </td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a href="/Customers/Edit/${customer.customerId}" class="btn btn-warning btn-sm" title="Editar">
-                                <i class="fas fa-edit"></i>
+                        <div class="btn-group-action">
+                            <a href="/Customers/Edit/${customer.customerId}" class="btn btn-edit btn-sm-action" title="Editar">
+                                <i class="fas fa-edit"></i> Editar
                             </a>
                             ${customer.isActive
                                 ? `<form action="/Customers/Delete/${customer.customerId}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este cliente?')">
                                     <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
                                     <input type="hidden" name="id" value="${customer.customerId}" />
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
-                                        <i class="fas fa-trash"></i>
+                                    <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
+                                        <i class="fas fa-trash"></i> Excluir
                                     </button>
                                 </form>`
                                 : `<form action="/Customers/Reactivate/${customer.customerId}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja reativar este cliente?')">
                                     <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
                                     <input type="hidden" name="id" value="${customer.customerId}" />
-                                    <button type="submit" class="btn btn-success btn-sm" title="Reativar">
-                                        <i class="fas fa-user-check"></i>
+                                    <button type="submit" class="btn btn-reactivate btn-sm-action" title="Reativar">
+                                        <i class="fas fa-user-check"></i> Reativar
                                     </button>
                                 </form>`}
                         </div>
@@ -360,16 +337,13 @@
         function renderPagination(totalPages) {
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
-
             if (totalPages <= 1) return;
 
-            // Botão Anterior
             const prevLi = document.createElement('li');
             prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
             prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">«</a>`;
             pagination.appendChild(prevLi);
 
-            // Números das páginas
             const maxVisible = 5;
             let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
             let endPage = Math.min(totalPages, startPage + maxVisible - 1);
@@ -383,7 +357,6 @@
                 firstLi.className = 'page-item';
                 firstLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(1); return false;">1</a>`;
                 pagination.appendChild(firstLi);
-
                 if (startPage > 2) {
                     const dotsLi = document.createElement('li');
                     dotsLi.className = 'page-item disabled';
@@ -406,65 +379,27 @@
                     dotsLi.innerHTML = '<span class="page-link">...</span>';
                     pagination.appendChild(dotsLi);
                 }
-
                 const lastLi = document.createElement('li');
                 lastLi.className = 'page-item';
                 lastLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${totalPages}); return false;">${totalPages}</a>`;
                 pagination.appendChild(lastLi);
             }
 
-            // Botão Próximo
             const nextLi = document.createElement('li');
             nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
             nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">»</a>`;
             pagination.appendChild(nextLi);
         }
 
-        function changePage(page) {
-            currentPage = page;
-            applyFilters();
-        }
+        function changePage(page) { currentPage = page; applyFilters(); }
+        function clearFilters() { document.getElementById('statusFilter').value = 'todos'; document.getElementById('searchInput').value = ''; currentPage = 1; applyFilters(); }
+        function getAntiForgeryToken() { const token = document.querySelector('input[name="__RequestVerificationToken"]'); return token ? token.value : ''; }
+        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
-        function clearFilters() {
-            document.getElementById('statusFilter').value = 'todos';
-            document.getElementById('searchInput').value = '';
-            currentPage = 1;
-            applyFilters();
-        }
+        document.getElementById('itemsPerPage').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+        document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; applyFilters(); });
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { currentPage = 1; applyFilters(); } });
 
-        function getAntiForgeryToken() {
-            const token = document.querySelector('input[name="__RequestVerificationToken"]');
-            return token ? token.value : '';
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Event listeners
-        document.getElementById('itemsPerPage').addEventListener('change', () => {
-            currentPage = 1;
-            applyFilters();
-        });
-
-        document.getElementById('statusFilter').addEventListener('change', () => {
-            currentPage = 1;
-            applyFilters();
-        });
-
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                currentPage = 1;
-                applyFilters();
-            }
-        });
-
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCustomers();
-        });
+        document.addEventListener('DOMContentLoaded', function() { loadCustomers(); });
     </script>
 }

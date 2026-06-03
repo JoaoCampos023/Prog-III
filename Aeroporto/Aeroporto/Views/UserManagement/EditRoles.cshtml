@@ -1,0 +1,120 @@
+﻿@model SistemaAereo.Models.ViewModels.EditUserRolesViewModel
+
+@{
+    ViewData["Title"] = "Editar Roles do Usuário";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">Editar Roles</h1>
+            <p class="text-muted mb-0">Gerenciando permissões para: @Model.UserName</p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Informações do Usuário</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Nome de Usuário</dt>
+                        <dd class="col-sm-8">@Model.UserName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.UserEmail</dd>
+
+                        <dt class="col-sm-4">Roles Atuais</dt>
+                        <dd class="col-sm-8">
+                            @foreach (var role in Model.CurrentRoles)
+                            {
+                                <span class="badge @(role == "Admin" ? "bg-danger" : role == "Funcionario" ? "bg-warning" : "bg-info") me-1">
+                                    @role
+                                </span>
+                            }
+                            @if (!Model.CurrentRoles.Any())
+                            {
+                                <span class="badge bg-secondary">Sem role</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Atribuir Roles</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditRoles" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="UserName" />
+                        <input type="hidden" asp-for="UserEmail" />
+                        <input type="hidden" asp-for="CurrentRoles" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Selecione as roles para este usuário</label>
+                            <div class="border rounded p-3">
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                    var isChecked = Model.CurrentRoles.Contains(role);
+                                    <div class="form-check mb-2">
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               name="SelectedRoles"
+                                               value="@role"
+                                               id="role_@role"
+                                        @(isChecked ? "checked" : "") />
+                                        <label class="form-check-label" for="role_@role">
+                                            @role
+                                            @if (role == "Admin")
+                                            {
+                                                <span class="text-muted small">(Acesso total ao sistema)</span>
+                                            }
+                                            else if (role == "Funcionario")
+                                            {
+                                                <span class="text-muted small">(Acesso a operações do dia a dia)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">(Acesso básico - consulta apenas)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info small">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Descrição das roles:</strong>
+                            <ul class="mb-0 mt-1">
+                                <li><strong>Admin</strong> - Acesso total ao sistema</li>
+                                <li><strong>Funcionario</strong> - Acesso às operações do dia a dia (CRUD completo)</li>
+                                <li><strong>User</strong> - Acesso básico (consulta apenas)</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-warning small">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Um usuário pode ter múltiplas roles. A role de maior privilégio será considerada.
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salvar Alterações
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

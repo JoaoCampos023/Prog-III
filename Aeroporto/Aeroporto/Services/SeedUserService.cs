@@ -21,7 +21,7 @@ namespace SistemaAereo.Services
             // Garantir que o banco de dados foi criado
             await context.Database.EnsureCreatedAsync();
 
-            // Criar roles se não existirem
+            // Criar roles se não existirem (apenas as 3 principais)
             string[] roles = { "Admin", "Funcionario", "User" };
 
             foreach (var role in roles)
@@ -81,6 +81,32 @@ namespace SistemaAereo.Services
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(funcionarioUser, "Funcionario");
+                }
+            }
+
+            // Criar usuário Comum padrão (opcional)
+            var userEmail = "usuario@sistema.com";
+            var commonUser = await userManager.FindByEmailAsync(userEmail);
+
+            if (commonUser == null)
+            {
+                var avatarUrl = avatarService.GerarAvatarUrl("Usuario", 128);
+
+                commonUser = new User
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    FullName = "Usuário Comum",
+                    EmailConfirmed = true,
+                    IsActive = true,
+                    AvatarUrl = avatarUrl
+                };
+
+                var result = await userManager.CreateAsync(commonUser, "User@123");
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(commonUser, "User");
                 }
             }
         }

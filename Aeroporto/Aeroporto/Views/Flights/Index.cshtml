@@ -160,7 +160,7 @@
                                 <th>Chegada</th>
                                 <th>Aeronave</th>
                                 <th>Status</th>
-                                <th width="150">Ações</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -191,21 +191,21 @@
                                         }
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@flight.FlightId" class="btn btn-info btn-sm" title="Detalhes">
-                                                <i class="fas fa-eye"></i>
+                                        <div class="btn-group-action">
+                                            <a asp-action="Details" asp-route-id="@flight.FlightId" class="btn btn-view btn-sm-action" title="Detalhes">
+                                                <i class="fas fa-eye"></i> Detalhes
                                             </a>
-                                            <a asp-action="Edit" asp-route-id="@flight.FlightId" class="btn btn-primary btn-sm" title="Editar">
-                                                <i class="fas fa-edit"></i>
+                                            <a asp-action="Edit" asp-route-id="@flight.FlightId" class="btn btn-edit btn-sm-action" title="Editar">
+                                                <i class="fas fa-edit"></i> Editar
                                             </a>
-                                            <a asp-action="Seats" asp-route-id="@flight.FlightId" class="btn btn-secondary btn-sm" title="Poltronas">
-                                                <i class="fas fa-chair"></i>
+                                            <a asp-action="Seats" asp-route-id="@flight.FlightId" class="btn btn-seats btn-sm-action" title="Poltronas">
+                                                <i class="fas fa-chair"></i> Poltronas
                                             </a>
                                             @if (flight.DepartureTime > DateTime.Now)
                                             {
-                                                <a asp-action="Delete" asp-route-id="@flight.FlightId" class="btn btn-danger btn-sm"
+                                                <a asp-action="Delete" asp-route-id="@flight.FlightId" class="btn btn-delete btn-sm-action"
                                                    onclick="return confirm('Tem certeza que deseja excluir este voo?')" title="Excluir">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fas fa-trash"></i> Excluir
                                                 </a>
                                             }
                                         </div>
@@ -266,7 +266,7 @@
             {
                 <div class="text-center py-5">
                     <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
-                        <i class="fas fa-plane-slash fa-2x text-muted"></i>
+                        <i class="fas fa-plane fa-2x text-muted"></i>
                     </div>
                     <h5 class="text-muted">Nenhum voo encontrado</h5>
                     <p class="text-muted mb-4">Comece cadastrando o primeiro voo do sistema.</p>

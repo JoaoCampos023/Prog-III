@@ -129,6 +129,7 @@ namespace SistemaAereo.Controllers
                 {
                     _logger.LogInformation($"Usuário {user.Email} criado com sucesso.");
 
+                    // Adicionar role padrão "User" (acesso básico)
                     await _userManager.AddToRoleAsync(user, "User");
 
                     await _signInManager.SignInAsync(user, isPersistent: false);

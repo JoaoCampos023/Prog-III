@@ -1,0 +1,249 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<SistemaAereo.Models.Entities.User>
+
+@{
+    ViewData["Title"] = "Gerenciar Usuários";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>>;
+    var allRoles = ViewBag.AllRoles as List<IdentityRole>;
+    var currentFilter = ViewBag.CurrentFilter as string ?? "todos";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">Gerenciar Usuários</h1>
+            <p class="text-muted mb-0">Gerencie todos os usuários do sistema</p>
+        </div>
+    </div>
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Cards de Estatísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total de Usuários</h6>
+                            <h2 class="mb-0">@ViewBag.TotalUsers</h2>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Usuários Ativos</h6>
+                            <h2 class="mb-0">@ViewBag.ActiveUsers</h2>
+                        </div>
+                        <i class="fas fa-user-check fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Usuários Inativos</h6>
+                            <h2 class="mb-0">@ViewBag.InactiveUsers</h2>
+                        </div>
+                        <i class="fas fa-user-slash fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="statusFilter" onchange="filtrarPorStatus()">
+                        <option value="todos" selected="@(currentFilter == "todos")">Todos</option>
+                        <option value="ativos" selected="@(currentFilter == "ativos")">Ativos</option>
+                        <option value="inativos" selected="@(currentFilter == "inativos")">Inativos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Nome, email ou usuário..." />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="aplicarBusca()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-outline-secondary w-100" onclick="limparFiltros()">
+                        <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Usuários</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="usersTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Email</th>
+                            <th>Nome Completo</th>
+                            <th>Data Cadastro</th>
+                            <th>Roles</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        @foreach (var user in Model)
+                        {
+                            var roles = userRoles != null && userRoles.ContainsKey(user.Id) ? userRoles[user.Id] : new List<string>();
+                            <tr data-status="@(user.IsActive ? "ativo" : "inativo")"
+                                data-name="@(user.FullName?.ToLower() ?? "")"
+                                data-email="@(user.Email?.ToLower() ?? "")"
+                                data-username="@(user.UserName?.ToLower() ?? "")">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/api/avatar/user/@user.Id?size=32"
+                                             alt="Avatar"
+                                             class="rounded-circle me-2"
+                                             style="width: 32px; height: 32px; object-fit: cover;"
+                                             onerror="this.src='/api/avatar/placeholder?size=32'" />
+                                        <span>@user.UserName</span>
+                                    </div>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>@(string.IsNullOrEmpty(user.FullName) ? "—" : user.FullName)</td>
+                                <td>@user.RegistrationDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @foreach (var role in roles)
+                                    {
+                                        <span class="badge @(role == "Admin" ? "bg-danger" : role == "Funcionario" ? "bg-warning" : "bg-info") me-1">
+                                            @role
+                                        </span>
+                                    }
+                                    @if (!roles.Any())
+                                    {
+                                        <span class="badge bg-secondary">Sem role</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inativo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group-action">
+                                        <a asp-action="EditRoles" asp-route-id="@user.Id" class="btn btn-edit-roles btn-sm-action" title="Editar Roles">
+                                            <i class="fas fa-user-tag"></i> Roles
+                                        </a>
+                                        <form asp-action="ToggleActive" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja alterar o status deste usuário?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit" class="btn btn-toggle-active @(user.IsActive ? "deactivate" : "activate") btn-sm-action"
+                                                    title="@(user.IsActive ? "Desativar" : "Ativar")">
+                                                <i class="fas @(user.IsActive ? "fa-ban" : "fa-check")"></i>
+                                                @(user.IsActive ? "Desativar" : "Ativar")
+                                            </button>
+                                        </form>
+                                        <form asp-action="ResetPassword" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja resetar a senha deste usuário?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit" class="btn btn-reset-password btn-sm-action" title="Resetar Senha">
+                                                <i class="fas fa-key"></i> Resetar
+                                            </button>
+                                        </form>
+                                        @if (user.UserName != "admin@sistema.com")
+                                        {
+                                            <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?')">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@user.Id" />
+                                                <button type="submit" class="btn btn-delete btn-sm-action" title="Excluir">
+                                                    <i class="fas fa-trash"></i> Excluir
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarPorStatus() {
+            const status = document.getElementById('statusFilter').value;
+            window.location.href = `/UserManagement/Index?filter=${status}`;
+        }
+
+        function aplicarBusca() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name') || '';
+                const email = row.getAttribute('data-email') || '';
+                const username = row.getAttribute('data-username') || '';
+
+                if (name.includes(searchTerm) || email.includes(searchTerm) || username.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('searchInput').value = '';
+            aplicarBusca();
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                aplicarBusca();
+            }
+        });
+    </script>
+}

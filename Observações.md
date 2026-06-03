@@ -38,10 +38,10 @@ OBSERVAÇÕES:
 No pc:
 
 * no perfil a data ta sem formatação - ??
-* Ao digitar a senha ele pede 6 caracteres, mas ao tentar enviar ele pede que tenha pelo menos 1 digito e uma letra maiscula
-* a barra de pesquisa de pessoa não funciona
-* O botão de novo cliente é azul e o outros como aeronave e aeroportos são verdes
-* Os status nos voos estão com letras minúsculas
+* Ao digitar a senha ele pede 6 caracteres, mas ao tentar enviar ele pede que tenha pelo menos 1 digito e uma letra maiscula - ??
+* a barra de pesquisa de pessoa não funciona - ??
+* O botão de novo cliente é azul e o outros como aeronave e aeroportos são verdes - ??
+* Os status nos voos estão com letras minúsculas -??
 
 
 Observações - Kalil:
