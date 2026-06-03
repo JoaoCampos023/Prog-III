@@ -43,7 +43,7 @@ Observações - Kalil:
 
 Observações - João:
 
-
+* Fazer os referidos ajustes nas impressões dos bilhetes de passagens
 
 Ja ajustados:
 
