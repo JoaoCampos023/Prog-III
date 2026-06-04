@@ -1,6 +1,14 @@
 O QUE JA FOI USADO NO PROJETO:
 
+
+
+
+
 BACKEND
+
+
+
+
 Tecnologia		Versão	Descrição
 .NET			9.0	Framework principal
 ASP.NET Core MVC	9.0	Framework web
@@ -10,6 +18,7 @@ ASP.NET Core Identity	9.0	Autenticação e autorização
 
 FRONTEND
 Tecnologia		Descrição
+
 * Bootstrap 5		Framework CSS responsivo
 * jQuery			Manipulação do DOM
 * DataTables		Tabelas interativas com paginação
@@ -17,10 +26,22 @@ Tecnologia		Descrição
 * InputMask		Máscaras para campos de formulário
 * Google Fonts (Inter)	Fonte personalizada
 
+
+
+
+
 APIs Integradas
+
+
+
+
 API		Descrição				Endpoint
 ViaCEP		Busca de endereços por CEP		https://viacep.com.br/ws/{cep}/json/
 DiceBear	Geração de avatares personalizados	https://api.dicebear.com/9.x/{style}/svg
+
+
+
+
 
 DESIGN PATTERNS IMPLEMENTADOS
 
@@ -33,17 +54,34 @@ DESIGN PATTERNS IMPLEMENTADOS
 * Builder Pattern (parcial)
 
 
+
+
+
 OBSERVAÇÕES:
 
+
+
+
+
 Observações - Kalil:
+
+
+
+
 
 * Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
 * É interessante fazer um readme, nele dá para falar que tem que mudar a string de conexão, também é interessante falar o que precisa para o projeto rodar e a versão dos programas usados, como vc fez aqui em cima
 
+
+
+
+
 Observações - João:
 
-* Fazer os referidos ajustes nas impressões dos bilhetes de passagens
+
+
+
 
 Ja ajustados:
 
@@ -73,3 +111,5 @@ Ja ajustados:
 * Os status nos voos estão com letras minúsculas
 * O botão de novo cliente é azul e o outros como aeronave e aeroportos são verdes
 * Aba relatorios ainda nao esta 100% funcional, ainda em processo de ajuste - ja esta funcionando
+* Fazer os referidos ajustes nas impressões dos bilhetes de passagens - arrumado
+

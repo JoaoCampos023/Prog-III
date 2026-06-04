@@ -1,4 +1,6 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SistemaAereo.Data.Context;
@@ -7,31 +9,37 @@ using SistemaAereo.Facades.Interfaces;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Repositories;
 using SistemaAereo.Repositories.Interfaces;
-using SistemaAereo.Services;                  
-using SistemaAereo.Services.Interfaces;       
-using System.Globalization;
+using SistemaAereo.Services;
+using SistemaAereo.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Adicionar localização para mensagens em português
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// =============================================
+// CONFIGURAÇÃO DE LOCALIZAÇÃO (PORTUGUÊS)
+// =============================================
 
+// Configurar localização para português do Brasil
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[] { new CultureInfo("pt-BR") };
-    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("pt-BR");
+    options.DefaultRequestCulture = new RequestCulture("pt-BR");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 // Configuração do Entity Framework
 builder.Services.AddDbContext<AirportsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configuração do Identity com mensagens em português
+// =============================================
+// CONFIGURAÇÃO DO IDENTITY (MENSAGENS EM PORTUGUÊS)
+// =============================================
+
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -46,7 +54,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AirportsContext>()
 .AddDefaultTokenProviders()
-.AddErrorDescriber<PortugueseIdentityErrorDescriber>();
+.AddErrorDescriber<PortugueseIdentityErrorDescriber>(); // Descritor de erros em português
 
 // Configurar Cookie de Autenticação
 builder.Services.ConfigureApplicationCookie(options =>
@@ -100,9 +108,12 @@ builder.Services.AddScoped<IFlightFacade, FlightFacade>();
 
 var app = builder.Build();
 
-// Configurar localização
-var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
-app.UseRequestLocalization(locOptions.Value);
+// =============================================
+// USAR LOCALIZAÇÃO
+// =============================================
+
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 
 // Inicializar banco de dados e criar usuário admin
 using (var scope = app.Services.CreateScope())

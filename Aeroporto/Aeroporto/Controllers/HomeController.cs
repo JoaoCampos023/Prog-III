@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaAereo.Data.Context;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Models.Enums;
 using SistemaAereo.Models.ViewModels;
-using System.Diagnostics;
 
 namespace SistemaAereo.Controllers
 {
@@ -123,6 +123,8 @@ namespace SistemaAereo.Controllers
         {
             try
             {
+                _logger.LogInformation("=== INICIANDO CRIAÇÃO DE DADOS DE TESTE ===");
+
                 // Verificar se já existem dados
                 if (await _context.Flights.AnyAsync())
                 {
@@ -132,143 +134,187 @@ namespace SistemaAereo.Controllers
 
                 using var transaction = await _context.Database.BeginTransactionAsync();
 
-                // 1. Criar aeroportos
-                if (!await _context.Airports.AnyAsync())
+                try
                 {
+                    // 1. Criar aeroportos
+                    _logger.LogInformation("Criando aeroportos...");
                     var airports = new[]
                     {
-                        new Airport { Name = "Aeroporto Internacional de São Paulo/Guarulhos", IATACode = "GRU", City = "São Paulo", Country = "Brasil" },
-                        new Airport { Name = "Aeroporto Santos Dumont", IATACode = "SDU", City = "Rio de Janeiro", Country = "Brasil" },
-                        new Airport { Name = "Aeroporto Internacional de Brasília", IATACode = "BSB", City = "Brasília", Country = "Brasil" },
-                        new Airport { Name = "Aeroporto Internacional de Confins", IATACode = "CNF", City = "Belo Horizonte", Country = "Brasil" },
-                        new Airport { Name = "Aeroporto Internacional de Salvador", IATACode = "SSA", City = "Salvador", Country = "Brasil" }
-                    };
-                    _context.Airports.AddRange(airports);
+                new Airport { Name = "Aeroporto Internacional de São Paulo/Guarulhos", IATACode = "GRU", City = "São Paulo", Country = "Brasil" },
+                new Airport { Name = "Aeroporto Santos Dumont", IATACode = "SDU", City = "Rio de Janeiro", Country = "Brasil" },
+                new Airport { Name = "Aeroporto Internacional de Brasília", IATACode = "BSB", City = "Brasília", Country = "Brasil" },
+                new Airport { Name = "Aeroporto Internacional de Confins", IATACode = "CNF", City = "Belo Horizonte", Country = "Brasil" },
+                new Airport { Name = "Aeroporto Internacional de Salvador", IATACode = "SSA", City = "Salvador", Country = "Brasil" }
+            };
+                    await _context.Airports.AddRangeAsync(airports);
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("Aeroportos criados com sucesso");
-                }
 
-                // 2. Criar aeronaves
-                if (!await _context.Aircrafts.AnyAsync())
-                {
+                    // 2. Criar aeronaves
+                    _logger.LogInformation("Criando aeronaves...");
                     var aircrafts = new[]
                     {
-                        new Aircraft { AircraftType = "Boeing 737-800", NumberOfSeats = 180 },
-                        new Aircraft { AircraftType = "Airbus A320", NumberOfSeats = 150 },
-                        new Aircraft { AircraftType = "Embraer E195", NumberOfSeats = 120 }
-                    };
-                    _context.Aircrafts.AddRange(aircrafts);
+                new Aircraft { AircraftType = "Boeing 737-800", NumberOfSeats = 180 },
+                new Aircraft { AircraftType = "Airbus A320", NumberOfSeats = 150 },
+                new Aircraft { AircraftType = "Embraer E195", NumberOfSeats = 120 }
+            };
+                    await _context.Aircrafts.AddRangeAsync(aircrafts);
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("Aeronaves criadas com sucesso");
-                }
 
-                // 3. Criar clientes
-                if (!await _context.Customers.AnyAsync())
-                {
+                    // 3. Criar clientes (com campos obrigatórios preenchidos)
+                    _logger.LogInformation("Criando clientes...");
                     var customers = new[]
                     {
-                        new Customer { Name = "João Silva", Email = "joao.silva@email.com", Phone = "(11) 99999-9999", CPF = "123.456.789-00", City = "São Paulo", State = "SP", IsActive = true, RegistrationDate = DateTime.Now },
-                        new Customer { Name = "Maria Santos", Email = "maria.santos@email.com", Phone = "(21) 98888-8888", CPF = "987.654.321-00", City = "Rio de Janeiro", State = "RJ", IsActive = true, RegistrationDate = DateTime.Now },
-                        new Customer { Name = "Pedro Oliveira", Email = "pedro.oliveira@email.com", Phone = "(31) 97777-7777", CPF = "456.789.123-00", City = "Belo Horizonte", State = "MG", IsActive = true, RegistrationDate = DateTime.Now },
-                        new Customer { Name = "Ana Costa", Email = "ana.costa@email.com", Phone = "(61) 96666-6666", CPF = "789.123.456-00", City = "Brasília", State = "DF", IsActive = true, RegistrationDate = DateTime.Now },
-                        new Customer { Name = "Carlos Pereira", Email = "carlos.pereira@email.com", Phone = "(85) 95555-5555", CPF = "321.654.987-00", City = "Fortaleza", State = "CE", IsActive = true, RegistrationDate = DateTime.Now }
-                    };
-                    _context.Customers.AddRange(customers);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("Clientes criados com sucesso");
-                }
-
-                // 4. Criar voos
-                if (!await _context.Flights.AnyAsync())
+                new Customer
                 {
+                    Name = "João Silva",
+                    Email = "joao.silva@email.com",
+                    Phone = "(11) 99999-9999",
+                    CPF = "12345678900",
+                    City = "São Paulo",
+                    State = "SP",
+                    ZipCode = "01001-000",
+                    Address = "Rua Exemplo, 123",
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now,
+                    Gender = "M"
+                },
+                new Customer
+                {
+                    Name = "Maria Santos",
+                    Email = "maria.santos@email.com",
+                    Phone = "(21) 98888-8888",
+                    CPF = "98765432100",
+                    City = "Rio de Janeiro",
+                    State = "RJ",
+                    ZipCode = "20000-000",
+                    Address = "Avenida Exemplo, 456",
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now,
+                    Gender = "F"
+                },
+                new Customer
+                {
+                    Name = "Pedro Oliveira",
+                    Email = "pedro.oliveira@email.com",
+                    Phone = "(31) 97777-7777",
+                    CPF = "45678912300",
+                    City = "Belo Horizonte",
+                    State = "MG",
+                    ZipCode = "30000-000",
+                    Address = "Praça Exemplo, 789",
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now,
+                    Gender = "M"
+                },
+                new Customer
+                {
+                    Name = "Ana Costa",
+                    Email = "ana.costa@email.com",
+                    Phone = "(61) 96666-6666",
+                    CPF = "78912345600",
+                    City = "Brasília",
+                    State = "DF",
+                    ZipCode = "70000-000",
+                    Address = "Quadra Exemplo, 10",
+                    IsActive = true,
+                    RegistrationDate = DateTime.Now,
+                    Gender = "F"
+                }
+            };
+                    await _context.Customers.AddRangeAsync(customers);
+                    await _context.SaveChangesAsync();
+
+                    // 4. Obter referências para os voos
                     var gru = await _context.Airports.FirstAsync(a => a.IATACode == "GRU");
                     var sdu = await _context.Airports.FirstAsync(a => a.IATACode == "SDU");
                     var bsb = await _context.Airports.FirstAsync(a => a.IATACode == "BSB");
                     var cnf = await _context.Airports.FirstAsync(a => a.IATACode == "CNF");
                     var ssa = await _context.Airports.FirstAsync(a => a.IATACode == "SSA");
-                    var aircraft737 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("737"));
-                    var aircraft320 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("320"));
-                    var aircraft195 = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("195"));
 
+                    var boeing = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("737"));
+                    var airbus = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("320"));
+                    var embraer = await _context.Aircrafts.FirstAsync(a => a.AircraftType.Contains("195"));
+
+                    // 5. Criar voos
+                    _logger.LogInformation("Criando voos...");
                     var flights = new[]
                     {
-                        new Flight
-                        {
-                            FlightNumber = "LA1234",
-                            DepartureAirportId = gru.AirportId,
-                            ArrivalAirportId = sdu.AirportId,
-                            AircraftId = aircraft737.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(1).AddHours(8),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(10)
-                        },
-                        new Flight
-                        {
-                            FlightNumber = "LA5678",
-                            DepartureAirportId = gru.AirportId,
-                            ArrivalAirportId = bsb.AirportId,
-                            AircraftId = aircraft320.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(2).AddHours(14),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(17)
-                        },
-                        new Flight
-                        {
-                            FlightNumber = "LA9012",
-                            DepartureAirportId = sdu.AirportId,
-                            ArrivalAirportId = cnf.AirportId,
-                            AircraftId = aircraft195.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(3).AddHours(10),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(3).AddHours(13)
-                        },
-                        new Flight
-                        {
-                            FlightNumber = "LA3456",
-                            DepartureAirportId = bsb.AirportId,
-                            ArrivalAirportId = ssa.AirportId,
-                            AircraftId = aircraft737.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(4).AddHours(6),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(4).AddHours(9)
-                        },
-                        new Flight
-                        {
-                            FlightNumber = "LA7890",
-                            DepartureAirportId = ssa.AirportId,
-                            ArrivalAirportId = gru.AirportId,
-                            AircraftId = aircraft320.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(5).AddHours(20),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(6).AddHours(1)
-                        }
-                    };
-                    _context.Flights.AddRange(flights);
+                new Flight
+                {
+                    FlightNumber = "LA1234",
+                    DepartureAirportId = gru.AirportId,
+                    ArrivalAirportId = sdu.AirportId,
+                    AircraftId = boeing.AircraftId,
+                    DepartureTime = DateTime.Now.AddDays(1).AddHours(8),
+                    EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(10)
+                },
+                new Flight
+                {
+                    FlightNumber = "LA5678",
+                    DepartureAirportId = gru.AirportId,
+                    ArrivalAirportId = bsb.AirportId,
+                    AircraftId = airbus.AircraftId,
+                    DepartureTime = DateTime.Now.AddDays(2).AddHours(14),
+                    EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(17)
+                },
+                new Flight
+                {
+                    FlightNumber = "LA9012",
+                    DepartureAirportId = sdu.AirportId,
+                    ArrivalAirportId = cnf.AirportId,
+                    AircraftId = embraer.AircraftId,
+                    DepartureTime = DateTime.Now.AddDays(3).AddHours(10),
+                    EstimatedArrivalTime = DateTime.Now.AddDays(3).AddHours(13)
+                },
+                new Flight
+                {
+                    FlightNumber = "LA3456",
+                    DepartureAirportId = bsb.AirportId,
+                    ArrivalAirportId = ssa.AirportId,
+                    AircraftId = boeing.AircraftId,
+                    DepartureTime = DateTime.Now.AddDays(4).AddHours(6),
+                    EstimatedArrivalTime = DateTime.Now.AddDays(4).AddHours(9)
+                },
+                new Flight
+                {
+                    FlightNumber = "LA7890",
+                    DepartureAirportId = ssa.AirportId,
+                    ArrivalAirportId = gru.AirportId,
+                    AircraftId = airbus.AircraftId,
+                    DepartureTime = DateTime.Now.AddDays(5).AddHours(20),
+                    EstimatedArrivalTime = DateTime.Now.AddDays(6).AddHours(1)
+                }
+            };
+                    await _context.Flights.AddRangeAsync(flights);
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("Voos criados com sucesso");
 
-                    // 5. Criar poltronas para cada voo
+                    // 6. Criar poltronas para cada voo
+                    _logger.LogInformation("Criando poltronas para os voos...");
                     foreach (var flight in flights)
                     {
                         var aircraft = await _context.Aircrafts.FindAsync(flight.AircraftId);
-                        await CreateSeatsForFlight(flight.FlightId, aircraft.NumberOfSeats);
+                        int numberOfSeats = aircraft?.NumberOfSeats ?? 120;
+                        await CreateSeatsForFlight(flight.FlightId, numberOfSeats);
+                        _logger.LogInformation($"Poltronas criadas para o voo {flight.FlightNumber}");
                     }
-                    _logger.LogInformation("Poltronas criadas com sucesso");
-                }
 
-                // 6. Criar algumas passagens de exemplo
-                if (!await _context.Tickets.AnyAsync())
-                {
-                    var customers = await _context.Customers.Take(3).ToListAsync();
-                    var flights = await _context.Flights.Take(3).ToListAsync();
+                    // 7. Criar algumas passagens de exemplo
+                    _logger.LogInformation("Criando passagens de exemplo...");
+                    var allCustomers = await _context.Customers.Take(3).ToListAsync();
+                    var allFlights = await _context.Flights.Take(3).ToListAsync();
                     var random = new Random();
 
-                    foreach (var flight in flights)
+                    foreach (var flight in allFlights)
                     {
                         var availableSeats = await _context.Seats
                             .Where(s => s.FlightId == flight.FlightId && s.IsAvailable)
                             .Take(2)
                             .ToListAsync();
 
-                        for (int i = 0; i < availableSeats.Count && i < customers.Count; i++)
+                        for (int i = 0; i < availableSeats.Count && i < allCustomers.Count; i++)
                         {
                             var seat = availableSeats[i];
-                            var customer = customers[i];
+                            var customer = allCustomers[i];
 
                             var ticket = new Ticket
                             {
@@ -287,18 +333,26 @@ namespace SistemaAereo.Controllers
                         }
                     }
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("Passagens criadas com sucesso");
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation("=== DADOS DE TESTE CRIADOS COM SUCESSO! ===");
+                    TempData["Sucesso"] = "Dados de teste criados com sucesso! Voos, aeronaves, aeroportos, clientes e passagens foram adicionados ao sistema.";
+
+                    return RedirectToAction(nameof(Index));
                 }
-
-                await transaction.CommitAsync();
-
-                TempData["Sucesso"] = "Dados de teste criados com sucesso! Voos, aeronaves, aeroportos, clientes e passagens foram adicionados ao sistema.";
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Erro durante a criação dos dados");
+                    TempData["Erro"] = $"Erro ao criar dados: {ex.InnerException?.Message ?? ex.Message}";
+                    return RedirectToAction(nameof(Index));
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar dados de teste");
-                TempData["Erro"] = $"Erro ao criar dados: {ex.Message}";
+                TempData["Erro"] = $"Erro ao criar dados: {ex.InnerException?.Message ?? ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
         }

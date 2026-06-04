@@ -173,7 +173,7 @@
         </div>
     </div>
 
-    <!-- Gráficos do Dashboard (acima das ações rápidas) -->
+    <!-- Gráficos do Dashboard -->
     <div class="row g-4 mb-5">
         <div class="col-lg-6">
             <div class="card-modern h-100">
@@ -232,7 +232,7 @@
         </div>
     </div>
 
-    <!-- Dados de Teste (apenas para Admin - no final) -->
+    <!-- Dados de Teste (apenas para Admin) -->
     @if (User.IsInRole("Admin"))
     {
         <div class="row">
@@ -290,22 +290,22 @@
         // Gráfico de distribuição de passagens por status
         const ctxStatus = document.getElementById('dashboardStatusChart').getContext('2d');
         new Chart(ctxStatus, {
-        type: 'doughnut',
-        data: {
-        labels: ['Confirmadas', 'Check-in', 'Embarcadas', 'Canceladas'],
-        datasets: [{
-        data: [@Model.ConfirmedTickets, @Model.CheckInTickets, @Model.BoardedTickets, @Model.CancelledTickets],
-        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
-        borderWidth: 0
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-        legend: { position: 'bottom' }
-        }
-        }
+            type: 'doughnut',
+            data: {
+                labels: ['Confirmadas', 'Check-in', 'Embarcadas', 'Canceladas'],
+                datasets: [{
+                    data: [@Model.ConfirmedTickets, @Model.CheckInTickets, @Model.BoardedTickets, @Model.CancelledTickets],
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
         });
 
         // Gráfico de faturamento mensal (últimos 6 meses)
@@ -314,53 +314,53 @@
 
         // Obter os últimos 6 meses
         for (let i = 5; i >= 0; i--) {
-        const data = new Date();
-        data.setMonth(data.getMonth() - i);
-        const nomeMes = data.toLocaleString('pt-BR', { month: 'short' });
-        meses.push(nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1));
+            const data = new Date();
+            data.setMonth(data.getMonth() - i);
+            const nomeMes = data.toLocaleString('pt-BR', { month: 'short' });
+            meses.push(nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1));
 
-        // Valor aleatório para exemplo (substituir por dados reais do banco)
-        valores.push(Math.floor(Math.random() * 20000) + 10000);
+            // Valor aleatório para exemplo (substituir por dados reais do banco)
+            valores.push(Math.floor(Math.random() * 20000) + 10000);
         }
 
         const ctxFaturamento = document.getElementById('dashboardFaturamentoChart').getContext('2d');
         new Chart(ctxFaturamento, {
-        type: 'line',
-        data: {
-        labels: meses,
-        datasets: [{
-        label: 'Faturamento (R$)',
-        data: valores,
-        borderColor: '#667eea',
-        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-        tension: 0.3,
-        fill: true,
-        pointBackgroundColor: '#667eea',
-        pointBorderColor: '#fff',
-        pointRadius: 5,
-        pointHoverRadius: 7
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-        legend: { position: 'top' },
-        tooltip: {
-        callbacks: {
-        label: (ctx) => `R$ ${ctx.raw.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-        }
-        }
-        },
-        scales: {
-        y: {
-        beginAtZero: true,
-        ticks: {
-        callback: (value) => `R$ ${value.toLocaleString('pt-BR')}`
-        }
-        }
-        }
-        }
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Faturamento (R$)',
+                    data: valores,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `R$ ${ctx.raw.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value) => `R$ ${value.toLocaleString('pt-BR')}`
+                        }
+                    }
+                }
+            }
         });
     </script>
 }

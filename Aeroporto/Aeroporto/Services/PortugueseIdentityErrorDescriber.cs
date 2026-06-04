@@ -4,12 +4,39 @@ namespace SistemaAereo.Services
 {
     public class PortugueseIdentityErrorDescriber : IdentityErrorDescriber
     {
+        public override IdentityError ConcurrencyFailure()
+        {
+            return new IdentityError
+            {
+                Code = nameof(ConcurrencyFailure),
+                Description = "Falha de concorrência. Os dados foram modificados por outro usuário."
+            };
+        }
+
+        public override IdentityError DefaultError()
+        {
+            return new IdentityError
+            {
+                Code = nameof(DefaultError),
+                Description = "Ocorreu um erro inesperado. Tente novamente."
+            };
+        }
+
         public override IdentityError DuplicateEmail(string email)
         {
             return new IdentityError
             {
                 Code = nameof(DuplicateEmail),
                 Description = $"O email '{email}' já está sendo utilizado."
+            };
+        }
+
+        public override IdentityError DuplicateRoleName(string role)
+        {
+            return new IdentityError
+            {
+                Code = nameof(DuplicateRoleName),
+                Description = $"A função '{role}' já existe."
             };
         }
 
@@ -31,12 +58,39 @@ namespace SistemaAereo.Services
             };
         }
 
+        public override IdentityError InvalidRoleName(string role)
+        {
+            return new IdentityError
+            {
+                Code = nameof(InvalidRoleName),
+                Description = $"O nome da função '{role}' é inválido."
+            };
+        }
+
+        public override IdentityError InvalidToken()
+        {
+            return new IdentityError
+            {
+                Code = nameof(InvalidToken),
+                Description = "Token inválido."
+            };
+        }
+
         public override IdentityError InvalidUserName(string userName)
         {
             return new IdentityError
             {
                 Code = nameof(InvalidUserName),
-                Description = $"O nome de usuário '{userName}' é inválido."
+                Description = $"O nome de usuário '{userName}' é inválido. Use apenas letras e números."
+            };
+        }
+
+        public override IdentityError LoginAlreadyAssociated()
+        {
+            return new IdentityError
+            {
+                Code = nameof(LoginAlreadyAssociated),
+                Description = "Este login já está associado a uma conta."
             };
         }
 
@@ -72,7 +126,7 @@ namespace SistemaAereo.Services
             return new IdentityError
             {
                 Code = nameof(PasswordRequiresNonAlphanumeric),
-                Description = "A senha deve conter pelo menos um caractere especial."
+                Description = "A senha deve conter pelo menos um caractere especial ('@', '#', '$', etc.)."
             };
         }
 
@@ -94,6 +148,24 @@ namespace SistemaAereo.Services
             };
         }
 
+        public override IdentityError RecoveryCodeRedemptionFailed()
+        {
+            return new IdentityError
+            {
+                Code = nameof(RecoveryCodeRedemptionFailed),
+                Description = "Falha na recuperação do código."
+            };
+        }
+
+        public override IdentityError UserAlreadyHasPassword()
+        {
+            return new IdentityError
+            {
+                Code = nameof(UserAlreadyHasPassword),
+                Description = "O usuário já possui uma senha definida."
+            };
+        }
+
         public override IdentityError UserAlreadyInRole(string role)
         {
             return new IdentityError
@@ -103,57 +175,21 @@ namespace SistemaAereo.Services
             };
         }
 
+        public override IdentityError UserLockoutNotEnabled()
+        {
+            return new IdentityError
+            {
+                Code = nameof(UserLockoutNotEnabled),
+                Description = "O bloqueio não está habilitado para este usuário."
+            };
+        }
+
         public override IdentityError UserNotInRole(string role)
         {
             return new IdentityError
             {
                 Code = nameof(UserNotInRole),
                 Description = $"O usuário não pertence à função '{role}'."
-            };
-        }
-
-        public override IdentityError DefaultError()
-        {
-            return new IdentityError
-            {
-                Code = nameof(DefaultError),
-                Description = "Ocorreu um erro inesperado. Tente novamente."
-            };
-        }
-
-        public override IdentityError ConcurrencyFailure()
-        {
-            return new IdentityError
-            {
-                Code = nameof(ConcurrencyFailure),
-                Description = "Falha de concorrência. Os dados foram modificados por outro usuário."
-            };
-        }
-
-        public override IdentityError LoginAlreadyAssociated()
-        {
-            return new IdentityError
-            {
-                Code = nameof(LoginAlreadyAssociated),
-                Description = "Este login já está associado a uma conta."
-            };
-        }
-
-        public override IdentityError InvalidToken()
-        {
-            return new IdentityError
-            {
-                Code = nameof(InvalidToken),
-                Description = "Token inválido."
-            };
-        }
-
-        public override IdentityError RecoveryCodeRedemptionFailed()
-        {
-            return new IdentityError
-            {
-                Code = nameof(RecoveryCodeRedemptionFailed),
-                Description = "Falha na recuperação do código."
             };
         }
     }

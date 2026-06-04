@@ -1,0 +1,440 @@
+﻿@using SistemaAereo.Models.Entities
+@using SistemaAereo.Models.Enums
+@model Ticket
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Imprimir Passagem";
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Passagem Aérea - @Model.TicketNumber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Ticket Container */
+        .ticket-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Estilos do Ticket */
+        .ticket {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .ticket-header-left h1 {
+            font-size: 28px;
+            margin: 5px 0 0;
+        }
+
+        .ticket-header-left p {
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        .ticket-header-left i {
+            font-size: 32px;
+        }
+
+        .ticket-number {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: right;
+        }
+
+        .ticket-status span {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-confirmed {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-checkin {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .status-boarded {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .status-cancelled {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Linha de voo */
+        .flight-route {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 35px 30px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .flight-origin, .flight-destination {
+            text-align: center;
+            flex: 1;
+        }
+
+        .airport-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .airport-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        .airport-full {
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        .flight-time {
+            font-size: 13px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .flight-line {
+            text-align: center;
+            flex: 0.5;
+        }
+
+        .flight-icon i {
+            font-size: 28px;
+            color: #1e3c72;
+        }
+
+        .flight-duration {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Detalhes */
+        .ticket-details {
+            display: flex;
+            padding: 25px 30px;
+            gap: 30px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-section {
+            flex: 1;
+            min-width: 180px;
+        }
+
+            .detail-section h3 {
+                margin: 0 0 15px;
+                font-size: 14px;
+                color: #1e3c72;
+                border-bottom: 2px solid #1e3c72;
+                display: inline-block;
+                padding-bottom: 3px;
+            }
+
+        .detail-row {
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+            display: inline-block;
+            width: 80px;
+        }
+
+        .detail-value {
+            color: #212529;
+        }
+
+        .seat-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        /* Código de barras */
+        .ticket-barcode {
+            padding: 20px 30px;
+            background: white;
+            text-align: center;
+        }
+
+        .barcode-lines {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 10px;
+        }
+
+        .barcode-line {
+            width: 2px;
+            background: #212529;
+        }
+
+        .barcode-number {
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .ticket-footer {
+            background: #f8f9fc;
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+            .ticket-footer p {
+                margin: 3px 0;
+            }
+
+        .issue-date {
+            margin-top: 8px;
+            font-size: 10px;
+        }
+
+        /* Botão de impressão */
+        .print-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-print {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .btn-print:hover {
+                background: #2a5298;
+                transform: translateY(-2px);
+            }
+
+        /* Estilos para impressão */
+        @@media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .print-btn-container {
+                display: none;
+            }
+
+            .ticket {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                border-radius: 0;
+            }
+
+            .ticket-header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .status-confirmed, .status-checkin, .status-boarded, .status-cancelled {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-container">
+        <div class="ticket">
+            <!-- Cabeçalho do Ticket -->
+            <div class="ticket-header">
+                <div class="ticket-header-left">
+                    <i class="fas fa-plane"></i>
+                    <h1>SkyLine Aviation</h1>
+                    <p>Passagem Aérea Eletrônica</p>
+                </div>
+                <div class="ticket-header-right">
+                    <div class="ticket-number">Bilhete: @Model.TicketNumber</div>
+                    <div class="ticket-status">
+                        @if (Model.Status == TicketStatus.Confirmed)
+                        {
+                            <span class="status-confirmed">CONFIRMADA</span>
+                        }
+                        else if (Model.Status == TicketStatus.CheckIn)
+                        {
+                            <span class="status-checkin">CHECK-IN REALIZADO</span>
+                        }
+                        else if (Model.Status == TicketStatus.Boarded)
+                        {
+                            <span class="status-boarded">EMBARCADA</span>
+                        }
+                        else
+                        {
+                            <span class="status-cancelled">CANCELADA</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linha de voo principal -->
+            <div class="flight-route">
+                <div class="flight-origin">
+                    <div class="airport-code">@Model.Flight?.DepartureAirport?.IATACode</div>
+                    <div class="airport-name">@Model.Flight?.DepartureAirport?.City</div>
+                    <div class="airport-full">@Model.Flight?.DepartureAirport?.Name</div>
+                    <div class="flight-time">@Model.Flight?.DepartureTime.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="flight-line">
+                    <div class="flight-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="flight-duration">
+                        @{
+                            var duration = Model.Flight?.EstimatedArrivalTime - Model.Flight?.DepartureTime;
+                        }
+                        @duration?.Hours h @duration?.Minutes min
+                    </div>
+                </div>
+                <div class="flight-destination">
+                    <div class="airport-code">@Model.Flight?.ArrivalAirport?.IATACode</div>
+                    <div class="airport-name">@Model.Flight?.ArrivalAirport?.City</div>
+                    <div class="airport-full">@Model.Flight?.ArrivalAirport?.Name</div>
+                    <div class="flight-time">@Model.Flight?.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            </div>
+
+            <!-- Informações do Passageiro e Voo -->
+            <div class="ticket-details">
+                <div class="detail-section">
+                    <h3>Dados do Passageiro</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Nome:</span>
+                        <span class="detail-value">@Model.Customer?.Name</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Documento:</span>
+                        <span class="detail-value">@(string.IsNullOrEmpty(Model.Customer?.CPF) ? "N/A" : Model.Customer.CPF)</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>Dados do Voo</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Voo:</span>
+                        <span class="detail-value">@Model.Flight?.FlightNumber</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Aeronave:</span>
+                        <span class="detail-value">@Model.Flight?.Aircraft?.AircraftType</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>Assento</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Poltrona:</span>
+                        <span class="detail-value seat-number">@Model.Seat?.SeatNumber</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Classe:</span>
+                        <span class="detail-value">@Model.Class</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Código de Barras Simulado -->
+            <div class="ticket-barcode">
+                <div class="barcode">
+                    <div class="barcode-lines">
+                        @{
+                            var random = new Random(Model.TicketNumber.GetHashCode());
+                        }
+                        @for (int i = 0; i < 50; i++)
+                        {
+                            <div class="barcode-line" style="height: @(random.Next(20, 45))px;"></div>
+                        }
+                    </div>
+                    <div class="barcode-number">@Model.TicketNumber</div>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="ticket-footer">
+                <p>Esta passagem é válida apenas para o voo e data especificados.</p>
+                <p>Apresente este documento no momento do embarque.</p>
+                <p class="issue-date">Emitido em: @Model.IssueDate.ToString("dd/MM/yyyy HH:mm:ss")</p>
+            </div>
+        </div>
+
+        <div class="print-btn-container">
+            <button class="btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir / Salvar como PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Impressão automática (opcional - descomente se quiser)
+        // window.onload = function() {
+        //     window.print();
+        // }
+    </script>
+</body>
+</html>

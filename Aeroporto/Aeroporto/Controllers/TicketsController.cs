@@ -122,6 +122,43 @@ namespace SistemaAereo.Controllers
         }
 
         /// <summary>
+        /// Gera uma versão isolada do ticket para impressão
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> PrintTicket(int id)
+        {
+            try
+            {
+                var ticket = await _ticketFacade.GetTicketCompleteAsync(id);
+                if (ticket == null)
+                {
+                    TempData["Erro"] = "Passagem não encontrada";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Verificar permissão para usuário comum
+                if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
+                {
+                    var userEmail = User.Identity.Name;
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+                    if (customer == null || ticket.CustomerId != customer.CustomerId)
+                    {
+                        TempData["Erro"] = "Você não tem permissão para imprimir esta passagem.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                return View(ticket);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar ticket para impressão");
+                TempData["Erro"] = "Erro ao carregar passagem para impressão";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        /// <summary>
         /// Formulário de emissão de passagem - apenas Admin e Funcionario
         /// </summary>
         [Authorize(Roles = "Admin,Funcionario")]

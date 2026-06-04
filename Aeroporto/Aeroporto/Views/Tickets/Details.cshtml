@@ -7,8 +7,9 @@
 }
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2"><i class="fas fa-ticket-alt"></i> @ViewData["Title"]</h1>
+    <!-- Botões de ação (não aparecem na impressão) -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom no-print">
+        <h1 class="h2"><i class="fas fa-ticket-alt"></i> Detalhes da Passagem</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <a asp-action="Index" class="btn btn-secondary me-2">
                 <i class="fas fa-arrow-left"></i> Voltar
@@ -25,209 +26,406 @@
                     <i class="fas fa-plane"></i> Embarque
                 </a>
             }
-            @if (Model.Status != TicketStatus.Cancelled)
+            @if (Model.Status != TicketStatus.Cancelled && Model.Status != TicketStatus.Boarded)
             {
-                <a asp-action="Cancel" asp-route-id="@Model.TicketId" class="btn btn-danger"
+                <a asp-action="Cancel" asp-route-id="@Model.TicketId" class="btn btn-danger me-2"
                    onclick="return confirm('Tem certeza que deseja cancelar esta passagem?')">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             }
+            <a asp-action="PrintTicket" asp-route-id="@Model.TicketId" class="btn btn-primary" target="_blank">
+                <i class="fas fa-print"></i> Imprimir
+            </a>
         </div>
     </div>
 
     @if (TempData["Sucesso"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show no-print" role="alert">
             <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-user"></i> Dados do Passageiro</h6>
+    <!-- Ticket de Passagem - Layout unificado -->
+    <div class="ticket-container">
+        <div class="ticket">
+            <!-- Cabeçalho do Ticket -->
+            <div class="ticket-header">
+                <div class="ticket-header-left">
+                    <i class="fas fa-plane ticket-icon"></i>
+                    <h2>SkyLine Aviation</h2>
+                    <p>Passagem Aérea Eletrônica</p>
                 </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th width="40%">Nome:</th>
-                            <td>@Model.Customer?.Name</td>
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td>@Model.Customer?.Email</td>
-                        </tr>
-                        <tr>
-                            <th>Telefone:</th>
-                            <td>@(string.IsNullOrEmpty(Model.Customer?.Phone) ? "N/A" : Model.Customer.Phone)</td>
-                        </tr>
-                        <tr>
-                            <th>CPF:</th>
-                            <td>@(string.IsNullOrEmpty(Model.Customer?.CPF) ? "N/A" : Model.Customer.CPF)</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-plane"></i> Dados do Voo</h6>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th width="40%">Número do Voo:</th>
-                            <td>@Model.Flight?.FlightNumber</td>
-                        </tr>
-                        <tr>
-                            <th>Origem:</th>
-                            <td>@Model.Flight?.DepartureAirport?.Name</td>
-                        </tr>
-                        <tr>
-                            <th>Destino:</th>
-                            <td>@Model.Flight?.ArrivalAirport?.Name</td>
-                        </tr>
-                        <tr>
-                            <th>Saída:</th>
-                            <td>@Model.Flight?.DepartureTime.ToString("dd/MM/yyyy HH:mm")</td>
-                        </tr>
-                        <tr>
-                            <th>Chegada:</th>
-                            <td>@Model.Flight?.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</td>
-                        </tr>
-                        <tr>
-                            <th>Aeronave:</th>
-                            <td>@Model.Flight?.Aircraft?.AircraftType</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chair"></i> Dados da Poltrona</h6>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th width="40%">Número:</th>
-                            <td><strong class="h5">@Model.Seat?.SeatNumber</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Classe:</th>
-                            <td>
-                                @if (Model.Class == SeatClass.FirstClass)
-                                {
-                                    <span class="badge bg-warning">Primeira</span>
-                                }
-                                else if (Model.Class == SeatClass.Executive)
-                                {
-                                    <span class="badge bg-info">Executiva</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Econômica</span>
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Localização:</th>
-                            <td>@Model.Seat?.Location</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-receipt"></i> Dados da Passagem</h6>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th width="40%">Número do Bilhete:</th>
-                            <td><strong class="h5">@Model.TicketNumber</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Data de Emissão:</th>
-                            <td>@Model.IssueDate.ToString("dd/MM/yyyy HH:mm")</td>
-                        </tr>
-                        <tr>
-                            <th>Preço:</th>
-                            <td><strong class="h5 text-success">@Model.Price.ToString("C")</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Status:</th>
-                            <td>
-                                @if (Model.Status == TicketStatus.Confirmed)
-                                {
-                                    <span class="badge bg-primary">Confirmada</span>
-                                }
-                                else if (Model.Status == TicketStatus.CheckIn)
-                                {
-                                    <span class="badge bg-warning">Check-in</span>
-                                }
-                                else if (Model.Status == TicketStatus.Boarded)
-                                {
-                                    <span class="badge bg-success">Embarcada</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Cancelada</span>
-                                }
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-qrcode"></i> Código da Passagem</h6>
-                </div>
-                <div class="card-body text-center">
-                    <div class="border p-4 d-inline-block bg-light">
-                        <h4>@Model.TicketNumber</h4>
-                        <small class="text-muted">Número do Bilhete</small>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-outline-primary" onclick="window.print()">
-                            <i class="fas fa-print"></i> Imprimir Passagem
-                        </button>
+                <div class="ticket-header-right">
+                    <div class="ticket-number">Bilhete: @Model.TicketNumber</div>
+                    <div class="ticket-status">
+                        @if (Model.Status == TicketStatus.Confirmed)
+                        {
+                            <span class="status-confirmed">CONFIRMADA</span>
+                        }
+                        else if (Model.Status == TicketStatus.CheckIn)
+                        {
+                            <span class="status-checkin">CHECK-IN REALIZADO</span>
+                        }
+                        else if (Model.Status == TicketStatus.Boarded)
+                        {
+                            <span class="status-boarded">EMBARCADA</span>
+                        }
+                        else
+                        {
+                            <span class="status-cancelled">CANCELADA</span>
+                        }
                     </div>
                 </div>
+            </div>
+
+            <!-- Linha de voo principal -->
+            <div class="flight-route">
+                <div class="flight-origin">
+                    <div class="airport-code">@Model.Flight?.DepartureAirport?.IATACode</div>
+                    <div class="airport-name">@Model.Flight?.DepartureAirport?.City</div>
+                    <div class="airport-full">@Model.Flight?.DepartureAirport?.Name</div>
+                    <div class="flight-time">@Model.Flight?.DepartureTime.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="flight-line">
+                    <div class="flight-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="flight-duration">
+                        @{
+                            var duration = Model.Flight?.EstimatedArrivalTime - Model.Flight?.DepartureTime;
+                        }
+                        @duration?.Hours h @duration?.Minutes min
+                    </div>
+                </div>
+                <div class="flight-destination">
+                    <div class="airport-code">@Model.Flight?.ArrivalAirport?.IATACode</div>
+                    <div class="airport-name">@Model.Flight?.ArrivalAirport?.City</div>
+                    <div class="airport-full">@Model.Flight?.ArrivalAirport?.Name</div>
+                    <div class="flight-time">@Model.Flight?.EstimatedArrivalTime.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            </div>
+
+            <!-- Informações do Passageiro e Voo -->
+            <div class="ticket-details">
+                <div class="detail-section">
+                    <h4>Dados do Passageiro</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Nome:</span>
+                        <span class="detail-value">@Model.Customer?.Name</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Documento:</span>
+                        <span class="detail-value">@(string.IsNullOrEmpty(Model.Customer?.CPF) ? "N/A" : Model.Customer.CPF)</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>Dados do Voo</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Voo:</span>
+                        <span class="detail-value">@Model.Flight?.FlightNumber</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Aeronave:</span>
+                        <span class="detail-value">@Model.Flight?.Aircraft?.AircraftType</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>Assento</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Poltrona:</span>
+                        <span class="detail-value seat-number">@Model.Seat?.SeatNumber</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Classe:</span>
+                        <span class="detail-value">@Model.Class</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Código de Barras Simulado -->
+            <div class="ticket-barcode">
+                <div class="barcode">
+                    <div class="barcode-lines">
+                        @{
+                            var random = new Random(Model.TicketNumber.GetHashCode());
+                        }
+                        @for (int i = 0; i < 50; i++)
+                        {
+                            <div class="barcode-line" style="height: @(random.Next(20, 45))px;"></div>
+                        }
+                    </div>
+                    <div class="barcode-number">@Model.TicketNumber</div>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="ticket-footer">
+                <p>Esta passagem é válida apenas para o voo e data especificados.</p>
+                <p>Apresente este documento no momento do embarque.</p>
+                <p class="issue-date">Emitido em: @Model.IssueDate.ToString("dd/MM/yyyy HH:mm:ss")</p>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+    /* Estilos para o ticket */
+    .ticket-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .ticket {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+    }
+
+    .ticket-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 25px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .ticket-header-left h2 {
+        margin: 5px 0 0;
+        font-size: 24px;
+    }
+
+    .ticket-header-left p {
+        margin: 0;
+        opacity: 0.8;
+        font-size: 12px;
+    }
+
+    .ticket-icon {
+        font-size: 32px;
+    }
+
+    .ticket-number {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: right;
+    }
+
+    .ticket-status span {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .status-confirmed {
+        background: #28a745;
+        color: white;
+    }
+
+    .status-checkin {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .status-boarded {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .status-cancelled {
+        background: #dc3545;
+        color: white;
+    }
+
+    /* Linha de voo */
+    .flight-route {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 35px 30px;
+        background: #f8f9fc;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .flight-origin, .flight-destination {
+        text-align: center;
+        flex: 1;
+    }
+
+    .airport-code {
+        font-size: 32px;
+        font-weight: bold;
+        color: #1e3c72;
+    }
+
+    .airport-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 8px 0;
+    }
+
+    .airport-full {
+        font-size: 11px;
+        color: #6c757d;
+    }
+
+    .flight-time {
+        font-size: 13px;
+        margin-top: 10px;
+        font-weight: 500;
+    }
+
+    .flight-line {
+        text-align: center;
+        flex: 0.5;
+    }
+
+    .flight-icon i {
+        font-size: 28px;
+        color: #1e3c72;
+    }
+
+    .flight-duration {
+        font-size: 11px;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    /* Detalhes */
+    .ticket-details {
+        display: flex;
+        padding: 25px 30px;
+        gap: 30px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-section {
+        flex: 1;
+        min-width: 180px;
+    }
+
+        .detail-section h4 {
+            margin: 0 0 15px;
+            font-size: 14px;
+            color: #1e3c72;
+            border-bottom: 2px solid #1e3c72;
+            display: inline-block;
+            padding-bottom: 3px;
+        }
+
+    .detail-row {
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #6c757d;
+        display: inline-block;
+        width: 80px;
+    }
+
+    .detail-value {
+        color: #212529;
+    }
+
+    .seat-number {
+        font-size: 22px;
+        font-weight: bold;
+        color: #28a745;
+    }
+
+    /* Código de barras */
+    .ticket-barcode {
+        padding: 20px 30px;
+        background: white;
+        text-align: center;
+    }
+
+    .barcode-lines {
+        display: flex;
+        justify-content: center;
+        gap: 2px;
+        margin-bottom: 10px;
+    }
+
+    .barcode-line {
+        width: 2px;
+        background: #212529;
+    }
+
+    .barcode-number {
+        font-size: 14px;
+        letter-spacing: 2px;
+        font-family: monospace;
+        font-weight: bold;
+    }
+
+    .ticket-footer {
+        background: #f8f9fc;
+        padding: 15px 30px;
+        text-align: center;
+        font-size: 11px;
+        color: #6c757d;
+    }
+
+        .ticket-footer p {
+            margin: 3px 0;
+        }
+
+    .issue-date {
+        margin-top: 8px;
+        font-size: 10px;
+    }
+
+    /* Estilos para impressão */
     @@media print {
-        .btn-toolbar, .border-bottom, .alert, .card-header .btn {
+        .no-print {
             display: none !important;
         }
 
-        .card {
-            border: 1px solid #000 !important;
+        body {
+            background: white;
+            padding: 0;
+            margin: 0;
         }
 
-        .card-header {
-            background: #f8f9fa !important;
-            color: #000 !important;
+        .container-fluid {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .ticket-container {
+            padding: 0;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .ticket {
+            box-shadow: none;
+            border: 1px solid #ddd;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .ticket-header {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .status-confirmed, .status-checkin, .status-boarded, .status-cancelled {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     }
 </style>
