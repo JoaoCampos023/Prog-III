@@ -116,10 +116,3 @@ Antes de executar o projeto, certifique-se de ter instalado:
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) ou [VS Code](https://code.visualstudio.com/)
 - [Git](https://git-scm.com/) (opcional)
 
-## ⚙️ Configuração do Ambiente
-
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/seu-usuario/SkyLineAviation.git
-cd SkyLineAviation
