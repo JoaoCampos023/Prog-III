@@ -1,50 +1,46 @@
 ﻿namespace SistemaAereo.Models.ViewModels
 {
-    /// <summary>
-    /// ViewModel para o relatório de ocupação de voos
-    /// </summary>
+    // ViewModel para o relatório de ocupação de voos
     public class FlightOccupancyReportViewModel
     {
-        /// <summary>Lista de voos com suas ocupações</summary>
+        // Lista de voos com suas ocupações
         public List<FlightOccupancyDto> Flights { get; set; }
 
-        /// <summary>Percentual médio de ocupação</summary>
+        // Percentual médio de ocupação de todos os voos
         public double AverageOccupancy { get; set; }
 
-        /// <summary>Total de voos no período</summary>
+        // Total de voos no período
         public int TotalFlights { get; set; }
 
-        /// <summary>Total de passageiros transportados</summary>
+        // Total de passageiros transportados
         public int TotalPassengers { get; set; }
     }
 
-    /// <summary>
-    /// DTO para ocupação de um voo específico
-    /// </summary>
+    // DTO para ocupação de um voo específico
     public class FlightOccupancyDto
     {
-        /// <summary>Identificador do voo</summary>
+        // Identificador do voo
         public int FlightId { get; set; }
 
-        /// <summary>Número do voo</summary>
+        // Número do voo
         public string FlightNumber { get; set; }
 
-        /// <summary>Código IATA do aeroporto de origem</summary>
+        // Código IATA do aeroporto de origem
         public string Origin { get; set; }
 
-        /// <summary>Código IATA do aeroporto de destino</summary>
+        // Código IATA do aeroporto de destino
         public string Destination { get; set; }
 
-        /// <summary>Data e hora de saída</summary>
+        // Data e hora de saída
         public DateTime DepartureTime { get; set; }
 
-        /// <summary>Total de poltronas do voo</summary>
+        // Total de poltronas do voo
         public int TotalSeats { get; set; }
 
-        /// <summary>Total de poltronas ocupadas</summary>
+        // Total de poltronas ocupadas
         public int OccupiedSeats { get; set; }
 
-        /// <summary>Percentual de ocupação</summary>
+        // Percentual de ocupação (calculado)
         public double OccupancyPercentage { get; set; }
     }
 }

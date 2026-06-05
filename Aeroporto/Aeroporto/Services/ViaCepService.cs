@@ -4,6 +4,7 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Services
 {
+    // Implementação do serviço de integração com a API ViaCEP
     public class ViaCepService : IViaCepService
     {
         private readonly HttpClient _httpClient;
@@ -15,21 +16,22 @@ namespace SistemaAereo.Services
             _logger = logger;
         }
 
-        /// <summary>
-        /// Busca endereço pelo CEP
-        /// </summary>
+        // Busca endereço pelo CEP
         public async Task<ViaCepResponseDto> GetAddressByZipCodeAsync(string zipCode)
         {
             try
             {
+                // Remove caracteres não numéricos (espaços, hífens, etc.)
                 var cleanZipCode = RemoveFormatting(zipCode);
 
+                // Valida o formato do CEP (deve ter exatamente 8 dígitos)
                 if (string.IsNullOrEmpty(cleanZipCode) || cleanZipCode.Length != 8 || !cleanZipCode.All(char.IsDigit))
                 {
                     _logger.LogWarning($"CEP inválido: {zipCode}");
                     return null;
                 }
 
+                // URL da API ViaCEP
                 var url = $"https://viacep.com.br/ws/{cleanZipCode}/json/";
                 _logger.LogInformation($"Consultando CEP: {cleanZipCode}");
 
@@ -47,6 +49,7 @@ namespace SistemaAereo.Services
                     PropertyNameCaseInsensitive = true
                 });
 
+                // Verifica se o CEP foi encontrado (campo "erro" é true quando não encontrado)
                 if (address == null || address.Error)
                 {
                     _logger.LogWarning($"CEP {cleanZipCode} não encontrado");
@@ -73,18 +76,14 @@ namespace SistemaAereo.Services
             }
         }
 
-        /// <summary>
-        /// Valida se o CEP é válido
-        /// </summary>
+        // Valida se o CEP é válido e existe
         public async Task<bool> IsZipCodeValidAsync(string zipCode)
         {
             var address = await GetAddressByZipCodeAsync(zipCode);
             return address != null && address.IsValid;
         }
 
-        /// <summary>
-        /// Formata o CEP para o padrão 00000-000
-        /// </summary>
+        // Formata o CEP para o padrão 00000-000
         public string FormatZipCode(string zipCode)
         {
             var cleanZipCode = RemoveFormatting(zipCode);
@@ -94,9 +93,7 @@ namespace SistemaAereo.Services
             return $"{cleanZipCode.Substring(0, 5)}-{cleanZipCode.Substring(5, 3)}";
         }
 
-        /// <summary>
-        /// Remove formatação do CEP
-        /// </summary>
+        // Remove formatação do CEP (deixa apenas números)
         public string RemoveFormatting(string zipCode)
         {
             if (string.IsNullOrEmpty(zipCode))

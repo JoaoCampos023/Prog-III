@@ -1,41 +1,37 @@
 ﻿namespace SistemaAereo.Models.ViewModels
 {
-    /// <summary>
-    /// ViewModel para o relatório de clientes mais frequentes
-    /// </summary>
+    // ViewModel para o relatório de clientes mais frequentes
     public class TopCustomersReportViewModel
     {
-        /// <summary>Lista dos clientes mais frequentes</summary>
+        // Lista dos clientes mais frequentes (ranking)
         public List<TopCustomerDto> TopCustomers { get; set; }
 
-        /// <summary>Total de clientes cadastrados</summary>
+        // Total de clientes cadastrados
         public int TotalCustomers { get; set; }
 
-        /// <summary>Total de clientes ativos</summary>
+        // Total de clientes ativos
         public int TotalActiveCustomers { get; set; }
     }
 
-    /// <summary>
-    /// DTO para cliente frequente
-    /// </summary>
+    // DTO para cliente frequente (ranking)
     public class TopCustomerDto
     {
-        /// <summary>Identificador do cliente</summary>
+        // Identificador do cliente
         public int CustomerId { get; set; }
 
-        /// <summary>Nome do cliente</summary>
+        // Nome do cliente
         public string Name { get; set; }
 
-        /// <summary>Email do cliente</summary>
+        // Email do cliente
         public string Email { get; set; }
 
-        /// <summary>Total de passagens compradas</summary>
+        // Total de passagens compradas
         public int TotalTickets { get; set; }
 
-        /// <summary>Valor total gasto</summary>
+        // Valor total gasto pelo cliente
         public decimal TotalAmount { get; set; }
 
-        /// <summary>Ticket médio do cliente</summary>
+        // Ticket médio do cliente (média por passagem)
         public decimal AverageTicketPrice { get; set; }
     }
 }

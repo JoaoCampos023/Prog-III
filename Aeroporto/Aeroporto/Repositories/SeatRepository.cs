@@ -5,13 +5,12 @@ using SistemaAereo.Repositories.Interfaces;
 
 namespace SistemaAereo.Repositories
 {
+    // Implementação do repositório de poltronas
     public class SeatRepository : Repository<Seat>, ISeatRepository
     {
         public SeatRepository(AirportsContext context) : base(context) { }
 
-        /// <summary>
-        /// Obtém todas as poltronas de um voo
-        /// </summary>
+        // Obtém todas as poltronas de um voo
         public async Task<IEnumerable<Seat>> GetSeatsByFlightAsync(int flightId)
         {
             return await _dbSet
@@ -22,9 +21,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém apenas as poltronas disponíveis de um voo
-        /// </summary>
+        // Obtém apenas as poltronas disponíveis de um voo
         public async Task<IEnumerable<Seat>> GetAvailableSeatsByFlightAsync(int flightId)
         {
             return await _dbSet
@@ -35,9 +32,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém uma poltrona com os dados do voo
-        /// </summary>
+        // Obtém uma poltrona com os dados do voo associado
         public async Task<Seat> GetSeatWithFlightAsync(int id)
         {
             return await _dbSet
@@ -45,26 +40,20 @@ namespace SistemaAereo.Repositories
                 .FirstOrDefaultAsync(s => s.SeatId == id);
         }
 
-        /// <summary>
-        /// Verifica se um número de poltrona já existe em um voo
-        /// </summary>
+        // Verifica se um número de poltrona já existe em um voo
         public async Task<bool> SeatNumberExistsInFlightAsync(int flightId, string seatNumber)
         {
             return await _dbSet.AnyAsync(s =>
                 s.FlightId == flightId && s.SeatNumber == seatNumber);
         }
 
-        /// <summary>
-        /// Obtém o total de poltronas disponíveis em um voo
-        /// </summary>
+        // Total de poltronas disponíveis em um voo
         public async Task<int> GetTotalAvailableSeatsByFlightAsync(int flightId)
         {
             return await _dbSet.CountAsync(s => s.FlightId == flightId && s.IsAvailable);
         }
 
-        /// <summary>
-        /// Obtém o total de poltronas de um voo
-        /// </summary>
+        // Total de poltronas de um voo (disponíveis + ocupadas)
         public async Task<int> GetTotalSeatsByFlightAsync(int flightId)
         {
             return await _dbSet.CountAsync(s => s.FlightId == flightId);

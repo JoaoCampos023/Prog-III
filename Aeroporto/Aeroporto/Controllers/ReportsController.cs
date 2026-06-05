@@ -19,13 +19,13 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        // GET: Reports
+        // Página principal de relatórios
         public IActionResult Index()
         {
             return View();
         }
 
-        // GET: Reports/Revenue
+        // Relatório de faturamento por período
         public async Task<IActionResult> Revenue(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;
@@ -39,7 +39,7 @@ namespace SistemaAereo.Controllers
                 MonthlyRevenue = new List<MonthlyRevenueDto>()
             };
 
-            // Daily revenue - CORRIGIDO
+            // Busca faturamento agrupado por dia
             var dailyRevenue = await _context.Tickets
                 .Where(t => t.IssueDate >= start && t.IssueDate <= end && t.Status != TicketStatus.Cancelled)
                 .GroupBy(t => t.IssueDate.Date)
@@ -57,11 +57,10 @@ namespace SistemaAereo.Controllers
             model.TotalTickets = dailyRevenue.Sum(r => r.Quantity);
             model.AverageTicketPrice = model.TotalTickets > 0 ? model.TotalRevenue / model.TotalTickets : 0;
 
-            // Monthly revenue - CORRIGIDO (últimos 12 meses)
+            // Busca faturamento dos últimos 12 meses
             var last12Months = DateTime.Now.AddMonths(-11);
             var startOfMonth = new DateTime(last12Months.Year, last12Months.Month, 1);
 
-            // Buscar tickets agrupados por mês usando DbFunctions
             var monthlyRevenueRaw = await _context.Tickets
                 .Where(t => t.IssueDate >= startOfMonth && t.Status != TicketStatus.Cancelled)
                 .GroupBy(t => new { t.IssueDate.Year, t.IssueDate.Month })
@@ -86,7 +85,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // GET: Reports/FlightOccupancy
+        // Relatório de ocupação de voos
         public async Task<IActionResult> FlightOccupancy(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;
@@ -95,6 +94,7 @@ namespace SistemaAereo.Controllers
             ViewBag.StartDate = start.ToString("yyyy-MM-dd");
             ViewBag.EndDate = end.ToString("yyyy-MM-dd");
 
+            // Busca voos no período com suas poltronas
             var flights = await _context.Flights
                 .Include(f => f.DepartureAirport)
                 .Include(f => f.ArrivalAirport)
@@ -108,6 +108,7 @@ namespace SistemaAereo.Controllers
                 TotalFlights = flights.Count
             };
 
+            // Calcula a ocupação de cada voo
             foreach (var flight in flights)
             {
                 var totalSeats = flight.Seats.Count;
@@ -133,9 +134,10 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // GET: Reports/TopCustomers
+        // Relatório de clientes mais frequentes (ranking)
         public async Task<IActionResult> TopCustomers(int quantity = 10)
         {
+            // Agrupa passagens por cliente e calcula totais
             var customers = await _context.Tickets
                 .Where(t => t.Status != TicketStatus.Cancelled)
                 .GroupBy(t => new { t.CustomerId, t.Customer.Name, t.Customer.Email })
@@ -151,6 +153,7 @@ namespace SistemaAereo.Controllers
                 .Take(quantity)
                 .ToListAsync();
 
+            // Calcula o ticket médio de cada cliente
             foreach (var customer in customers)
             {
                 customer.AverageTicketPrice = customer.TotalTickets > 0 ? customer.TotalAmount / customer.TotalTickets : 0;
@@ -166,7 +169,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        // GET: Reports/ExportRevenueToCsv
+        // Exporta o relatório de faturamento para CSV
         public async Task<IActionResult> ExportRevenueToCsv(DateTime? startDate, DateTime? endDate)
         {
             var end = endDate ?? DateTime.Now;
@@ -184,6 +187,7 @@ namespace SistemaAereo.Controllers
                 .OrderBy(d => d.Date)
                 .ToListAsync();
 
+            // Gera arquivo CSV
             var csv = new System.Text.StringBuilder();
             csv.AppendLine("Data;Quantidade;Valor");
             foreach (var item in revenue)

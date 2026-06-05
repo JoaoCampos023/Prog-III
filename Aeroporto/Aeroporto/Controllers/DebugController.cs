@@ -6,6 +6,7 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Controllers
 {
+    // Controller para debug e criação de dados de teste
     public class DebugController : Controller
     {
         private readonly AirportsContext _context;
@@ -26,9 +27,7 @@ namespace SistemaAereo.Controllers
         // MÉTODOS DE VISUALIZAÇÃO DE DADOS
         // =============================================
 
-        /// <summary>
-        /// Exibe todos os dados do sistema em uma view
-        /// </summary>
+        // Exibe todos os dados do sistema em uma view (para debug)
         public async Task<IActionResult> Dados()
         {
             var dados = new
@@ -72,9 +71,7 @@ namespace SistemaAereo.Controllers
             return View(dados);
         }
 
-        /// <summary>
-        /// Retorna dados em formato JSON para debug
-        /// </summary>
+        // Retorna dados em formato JSON para debug
         public async Task<JsonResult> ApiDados()
         {
             var dados = new
@@ -105,22 +102,16 @@ namespace SistemaAereo.Controllers
             return Json(dados);
         }
 
-        // =============================================
-        // MÉTODOS DE CRIAÇÃO DE DADOS TESTE
-        // =============================================
-
-        /// <summary>
-        /// Cria dados de teste para o sistema
-        /// </summary>
+        // Cria dados de teste para o sistema (usado apenas quando o banco está vazio)
         [HttpPost]
         public async Task<JsonResult> CriarDadosTeste()
         {
             try
             {
-                var flightsExist = await _context.Flights.AnyAsync();
-                var customersExist = await _context.Customers.AnyAsync();
+                var voosExistem = await _context.Flights.AnyAsync();
+                var clientesExistem = await _context.Customers.AnyAsync();
 
-                if (flightsExist || customersExist)
+                if (voosExistem || clientesExistem)
                 {
                     return Json(new
                     {
@@ -161,8 +152,8 @@ namespace SistemaAereo.Controllers
                             DepartureAirportId = airports[0].AirportId,
                             ArrivalAirportId = airports[1].AirportId,
                             AircraftId = aircraft.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(1).AddHours(2),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(4)
+                            DepartureTime = DateTime.Now.AddDays(1).AddHours(8),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(1).AddHours(10)
                         },
                         new Flight
                         {
@@ -170,8 +161,8 @@ namespace SistemaAereo.Controllers
                             DepartureAirportId = airports[0].AirportId,
                             ArrivalAirportId = airports[2].AirportId,
                             AircraftId = aircraft.AircraftId,
-                            DepartureTime = DateTime.Now.AddDays(2).AddHours(3),
-                            EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(5)
+                            DepartureTime = DateTime.Now.AddDays(2).AddHours(14),
+                            EstimatedArrivalTime = DateTime.Now.AddDays(2).AddHours(17)
                         }
                     };
                     _context.Flights.AddRange(flights);
@@ -184,7 +175,7 @@ namespace SistemaAereo.Controllers
                             Name = "João Silva",
                             Email = "joao.silva@email.com",
                             Phone = "(11) 99999-9999",
-                            CPF = "123.456.789-00",
+                            CPF = "12345678900",
                             City = "São Paulo",
                             State = "SP",
                             IsActive = true
@@ -194,7 +185,7 @@ namespace SistemaAereo.Controllers
                             Name = "Maria Santos",
                             Email = "maria.santos@email.com",
                             Phone = "(21) 98888-8888",
-                            CPF = "987.654.321-00",
+                            CPF = "98765432100",
                             City = "Rio de Janeiro",
                             State = "RJ",
                             IsActive = true

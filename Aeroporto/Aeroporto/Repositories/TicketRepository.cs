@@ -6,13 +6,12 @@ using SistemaAereo.Repositories.Interfaces;
 
 namespace SistemaAereo.Repositories
 {
+    // Implementação do repositório de passagens
     public class TicketRepository : Repository<Ticket>, ITicketRepository
     {
         public TicketRepository(AirportsContext context) : base(context) { }
 
-        /// <summary>
-        /// Obtém todas as passagens com os dados completos (voos, clientes, poltronas)
-        /// </summary>
+        // Obtém todas as passagens com dados relacionados (cliente, voo, poltrona)
         public async Task<IEnumerable<Ticket>> GetTicketsCompleteAsync()
         {
             return await _dbSet
@@ -27,9 +26,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém uma passagem específica com todos os dados relacionados
-        /// </summary>
+        // Obtém uma passagem específica com todos os dados relacionados
         public async Task<Ticket> GetTicketCompleteAsync(int id)
         {
             return await _dbSet
@@ -44,9 +41,7 @@ namespace SistemaAereo.Repositories
                 .FirstOrDefaultAsync(t => t.TicketId == id);
         }
 
-        /// <summary>
-        /// Obtém todas as passagens de um cliente específico
-        /// </summary>
+        // Obtém todas as passagens de um cliente específico
         public async Task<IEnumerable<Ticket>> GetTicketsByCustomerAsync(int customerId)
         {
             return await _dbSet
@@ -61,9 +56,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém todas as passagens de um voo específico
-        /// </summary>
+        // Obtém todas as passagens de um voo específico
         public async Task<IEnumerable<Ticket>> GetTicketsByFlightAsync(int flightId)
         {
             return await _dbSet
@@ -75,28 +68,23 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Verifica se um número de bilhete já existe
-        /// </summary>
+        // Verifica se um número de bilhete já existe
         public async Task<bool> TicketNumberExistsAsync(string ticketNumber)
         {
             return await _dbSet.AnyAsync(t => t.TicketNumber == ticketNumber);
         }
 
-        /// <summary>
-        /// Verifica se uma poltrona está ocupada em um voo
-        /// </summary>
+        // Verifica se uma poltrona está ocupada em um voo
         public async Task<bool> IsSeatOccupiedAsync(int flightId, int seatId)
         {
+            // Uma poltrona está ocupada se existe uma passagem ativa (não cancelada) para ela
             return await _dbSet.AnyAsync(t =>
                 t.FlightId == flightId &&
                 t.SeatId == seatId &&
                 t.Status != TicketStatus.Cancelled);
         }
 
-        /// <summary>
-        /// Obtém o total de passagens vendidas para um voo
-        /// </summary>
+        // Total de passagens vendidas para um voo
         public async Task<int> GetTotalTicketsSoldByFlightAsync(int flightId)
         {
             return await _dbSet.CountAsync(t =>
@@ -104,9 +92,7 @@ namespace SistemaAereo.Repositories
                 t.Status != TicketStatus.Cancelled);
         }
 
-        /// <summary>
-        /// Obtém o faturamento total de um voo
-        /// </summary>
+        // Faturamento total de um voo
         public async Task<decimal> GetRevenueByFlightAsync(int flightId)
         {
             return await _dbSet

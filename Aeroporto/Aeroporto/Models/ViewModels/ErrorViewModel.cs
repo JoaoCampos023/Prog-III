@@ -1,17 +1,12 @@
 namespace SistemaAereo.Models.ViewModels
 {
+    // ViewModel para página de erro
     public class ErrorViewModel
     {
-        // =============================================
-        // PROPRIEDADES DE INFORMAÇÃO DE ERRO
-        // =============================================
-
+        // ID da requisição que gerou o erro
         public string? RequestId { get; set; }
 
-        // =============================================
-        // PROPRIEDADE CALCULADA
-        // =============================================
-
+        // Indica se deve mostrar o ID da requisição
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }

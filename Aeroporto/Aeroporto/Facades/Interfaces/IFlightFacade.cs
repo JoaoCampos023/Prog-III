@@ -3,34 +3,27 @@ using SistemaAereo.Models.Entities;
 
 namespace SistemaAereo.Facades.Interfaces
 {
-    /// <summary>
-    /// Fachada para operações complexas relacionadas a voos
-    /// </summary>
+    // Fachada para operações complexas relacionadas a voos
+    // Simplifica as operações de criação, atualização, exclusão e estatísticas
     public interface IFlightFacade
     {
-        /// <summary>
-        /// Cria um novo voo com todas as dependências
-        /// </summary>
+        // Cria um novo voo com todas as dependências
+        // Inclui a criação automática das poltronas
         Task<FlightResultDto> CreateFlightAsync(Flight flight);
 
-        /// <summary>
-        /// Atualiza um voo existente
-        /// </summary>
+        // Atualiza um voo existente
         Task<FlightResultDto> UpdateFlightAsync(Flight flight);
 
-        /// <summary>
-        /// Exclui um voo e todas suas dependências
-        /// </summary>
+        // Exclui um voo e todas suas dependências
+        // Remove poltronas, escalas e verifica se há passagens
         Task<FlightResultDto> DeleteFlightAsync(int flightId);
 
-        /// <summary>
-        /// Recria as poltronas de um voo
-        /// </summary>
+        // Recria as poltronas de um voo
+        // Útil para corrigir problemas na criação inicial
         Task<FlightResultDto> RecreateSeatsAsync(int flightId);
 
-        /// <summary>
-        /// Obtém estatísticas completas de um voo
-        /// </summary>
+        // Obtém estatísticas completas de um voo
+        // Retorna total de poltronas, ocupação, faturamento, etc.
         Task<FlightStatisticsDto> GetFlightStatisticsAsync(int flightId);
     }
 }

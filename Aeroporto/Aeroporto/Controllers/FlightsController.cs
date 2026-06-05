@@ -30,6 +30,7 @@ namespace SistemaAereo.Controllers
         // MÉTODOS PRINCIPAIS
         // =============================================
 
+        // Lista todos os voos com paginação
         public async Task<IActionResult> Index(int page = 1, int itemsPerPage = 10, string status = null)
         {
             try
@@ -41,6 +42,7 @@ namespace SistemaAereo.Controllers
                     .Include(f => f.Aircraft)
                     .AsQueryable();
 
+                // Aplica filtro por status (futuros, hoje, passados)
                 if (!string.IsNullOrEmpty(status))
                 {
                     var now = DateTime.Now;
@@ -54,6 +56,7 @@ namespace SistemaAereo.Controllers
                     ViewBag.StatusFilter = status;
                 }
 
+                // Contagem total para paginação
                 var totalItems = await query.CountAsync();
                 var flights = await query
                     .OrderBy(f => f.DepartureTime)
@@ -76,23 +79,57 @@ namespace SistemaAereo.Controllers
             }
         }
 
+        // Detalhes de um voo específico
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var flight = await _context.Flights
+                    .AsNoTracking()
+                    .Include(f => f.DepartureAirport)
+                    .Include(f => f.ArrivalAirport)
+                    .Include(f => f.Aircraft)
+                    .FirstOrDefaultAsync(f => f.FlightId == id);
+
+                if (flight == null)
+                {
+                    TempData["Erro"] = "Voo não encontrado";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Busca estatísticas do voo (poltronas disponíveis, ocupadas, etc.)
+                var statistics = await _flightFacade.GetFlightStatisticsAsync(id);
+                ViewBag.Statistics = statistics;
+
+                return View(flight);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar detalhes do voo {FlightId}", id);
+                TempData["Erro"] = "Erro ao carregar detalhes do voo";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
         // =============================================
-        // CREATE - CORRIGIDO
+        // CRIAÇÃO DE VOOS
         // =============================================
 
+        // Formulário de criação de voo
         public async Task<IActionResult> Create()
         {
             await LoadViewBags();
             return View(new Flight());
         }
 
+        // Processa a criação de um novo voo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Flight flight)
         {
             try
             {
-                // Remover validação de campos que não estão no formulário
+                // Remove campos de navegação da validação
                 ModelState.Remove("DepartureAirport");
                 ModelState.Remove("ArrivalAirport");
                 ModelState.Remove("Aircraft");
@@ -100,19 +137,21 @@ namespace SistemaAereo.Controllers
                 ModelState.Remove("Seats");
                 ModelState.Remove("Tickets");
 
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    var result = await _flightFacade.CreateFlightAsync(flight);
-
-                    if (result.Success)
-                    {
-                        TempData["Sucesso"] = result.Message;
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    ModelState.AddModelError("", result.ErrorMessage);
+                    await LoadViewBags();
+                    return View(flight);
                 }
 
+                var result = await _flightFacade.CreateFlightAsync(flight);
+
+                if (result.Success)
+                {
+                    TempData["Sucesso"] = result.Message;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ModelState.AddModelError("", result.ErrorMessage);
                 await LoadViewBags();
                 return View(flight);
             }
@@ -126,53 +165,10 @@ namespace SistemaAereo.Controllers
         }
 
         // =============================================
-        // LOAD VIEW BAGS - CORRIGIDO
+        // EDIÇÃO DE VOOS
         // =============================================
 
-        private async Task LoadViewBags()
-        {
-            try
-            {
-                // Carregar aeroportos
-                var airports = await _context.Airports
-                    .OrderBy(a => a.Name)
-                    .Select(a => new SelectListItem
-                    {
-                        Value = a.AirportId.ToString(),
-                        Text = $"{a.Name} ({a.IATACode}) - {a.City}"
-                    })
-                    .ToListAsync();
-
-                ViewBag.Airports = airports;
-                ViewBag.AirportsList = new SelectList(airports, "Value", "Text");
-
-                // Carregar aeronaves
-                var aircrafts = await _context.Aircrafts
-                    .OrderBy(a => a.AircraftType)
-                    .Select(a => new SelectListItem
-                    {
-                        Value = a.AircraftId.ToString(),
-                        Text = $"{a.AircraftType} - {a.NumberOfSeats} assentos"
-                    })
-                    .ToListAsync();
-
-                ViewBag.Aircrafts = aircrafts;
-                ViewBag.AircraftsList = new SelectList(aircrafts, "Value", "Text");
-
-                _logger.LogInformation($"ViewBags carregados: {airports.Count} aeroportos, {aircrafts.Count} aeronaves");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao carregar ViewBags");
-                ViewBag.Airports = new List<SelectListItem>();
-                ViewBag.Aircrafts = new List<SelectListItem>();
-            }
-        }
-
-        // =============================================
-        // OUTROS MÉTODOS
-        // =============================================
-
+        // Formulário de edição de voo
         public async Task<IActionResult> Edit(int id)
         {
             var flight = await _context.Flights.FindAsync(id);
@@ -186,6 +182,7 @@ namespace SistemaAereo.Controllers
             return View(flight);
         }
 
+        // Processa a atualização de um voo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Flight flight)
@@ -198,7 +195,7 @@ namespace SistemaAereo.Controllers
 
             try
             {
-                // Remover validação de campos de navegação
+                // Remove campos de navegação da validação
                 ModelState.Remove("DepartureAirport");
                 ModelState.Remove("ArrivalAirport");
                 ModelState.Remove("Aircraft");
@@ -227,23 +224,11 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        public async Task<IActionResult> Details(int id)
-        {
-            var flight = await _context.Flights
-                .Include(f => f.DepartureAirport)
-                .Include(f => f.ArrivalAirport)
-                .Include(f => f.Aircraft)
-                .FirstOrDefaultAsync(f => f.FlightId == id);
+        // =============================================
+        // EXCLUSÃO DE VOOS
+        // =============================================
 
-            if (flight == null)
-            {
-                TempData["Erro"] = "Voo não encontrado";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(flight);
-        }
-
+        // Formulário de confirmação de exclusão
         public async Task<IActionResult> Delete(int id)
         {
             var flight = await _context.Flights
@@ -261,6 +246,7 @@ namespace SistemaAereo.Controllers
             return View(flight);
         }
 
+        // Confirma a exclusão do voo
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -275,6 +261,11 @@ namespace SistemaAereo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // =============================================
+        // GERENCIAMENTO DE POLTRONAS
+        // =============================================
+
+        // Visualiza o mapa de poltronas de um voo
         public async Task<IActionResult> Seats(int id)
         {
             var flight = await _context.Flights
@@ -293,10 +284,14 @@ namespace SistemaAereo.Controllers
                 .OrderBy(s => s.SeatNumber)
                 .ToListAsync();
 
+            var statistics = await _flightFacade.GetFlightStatisticsAsync(id);
+            ViewBag.Statistics = statistics;
             ViewBag.Flight = flight;
+
             return View(seats);
         }
 
+        // Recria todas as poltronas de um voo (útil se houver erro na criação)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RecreateSeats(int id)
@@ -309,6 +304,40 @@ namespace SistemaAereo.Controllers
                 TempData["Erro"] = result.ErrorMessage;
 
             return RedirectToAction(nameof(Seats), new { id = id });
+        }
+
+        // =============================================
+        // MÉTODOS PRIVADOS
+        // =============================================
+
+        // Carrega os dados para os dropdowns da view
+        private async Task LoadViewBags()
+        {
+            // Lista de aeroportos para o dropdown
+            var airports = await _context.Airports
+                .OrderBy(a => a.Name)
+                .ToListAsync();
+
+            ViewBag.Airports = airports
+                .Select(a => new SelectListItem
+                {
+                    Value = a.AirportId.ToString(),
+                    Text = $"{a.Name} ({a.IATACode}) - {a.City}"
+                })
+                .ToList();
+
+            // Lista de aeronaves para o dropdown
+            var aircrafts = await _context.Aircrafts
+                .OrderBy(a => a.AircraftType)
+                .ToListAsync();
+
+            ViewBag.Aircrafts = aircrafts
+                .Select(a => new SelectListItem
+                {
+                    Value = a.AircraftId.ToString(),
+                    Text = $"{a.AircraftType} - {a.NumberOfSeats} assentos"
+                })
+                .ToList();
         }
     }
 }

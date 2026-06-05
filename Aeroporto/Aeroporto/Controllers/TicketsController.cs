@@ -28,9 +28,7 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lista todas as passagens com paginação
-        /// </summary>
+        // Lista todas as passagens com paginação
         public async Task<IActionResult> Index(int page = 1, int itemsPerPage = 10, string status = null)
         {
             try
@@ -56,12 +54,14 @@ namespace SistemaAereo.Controllers
                     }
                 }
 
+                // Aplica filtro por status se informado
                 if (!string.IsNullOrEmpty(status) && TicketStatus.IsValid(status))
                 {
                     query = query.Where(t => t.Status == status);
                     ViewBag.StatusFilter = status;
                 }
 
+                // Contagem total para paginação
                 var totalItems = await query.CountAsync();
                 var tickets = await query
                     .OrderByDescending(t => t.IssueDate)
@@ -71,6 +71,7 @@ namespace SistemaAereo.Controllers
 
                 var model = new PaginationViewModel<Ticket>(tickets, totalItems, page, itemsPerPage);
 
+                // Configurações para a view
                 ViewBag.ItemsPerPageOptions = new[] { 5, 10, 25, 50, 100 };
                 ViewBag.CurrentItemsPerPage = itemsPerPage;
                 ViewBag.StatusOptions = TicketStatus.GetAll();
@@ -85,9 +86,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Detalhes de uma passagem - User pode ver apenas suas próprias
-        /// </summary>
+        // Detalhes de uma passagem - User pode ver apenas suas próprias
         public async Task<IActionResult> Details(int id)
         {
             try
@@ -99,7 +98,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -121,9 +120,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Gera uma versão isolada do ticket para impressão
-        /// </summary>
+        // Gera uma versão isolada do ticket para impressão
         [HttpGet]
         public async Task<IActionResult> PrintTicket(int id)
         {
@@ -136,7 +133,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -158,9 +155,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de emissão de passagem - apenas Admin e Funcionario
-        /// </summary>
+        // Formulário de emissão de passagem - apenas Admin e Funcionario
         [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> Create()
         {
@@ -168,9 +163,7 @@ namespace SistemaAereo.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Emite uma nova passagem - apenas Admin e Funcionario
-        /// </summary>
+        // Emite uma nova passagem - apenas Admin e Funcionario
         [HttpPost]
         [Authorize(Roles = "Admin,Funcionario")]
         [ValidateAntiForgeryToken]
@@ -205,9 +198,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Realiza check-in - User pode fazer apenas nas suas próprias passagens
-        /// </summary>
+        // Realiza check-in - User pode fazer apenas nas suas próprias passagens
         public async Task<IActionResult> Checkin(int id)
         {
             try
@@ -222,7 +213,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -234,12 +225,14 @@ namespace SistemaAereo.Controllers
                     }
                 }
 
+                // Valida se o status permite check-in
                 if (ticket.Status != TicketStatus.Confirmed)
                 {
                     TempData["Erro"] = $"Check-in não permitido. Status atual: {ticket.Status}";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
+                // Impede check-in de voo já partido
                 if (ticket.Flight != null && ticket.Flight.DepartureTime < DateTime.Now)
                 {
                     TempData["Erro"] = "Não é possível fazer check-in de um voo que já partiu.";
@@ -263,9 +256,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Registra embarque - User pode fazer apenas nas suas próprias passagens
-        /// </summary>
+        // Registra embarque - User pode fazer apenas nas suas próprias passagens
         public async Task<IActionResult> Boarding(int id)
         {
             try
@@ -280,7 +271,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -292,6 +283,7 @@ namespace SistemaAereo.Controllers
                     }
                 }
 
+                // Valida se já fez check-in
                 if (ticket.Status != TicketStatus.CheckIn)
                 {
                     TempData["Erro"] = $"Embarque não permitido. Status atual: {ticket.Status}. É necessário fazer check-in primeiro.";
@@ -315,9 +307,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Cancela uma passagem - User pode cancelar apenas suas próprias passagens
-        /// </summary>
+        // Cancela uma passagem - User pode cancelar apenas suas próprias passagens
         public async Task<IActionResult> Cancel(int id)
         {
             try
@@ -332,7 +322,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -344,18 +334,21 @@ namespace SistemaAereo.Controllers
                     }
                 }
 
+                // Impede cancelamento de passagem já cancelada
                 if (ticket.Status == TicketStatus.Cancelled)
                 {
                     TempData["Info"] = "Esta passagem já está cancelada.";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
+                // Impede cancelamento de passagem já embarcada
                 if (ticket.Status == TicketStatus.Boarded)
                 {
                     TempData["Erro"] = "Não é possível cancelar uma passagem já embarcada.";
                     return RedirectToAction(nameof(Details), new { id = id });
                 }
 
+                // Impede cancelamento de voo já partido
                 if (ticket.Flight != null && ticket.Flight.DepartureTime < DateTime.Now)
                 {
                     TempData["Erro"] = "Não é possível cancelar uma passagem de um voo que já partiu.";
@@ -379,9 +372,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Passagens por cliente
-        /// </summary>
+        // Passagens por cliente
         public async Task<IActionResult> ByCustomer(int id, int page = 1, int itemsPerPage = 10)
         {
             try
@@ -393,7 +384,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Verificar permissão para usuário comum
+                // Verifica permissão para usuário comum
                 if (!User.IsInRole("Admin") && !User.IsInRole("Funcionario"))
                 {
                     var userEmail = User.Identity.Name;
@@ -438,9 +429,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Passagens por voo - apenas Admin e Funcionario
-        /// </summary>
+        // Passagens por voo - apenas Admin e Funcionario
         [Authorize(Roles = "Admin,Funcionario")]
         public async Task<IActionResult> ByFlight(int id, int page = 1, int itemsPerPage = 10)
         {
@@ -483,9 +472,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Busca poltronas disponíveis via AJAX
-        /// </summary>
+        // Busca poltronas disponíveis via AJAX
         public async Task<JsonResult> GetAvailableSeats(int flightId)
         {
             try
@@ -518,8 +505,10 @@ namespace SistemaAereo.Controllers
         // MÉTODOS PRIVADOS
         // =============================================
 
+        // Carrega os dados para os dropdowns da view
         private async Task LoadViewBags()
         {
+            // Clientes ativos para o dropdown
             var activeCustomers = await _context.Customers
                 .Where(c => c.IsActive)
                 .OrderBy(c => c.Name)
@@ -527,6 +516,7 @@ namespace SistemaAereo.Controllers
 
             ViewBag.Customers = new SelectList(activeCustomers, "CustomerId", "Name");
 
+            // Voos disponíveis para o dropdown
             var now = DateTime.Now;
             var availableFlights = await _context.Flights
                 .Include(f => f.DepartureAirport)

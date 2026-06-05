@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SistemaAereo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9676f9c122e52be8042f388a5b4292564e093b67")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a40a361a10b6906bdaeda4dea18d5401e86b087")]
 [assembly: System.Reflection.AssemblyProductAttribute("SistemaAereo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SistemaAereo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -30,9 +30,7 @@ namespace SistemaAereo.Controllers
         // MÉTODOS DE AUTENTICAÇÃO
         // =============================================
 
-        /// <summary>
-        /// GET: Account/Login - Página de login
-        /// </summary>
+        // Exibe a página de login
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
@@ -40,9 +38,7 @@ namespace SistemaAereo.Controllers
             return View();
         }
 
-        /// <summary>
-        /// POST: Account/Login - Processa o login
-        /// </summary>
+        // Processa a tentativa de login do usuário
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -52,6 +48,7 @@ namespace SistemaAereo.Controllers
 
             if (ModelState.IsValid)
             {
+                // Tenta fazer login com as credenciais fornecidas
                 var result = await _signInManager.PasswordSignInAsync(
                     model.Email,
                     model.Password,
@@ -62,6 +59,7 @@ namespace SistemaAereo.Controllers
                 {
                     _logger.LogInformation($"Usuário {model.Email} logou com sucesso.");
 
+                    // Verifica se o usuário está ativo
                     var user = await _userManager.FindByEmailAsync(model.Email);
                     if (user != null && !user.IsActive)
                     {
@@ -70,6 +68,7 @@ namespace SistemaAereo.Controllers
                         return View(model);
                     }
 
+                    // Redireciona para a página solicitada ou para o Dashboard
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
@@ -78,6 +77,7 @@ namespace SistemaAereo.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
+                // Usuário bloqueado por muitas tentativas
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning($"Usuário {model.Email} bloqueado.");
@@ -91,18 +91,14 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// GET: Account/Register - Página de registro
-        /// </summary>
+        // Exibe a página de registro de novo usuário
         [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
-        /// <summary>
-        /// POST: Account/Register - Processa o registro de novo usuário
-        /// </summary>
+        // Processa o registro de um novo usuário
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -110,7 +106,7 @@ namespace SistemaAereo.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Gerar avatar para o novo usuário
+                // Gera um avatar para o novo usuário baseado no nome
                 var avatarUrl = _avatarService.GerarAvatarUrl(model.FullName ?? model.Email, 128);
 
                 var user = new User
@@ -129,14 +125,16 @@ namespace SistemaAereo.Controllers
                 {
                     _logger.LogInformation($"Usuário {user.Email} criado com sucesso.");
 
-                    // Adicionar role padrão "User" (acesso básico)
+                    // Adiciona o usuário à role padrão "User"
                     await _userManager.AddToRoleAsync(user, "User");
 
+                    // Faz login automático após o registro
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
                     return RedirectToAction("Index", "Home");
                 }
 
+                // Exibe os erros de validação
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -146,9 +144,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// POST: Account/Logout - Realiza logout do usuário
-        /// </summary>
+        // Realiza o logout do usuário
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -158,18 +154,14 @@ namespace SistemaAereo.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        /// <summary>
-        /// GET: Account/AccessDenied - Página de acesso negado
-        /// </summary>
+        // Exibe página de acesso negado
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        /// <summary>
-        /// GET: Account/Lockout - Página de conta bloqueada
-        /// </summary>
+        // Exibe página de conta bloqueada
         [AllowAnonymous]
         public IActionResult Lockout()
         {
@@ -180,9 +172,7 @@ namespace SistemaAereo.Controllers
         // MÉTODOS DE PERFIL
         // =============================================
 
-        /// <summary>
-        /// GET: Account/Profile - Página de perfil do usuário
-        /// </summary>
+        // Exibe a página de perfil do usuário
         [Authorize]
         public async Task<IActionResult> Profile()
         {
@@ -213,9 +203,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// POST: Account/Profile - Atualiza o perfil do usuário
-        /// </summary>
+        // Atualiza os dados do perfil do usuário
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -258,18 +246,14 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// GET: Account/ChangePassword - Página de alteração de senha
-        /// </summary>
+        // Exibe a página de alteração de senha
         [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
-        /// <summary>
-        /// POST: Account/ChangePassword - Altera a senha do usuário
-        /// </summary>
+        // Processa a alteração da senha do usuário
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]

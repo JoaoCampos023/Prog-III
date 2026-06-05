@@ -6,9 +6,7 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Controllers.Api
 {
-    /// <summary>
-    /// API para gerenciamento de avatares dos usuários
-    /// </summary>
+    // API para gerenciamento de avatares dos usuários
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -28,14 +26,12 @@ namespace SistemaAereo.Controllers.Api
             _logger = logger;
         }
 
-        /// <summary>
-        /// Obtém avatar placeholder (quando não há avatar disponível)
-        /// </summary>
+        // Gera um avatar placeholder (fallback)
         [HttpGet("placeholder")]
         [AllowAnonymous]
         public IActionResult GetPlaceholderAvatar(int size = 128)
         {
-            // Gerar um SVG simples de placeholder
+            // SVG simples de placeholder
             var svg = $@"<svg width='{size}' height='{size}' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
                 <circle cx='50' cy='50' r='50' fill='#667eea'/>
                 <circle cx='50' cy='35' r='15' fill='white'/>
@@ -47,9 +43,7 @@ namespace SistemaAereo.Controllers.Api
             return File(bytes, "image/svg+xml");
         }
 
-        /// <summary>
-        /// Obtém o avatar do usuário atual
-        /// </summary>
+        // Obtém o avatar do usuário atual
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentAvatar(int size = 128)
         {
@@ -61,9 +55,9 @@ namespace SistemaAereo.Controllers.Api
 
                 var avatarUrl = user.AvatarUrl;
 
+                // Se não tiver avatar, gera um novo
                 if (string.IsNullOrEmpty(avatarUrl))
                 {
-                    // Gerar avatar se não existir
                     var timestamp = DateTime.Now.Ticks;
                     avatarUrl = _avatarService.GerarAvatarUrl(user.FullName ?? user.Email, size);
                     avatarUrl = $"{avatarUrl}&t={timestamp}";
@@ -72,6 +66,7 @@ namespace SistemaAereo.Controllers.Api
                     await _userManager.UpdateAsync(user);
                 }
 
+                // Impede cache da imagem
                 Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
                 Response.Headers.Add("Pragma", "no-cache");
                 Response.Headers.Add("Expires", "0");
@@ -88,9 +83,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Obtém avatar para um usuário específico (para administradores)
-        /// </summary>
+        // Obtém avatar para um usuário específico (apenas Admin)
         [HttpGet("user/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserAvatar(string userId, int size = 128)
@@ -115,9 +108,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Obtém a lista de estilos disponíveis
-        /// </summary>
+        // Retorna a lista de estilos disponíveis para avatar
         [HttpGet("styles")]
         public IActionResult GetStyles()
         {
@@ -125,9 +116,7 @@ namespace SistemaAereo.Controllers.Api
             return Ok(new { success = true, data = styles });
         }
 
-        /// <summary>
-        /// Obtém a lista de provedores disponíveis
-        /// </summary>
+        // Retorna a lista de provedores disponíveis
         [HttpGet("providers")]
         public IActionResult GetProviders()
         {
@@ -135,9 +124,7 @@ namespace SistemaAereo.Controllers.Api
             return Ok(new { success = true, data = providers });
         }
 
-        /// <summary>
-        /// Obtém preview de um estilo específico
-        /// </summary>
+        // Gera preview de um estilo específico
         [HttpGet("preview/{style}")]
         public async Task<IActionResult> GetStylePreview(string style, int size = 80)
         {
@@ -160,9 +147,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Gera avatar usando provedor específico
-        /// </summary>
+        // Gera avatar usando provedor específico
         [HttpGet("provider/{provider}")]
         public async Task<IActionResult> GetAvatarByProvider(string provider, int size = 128, string style = null)
         {
@@ -186,9 +171,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Gera avatar UI (iniciais)
-        /// </summary>
+        // Gera avatar UI (iniciais do nome)
         [HttpGet("ui")]
         public async Task<IActionResult> GetUIAvatar(int size = 128)
         {
@@ -212,9 +195,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Altera o estilo do avatar do usuário
-        /// </summary>
+        // Altera o estilo do avatar do usuário
         [HttpPost("change-style")]
         public async Task<IActionResult> ChangeAvatarStyle([FromBody] ChangeStyleRequest request)
         {
@@ -232,7 +213,7 @@ namespace SistemaAereo.Controllers.Api
                 var estilosDisponiveis = _avatarService.ObterEstilosDisponiveis();
                 var provedoresDisponiveis = _avatarService.ObterProvedoresDisponiveis();
 
-                // Verificar se é um estilo ou provedor
+                // Verifica se o estilo/provedor é válido
                 bool isValid = estilosDisponiveis.Contains(request.Style) || provedoresDisponiveis.Contains(request.Style);
 
                 if (!isValid)
@@ -276,9 +257,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Regenera o avatar do usuário atual
-        /// </summary>
+        // Regenera o avatar do usuário atual (novo seed aleatório)
         [HttpPost("regenerate")]
         public async Task<IActionResult> RegenerateAvatar()
         {
@@ -310,9 +289,7 @@ namespace SistemaAereo.Controllers.Api
             }
         }
 
-        /// <summary>
-        /// Baixa o avatar do usuário atual
-        /// </summary>
+        // Baixa o avatar do usuário atual como arquivo SVG
         [HttpGet("download")]
         public async Task<IActionResult> DownloadAvatar(int size = 256)
         {
@@ -341,9 +318,7 @@ namespace SistemaAereo.Controllers.Api
         }
     }
 
-    /// <summary>
-    /// Request para alterar estilo do avatar
-    /// </summary>
+    // Classe auxiliar para requisição de mudança de estilo
     public class ChangeStyleRequest
     {
         public string Style { get; set; }

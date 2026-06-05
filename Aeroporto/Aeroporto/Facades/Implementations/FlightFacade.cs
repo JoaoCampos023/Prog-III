@@ -9,8 +9,11 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Facades.Implementations
 {
+    // Implementação da fachada de voos
+    // Centraliza toda a lógica de negócio relacionada a voos
     public class FlightFacade : IFlightFacade
     {
+        // Dependências injetadas
         private readonly IFlightRepository _flightRepository;
         private readonly ISeatService _seatService;
         private readonly AirportsContext _context;
@@ -28,9 +31,7 @@ namespace SistemaAereo.Facades.Implementations
             _logger = logger;
         }
 
-        /// <summary>
-        /// Cria um novo voo com todas as dependências
-        /// </summary>
+        // Cria um novo voo com todas as dependências
         public async Task<FlightResultDto> CreateFlightAsync(Flight flight)
         {
             _logger.LogInformation($"Iniciando criação do voo - Número: {flight.FlightNumber}");
@@ -45,6 +46,7 @@ namespace SistemaAereo.Facades.Implementations
             if (flight.DepartureTime < DateTime.Now)
                 return FlightResultDto.Fail("Não é possível cadastrar um voo com data/hora no passado.");
 
+            // Verifica se o número do voo já existe
             var flightNumberExists = await _flightRepository.FlightNumberExistsAsync(flight.FlightNumber);
             if (flightNumberExists)
                 return FlightResultDto.Fail("Este número de voo já está cadastrado.");
@@ -73,13 +75,12 @@ namespace SistemaAereo.Facades.Implementations
             }
         }
 
-        /// <summary>
-        /// Atualiza um voo existente
-        /// </summary>
+        // Atualiza um voo existente
         public async Task<FlightResultDto> UpdateFlightAsync(Flight flight)
         {
             _logger.LogInformation($"Iniciando atualização do voo - ID: {flight.FlightId}");
 
+            // Valida se a data não é passada
             if (flight.DepartureTime < DateTime.Now)
                 return FlightResultDto.Fail("Não é possível editar para uma data/hora no passado.");
 
@@ -89,6 +90,7 @@ namespace SistemaAereo.Facades.Implementations
             if (flight.EstimatedArrivalTime <= flight.DepartureTime)
                 return FlightResultDto.Fail("O horário de chegada deve ser posterior ao horário de saída.");
 
+            // Verifica se o número do voo já existe (excluindo o próprio voo)
             var flightNumberExists = await _flightRepository.FlightNumberExistsAsync(flight.FlightNumber, flight.FlightId);
             if (flightNumberExists)
                 return FlightResultDto.Fail("Este número de voo já está cadastrado.");
@@ -108,9 +110,7 @@ namespace SistemaAereo.Facades.Implementations
             }
         }
 
-        /// <summary>
-        /// Exclui um voo e todas suas dependências
-        /// </summary>
+        // Exclui um voo e todas suas dependências
         public async Task<FlightResultDto> DeleteFlightAsync(int flightId)
         {
             _logger.LogInformation($"Iniciando exclusão do voo - ID: {flightId}");
@@ -123,6 +123,7 @@ namespace SistemaAereo.Facades.Implementations
             if (flight == null)
                 return FlightResultDto.Fail("Voo não encontrado");
 
+            // Verifica se existem passagens vendidas (não canceladas)
             var hasTickets = flight.Tickets.Any(t => t.Status != TicketStatus.Cancelled);
             if (hasTickets)
                 return FlightResultDto.Fail("Não é possível excluir o voo pois existem passagens vendidas.");
@@ -131,13 +132,16 @@ namespace SistemaAereo.Facades.Implementations
 
             try
             {
+                // Remove as poltronas primeiro
                 if (flight.Seats.Any())
                     _context.Seats.RemoveRange(flight.Seats);
 
+                // Remove as escalas
                 var stopovers = await _context.Stopovers.Where(s => s.FlightId == flightId).ToListAsync();
                 if (stopovers.Any())
                     _context.Stopovers.RemoveRange(stopovers);
 
+                // Remove o voo
                 _context.Flights.Remove(flight);
                 await _context.SaveChangesAsync();
 
@@ -154,9 +158,7 @@ namespace SistemaAereo.Facades.Implementations
             }
         }
 
-        /// <summary>
-        /// Recria as poltronas de um voo
-        /// </summary>
+        // Recria as poltronas de um voo
         public async Task<FlightResultDto> RecreateSeatsAsync(int flightId)
         {
             _logger.LogInformation($"Recriando poltronas do voo - ID: {flightId}");
@@ -168,6 +170,7 @@ namespace SistemaAereo.Facades.Implementations
             if (flight == null)
                 return FlightResultDto.Fail("Voo não encontrado");
 
+            // Verifica se existem passagens vendidas
             var hasTickets = await _context.Tickets
                 .AnyAsync(t => t.FlightId == flightId && t.Status != TicketStatus.Cancelled);
 
@@ -178,12 +181,14 @@ namespace SistemaAereo.Facades.Implementations
 
             try
             {
+                // Remove poltronas existentes
                 if (flight.Seats.Any())
                 {
                     _context.Seats.RemoveRange(flight.Seats);
                     await _context.SaveChangesAsync();
                 }
 
+                // Cria novas poltronas
                 await _seatService.CreateSeatsForFlightAsync(flightId);
 
                 await transaction.CommitAsync();
@@ -199,9 +204,7 @@ namespace SistemaAereo.Facades.Implementations
             }
         }
 
-        /// <summary>
-        /// Obtém estatísticas completas de um voo
-        /// </summary>
+        // Obtém estatísticas completas de um voo
         public async Task<FlightStatisticsDto> GetFlightStatisticsAsync(int flightId)
         {
             var flight = await _context.Flights
@@ -211,6 +214,7 @@ namespace SistemaAereo.Facades.Implementations
             if (flight == null)
                 return null;
 
+            // Calcula estatísticas
             var totalSeats = flight.Seats.Count;
             var availableSeats = flight.Seats.Count(s => s.IsAvailable);
             var occupiedSeats = totalSeats - availableSeats;

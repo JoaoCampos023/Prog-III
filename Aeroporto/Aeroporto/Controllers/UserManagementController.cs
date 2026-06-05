@@ -28,14 +28,12 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lista todos os usuários do sistema
-        /// </summary>
+        // Lista todos os usuários do sistema com filtro por status
         public async Task<IActionResult> Index(string filter = "todos")
         {
             var users = new List<User>();
 
-            // Filtrar usuários por status
+            // Aplica filtro por status (todos, ativos, inativos)
             switch (filter?.ToLower())
             {
                 case "ativos":
@@ -49,6 +47,7 @@ namespace SistemaAereo.Controllers
                     break;
             }
 
+            // Busca as roles de cada usuário
             var userRoles = new Dictionary<string, IList<string>>();
 
             foreach (var user in users)
@@ -61,7 +60,7 @@ namespace SistemaAereo.Controllers
             ViewBag.AllRoles = await _roleManager.Roles.ToListAsync();
             ViewBag.CurrentFilter = filter;
 
-            // Estatísticas
+            // Estatísticas para os cards
             ViewBag.TotalUsers = await _userManager.Users.CountAsync();
             ViewBag.ActiveUsers = await _userManager.Users.CountAsync(u => u.IsActive);
             ViewBag.InactiveUsers = await _userManager.Users.CountAsync(u => !u.IsActive);
@@ -69,25 +68,19 @@ namespace SistemaAereo.Controllers
             return View(users);
         }
 
-        /// <summary>
-        /// Lista apenas usuários ativos
-        /// </summary>
+        // Atalho para listar apenas usuários ativos
         public async Task<IActionResult> Ativos()
         {
             return RedirectToAction("Index", new { filter = "ativos" });
         }
 
-        /// <summary>
-        /// Lista apenas usuários inativos
-        /// </summary>
+        // Atalho para listar apenas usuários inativos
         public async Task<IActionResult> Inativos()
         {
             return RedirectToAction("Index", new { filter = "inativos" });
         }
 
-        /// <summary>
-        /// Edita as roles de um usuário
-        /// </summary>
+        // Formulário para editar as roles de um usuário
         [HttpGet]
         public async Task<IActionResult> EditRoles(string id)
         {
@@ -100,7 +93,7 @@ namespace SistemaAereo.Controllers
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            // Lista fixa de roles disponíveis (sem duplicação)
+            // Lista fixa de roles disponíveis
             var allRoles = new List<string> { "Admin", "Funcionario", "User" };
 
             var model = new EditUserRolesViewModel
@@ -115,9 +108,7 @@ namespace SistemaAereo.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// Salva as alterações de roles do usuário
-        /// </summary>
+        // Salva as alterações de roles do usuário
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditRoles(EditUserRolesViewModel model)
@@ -131,7 +122,7 @@ namespace SistemaAereo.Controllers
 
             var currentRoles = await _userManager.GetRolesAsync(user);
 
-            // Remover roles atuais
+            // Remove todas as roles atuais
             var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
             if (!removeResult.Succeeded)
             {
@@ -142,7 +133,7 @@ namespace SistemaAereo.Controllers
                 return View(model);
             }
 
-            // Adicionar novas roles
+            // Adiciona as novas roles selecionadas
             if (model.SelectedRoles != null && model.SelectedRoles.Any())
             {
                 var addResult = await _userManager.AddToRolesAsync(user, model.SelectedRoles);
@@ -162,9 +153,7 @@ namespace SistemaAereo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Ativa/Desativa um usuário
-        /// </summary>
+        // Ativa ou desativa um usuário
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleActive(string id)
@@ -190,9 +179,7 @@ namespace SistemaAereo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Exclui um usuário
-        /// </summary>
+        // Exclui um usuário do sistema (não permite excluir o admin padrão)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
@@ -201,6 +188,7 @@ namespace SistemaAereo.Controllers
             if (user == null)
                 return NotFound();
 
+            // Impede exclusão do usuário administrador padrão
             if (user.UserName == "admin@sistema.com")
             {
                 TempData["Erro"] = "Não é possível excluir o usuário administrador padrão.";
@@ -222,9 +210,7 @@ namespace SistemaAereo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Resetar senha de um usuário
-        /// </summary>
+        // Reseta a senha de um usuário para o padrão "User@123"
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(string id)

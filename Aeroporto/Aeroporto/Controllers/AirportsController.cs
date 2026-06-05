@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data.Context;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Repositories.Interfaces;
 
@@ -21,9 +20,7 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lista todos os aeroportos
-        /// </summary>
+        // Lista todos os aeroportos cadastrados
         public async Task<IActionResult> Index()
         {
             try
@@ -39,17 +36,13 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de criação de aeroporto
-        /// </summary>
+        // Formulário de criação de aeroporto
         public IActionResult Create()
         {
             return View();
         }
 
-        /// <summary>
-        /// Cria um novo aeroporto
-        /// </summary>
+        // Cria um novo aeroporto
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Airport airport)
@@ -58,6 +51,7 @@ namespace SistemaAereo.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    // Valida se o código IATA já está cadastrado
                     if (await _airportRepository.IATACodeExistsAsync(airport.IATACode))
                     {
                         ModelState.AddModelError("IATACode", "Este código IATA já está cadastrado.");
@@ -78,9 +72,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de edição de aeroporto
-        /// </summary>
+        // Formulário de edição de aeroporto
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -101,9 +93,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Atualiza um aeroporto
-        /// </summary>
+        // Atualiza os dados de um aeroporto
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Airport airport)
@@ -118,6 +108,7 @@ namespace SistemaAereo.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    // Valida se o código IATA já está cadastrado (excluindo o próprio aeroporto)
                     if (await _airportRepository.IATACodeExistsAsync(airport.IATACode, id))
                     {
                         ModelState.AddModelError("IATACode", "Este código IATA já está cadastrado.");
@@ -147,15 +138,14 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Exclui um aeroporto
-        /// </summary>
+        // Exclui um aeroporto (verifica se não possui voos associados)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
+                // Verifica se o aeroporto está sendo usado em algum voo
                 if (await _airportRepository.HasFlightsAsync(id))
                 {
                     TempData["Erro"] = "Não é possível excluir o aeroporto pois existem voos associados a ele.";

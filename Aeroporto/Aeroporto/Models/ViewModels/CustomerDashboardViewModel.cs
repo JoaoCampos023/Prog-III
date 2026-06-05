@@ -2,21 +2,19 @@
 
 namespace SistemaAereo.Models.ViewModels
 {
-    /// <summary>
-    /// ViewModel para o dashboard de clientes
-    /// </summary>
+    // ViewModel para o dashboard de clientes
     public class CustomerDashboardViewModel
     {
-        /// <summary>Lista de clientes</summary>
+        // Lista de clientes ativos
         public IEnumerable<Customer> Customers { get; set; }
 
-        /// <summary>Total de clientes</summary>
+        // Total de clientes cadastrados
         public int TotalCustomers { get; set; }
 
-        /// <summary>Total de clientes ativos</summary>
+        // Total de clientes ativos
         public int ActiveCustomers { get; set; }
 
-        /// <summary>Total de clientes inativos</summary>
+        // Total de clientes inativos
         public int InactiveCustomers { get; set; }
     }
 }

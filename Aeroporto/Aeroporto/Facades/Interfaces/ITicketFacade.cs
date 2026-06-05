@@ -3,39 +3,31 @@ using SistemaAereo.Models.Entities;
 
 namespace SistemaAereo.Facades.Interfaces
 {
-    /// <summary>
-    /// Fachada para operações complexas relacionadas a passagens
-    /// </summary>
+    // Fachada para operações complexas relacionadas a passagens
+    // Simplifica as operações de emissão, cancelamento, check-in e embarque
     public interface ITicketFacade
     {
-        /// <summary>
-        /// Emite uma nova passagem
-        /// </summary>
+        // Emite uma nova passagem
+        // Recebe os dados da requisição e retorna o resultado da operação
         Task<TicketResultDto> IssueTicketAsync(IssueTicketRequestDto request);
 
-        /// <summary>
-        /// Cancela uma passagem existente
-        /// </summary>
+        // Cancela uma passagem existente
+        // Libera a poltrona e atualiza o status da passagem
         Task<TicketResultDto> CancelTicketAsync(CancelTicketRequestDto request);
 
-        /// <summary>
-        /// Realiza check-in de uma passagem
-        /// </summary>
+        // Realiza check-in de uma passagem
+        // Altera o status da passagem para "Check-in"
         Task<TicketResultDto> CheckinAsync(CheckinRequestDto request);
 
-        /// <summary>
-        /// Registra embarque de uma passagem
-        /// </summary>
+        // Registra embarque de uma passagem
+        // Altera o status da passagem para "Embarcada"
         Task<TicketResultDto> RegisterBoardingAsync(int ticketId);
 
-        /// <summary>
-        /// Obtém detalhes completos de uma passagem
-        /// </summary>
+        // Obtém detalhes completos de uma passagem
+        // Inclui dados do voo, cliente, poltrona, etc.
         Task<Ticket> GetTicketCompleteAsync(int ticketId);
 
-        /// <summary>
-        /// Verifica se uma poltrona está disponível
-        /// </summary>
+        // Verifica se uma poltrona está disponível para venda
         Task<bool> IsSeatAvailableAsync(int flightId, int seatId);
     }
 }

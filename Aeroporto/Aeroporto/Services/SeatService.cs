@@ -6,6 +6,7 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Services
 {
+    // Implementação do serviço de gerenciamento de poltronas
     public class SeatService : ISeatService
     {
         private readonly AirportsContext _context;
@@ -17,9 +18,7 @@ namespace SistemaAereo.Services
             _logger = logger;
         }
 
-        /// <summary>
-        /// Cria as poltronas para um voo específico
-        /// </summary>
+        // Cria as poltronas para um voo específico
         public async Task<List<Seat>> CreateSeatsForFlightAsync(int flightId, int? numberOfSeats = null)
         {
             try
@@ -34,7 +33,7 @@ namespace SistemaAereo.Services
                     return new List<Seat>();
                 }
 
-                // Verificar se já existem poltronas
+                // Verifica se o voo já possui poltronas (evita duplicação)
                 var existingSeats = await _context.Seats.AnyAsync(s => s.FlightId == flightId);
                 if (existingSeats)
                 {
@@ -42,35 +41,37 @@ namespace SistemaAereo.Services
                     return await _context.Seats.Where(s => s.FlightId == flightId).ToListAsync();
                 }
 
+                // Define o número total de poltronas (usa o da aeronave ou fallback de 50)
                 int totalSeats = numberOfSeats ?? flight.Aircraft?.NumberOfSeats ?? 50;
                 var seats = new List<Seat>();
                 var random = new Random();
 
                 for (int i = 1; i <= totalSeats; i++)
                 {
+                    // Calcula fileira e letra do assento (formato: 1A, 1B, 2A, etc.)
                     var row = (i - 1) / 6 + 1;
                     var position = (i - 1) % 6 + 1;
                     var letter = ((char)('A' + (position - 1))).ToString();
 
-                    // Definir tipo baseado na posição
+                    // Define a classe da poltrona baseada na posição
                     string seatClass;
                     if (i <= totalSeats * 0.05)
-                        seatClass = SeatClass.FirstClass;
+                        seatClass = SeatClass.FirstClass;      // 5% primeiras poltronas
                     else if (i <= totalSeats * 0.2)
-                        seatClass = SeatClass.Executive;
+                        seatClass = SeatClass.Executive;       // 15% seguintes
                     else
-                        seatClass = SeatClass.Economy;
+                        seatClass = SeatClass.Economy;         // Restante
 
-                    // Definir localização baseada no assento
+                    // Define a localização na fileira
                     string location = position switch
                     {
-                        1 or 6 => SeatLocation.Window,
-                        2 or 5 => SeatLocation.Middle,
-                        3 or 4 => SeatLocation.Aisle,
+                        1 or 6 => SeatLocation.Window,   // Janela
+                        2 or 5 => SeatLocation.Middle,   // Meio
+                        3 or 4 => SeatLocation.Aisle,    // Corredor
                         _ => SeatLocation.Aisle
                     };
 
-                    // Definir preço baseado no tipo
+                    // Define o preço baseado na classe
                     decimal price = seatClass switch
                     {
                         SeatClass.FirstClass => 800.00m,
@@ -78,7 +79,7 @@ namespace SistemaAereo.Services
                         _ => 300.00m
                     };
 
-                    // Adicionar variação aleatória
+                    // Adiciona uma pequena variação aleatória ao preço
                     price += random.Next(-50, 51);
 
                     var seat = new Seat
@@ -88,7 +89,7 @@ namespace SistemaAereo.Services
                         IsAvailable = true,
                         Location = location,
                         Class = seatClass,
-                        Price = price
+                        Price = Math.Max(price, 50) // Garante preço mínimo de R$ 50
                     };
 
                     seats.Add(seat);
@@ -107,17 +108,13 @@ namespace SistemaAereo.Services
             }
         }
 
-        /// <summary>
-        /// Verifica se o voo já possui poltronas
-        /// </summary>
+        // Verifica se o voo já possui poltronas
         public async Task<bool> HasSeatsAsync(int flightId)
         {
             return await _context.Seats.AnyAsync(s => s.FlightId == flightId);
         }
 
-        /// <summary>
-        /// Obtém o total de poltronas disponíveis em um voo
-        /// </summary>
+        // Obtém o total de poltronas disponíveis em um voo
         public async Task<int> GetTotalAvailableSeatsAsync(int flightId)
         {
             return await _context.Seats
@@ -125,9 +122,7 @@ namespace SistemaAereo.Services
                 .CountAsync(s => s.FlightId == flightId && s.IsAvailable);
         }
 
-        /// <summary>
-        /// Obtém o total de poltronas ocupadas em um voo
-        /// </summary>
+        // Obtém o total de poltronas ocupadas em um voo
         public async Task<int> GetTotalOccupiedSeatsAsync(int flightId)
         {
             return await _context.Seats

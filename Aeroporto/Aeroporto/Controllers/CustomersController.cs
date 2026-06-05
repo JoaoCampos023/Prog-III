@@ -29,17 +29,15 @@ namespace SistemaAereo.Controllers
         // MÉTODOS PRINCIPAIS - CRUD
         // =============================================
 
-        /// <summary>
-        /// Lista todos os clientes ativos
-        /// </summary>
+        // Lista todos os clientes ativos
         public async Task<IActionResult> Index()
         {
             try
             {
-                // Buscar clientes ativos
+                // Busca clientes ativos
                 var activeCustomers = await _customerRepository.GetActiveCustomersAsync();
 
-                // Buscar todos os clientes para estatísticas
+                // Busca todos os clientes para estatísticas
                 var allCustomers = await _customerRepository.GetAllCustomersAsync();
 
                 var activeCount = activeCustomers.Count();
@@ -66,9 +64,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Retorna todos os clientes em formato JSON para o front-end (filtros e paginação)
-        /// </summary>
+        // Retorna todos os clientes em formato JSON para o front-end (filtros e paginação)
         [HttpGet]
         public async Task<IActionResult> GetAllCustomersJson()
         {
@@ -96,9 +92,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Lista todos os clientes inativos
-        /// </summary>
+        // Lista todos os clientes inativos
         public async Task<IActionResult> Inactive()
         {
             try
@@ -115,17 +109,13 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de criação de cliente
-        /// </summary>
+        // Formulário de criação de cliente
         public IActionResult Create()
         {
             return View();
         }
 
-        /// <summary>
-        /// Cria um novo cliente
-        /// </summary>
+        // Cria um novo cliente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Customer customer)
@@ -134,12 +124,14 @@ namespace SistemaAereo.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    // Valida se o email já está cadastrado
                     if (await _customerRepository.EmailExistsAsync(customer.Email))
                     {
                         ModelState.AddModelError("Email", "Este email já está cadastrado.");
                         return View(customer);
                     }
 
+                    // Valida se o CPF já está cadastrado
                     if (!string.IsNullOrEmpty(customer.CPF) &&
                         await _customerRepository.CPFExistsAsync(customer.CPF))
                     {
@@ -161,9 +153,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de edição de cliente
-        /// </summary>
+        // Formulário de edição de cliente
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -184,9 +174,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Atualiza um cliente
-        /// </summary>
+        // Atualiza os dados de um cliente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Customer customer)
@@ -201,12 +189,14 @@ namespace SistemaAereo.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    // Valida se o email já está cadastrado (excluindo o próprio cliente)
                     if (await _customerRepository.EmailExistsAsync(customer.Email, id))
                     {
                         ModelState.AddModelError("Email", "Este email já está cadastrado.");
                         return View(customer);
                     }
 
+                    // Valida se o CPF já está cadastrado (excluindo o próprio cliente)
                     if (!string.IsNullOrEmpty(customer.CPF) &&
                         await _customerRepository.CPFExistsAsync(customer.CPF, id))
                     {
@@ -237,9 +227,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Remove (desativa) um cliente
-        /// </summary>
+        // Remove (desativa) um cliente - exclusão lógica
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -267,9 +255,7 @@ namespace SistemaAereo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Reativa um cliente
-        /// </summary>
+        // Reativa um cliente que estava inativo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reactivate(int id)
@@ -301,9 +287,7 @@ namespace SistemaAereo.Controllers
         // MÉTODOS ADICIONAIS
         // =============================================
 
-        /// <summary>
-        /// Lista de clientes para mala direta
-        /// </summary>
+        // Lista de clientes para mala direta (exportação de emails)
         public async Task<IActionResult> MailingList()
         {
             try

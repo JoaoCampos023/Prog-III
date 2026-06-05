@@ -1,61 +1,53 @@
-﻿using SistemaAereo.Models.Entities;
-
-namespace SistemaAereo.Models.ViewModels
+﻿namespace SistemaAereo.Models.ViewModels
 {
-    /// <summary>
-    /// ViewModel para o relatório de faturamento
-    /// </summary>
+    // ViewModel para o relatório de faturamento
     public class RevenueReportViewModel
     {
-        /// <summary>Data de início do período</summary>
+        // Data de início do período analisado
         public DateTime StartDate { get; set; }
 
-        /// <summary>Data de fim do período</summary>
+        // Data de fim do período analisado
         public DateTime EndDate { get; set; }
 
-        /// <summary>Faturamento total do período</summary>
+        // Faturamento total do período
         public decimal TotalRevenue { get; set; }
 
-        /// <summary>Total de passagens vendidas</summary>
+        // Total de passagens vendidas no período
         public int TotalTickets { get; set; }
 
-        /// <summary>Ticket médio do período</summary>
+        // Ticket médio do período (média de preço por passagem)
         public decimal AverageTicketPrice { get; set; }
 
-        /// <summary>Faturamento detalhado por dia</summary>
+        // Faturamento detalhado por dia
         public List<DailyRevenueDto> DailyRevenue { get; set; }
 
-        /// <summary>Faturamento detalhado por mês</summary>
+        // Faturamento detalhado por mês
         public List<MonthlyRevenueDto> MonthlyRevenue { get; set; }
     }
 
-    /// <summary>
-    /// DTO para faturamento diário
-    /// </summary>
+    // DTO para faturamento diário
     public class DailyRevenueDto
     {
-        /// <summary>Data do faturamento</summary>
+        // Data do faturamento
         public DateTime Date { get; set; }
 
-        /// <summary>Valor faturado no dia</summary>
+        // Valor faturado no dia
         public decimal Amount { get; set; }
 
-        /// <summary>Quantidade de passagens vendidas</summary>
+        // Quantidade de passagens vendidas
         public int Quantity { get; set; }
     }
 
-    /// <summary>
-    /// DTO para faturamento mensal
-    /// </summary>
+    // DTO para faturamento mensal
     public class MonthlyRevenueDto
     {
-        /// <summary>Mês/Ano no formato YYYY-MM</summary>
+        // Mês/Ano no formato YYYY-MM
         public string Month { get; set; }
 
-        /// <summary>Valor faturado no mês</summary>
+        // Valor faturado no mês
         public decimal Amount { get; set; }
 
-        /// <summary>Quantidade de passagens vendidas</summary>
+        // Quantidade de passagens vendidas
         public int Quantity { get; set; }
     }
 }

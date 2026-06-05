@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SistemaAereo.Data.Context;
 using SistemaAereo.Models.Entities;
 using SistemaAereo.Repositories.Interfaces;
 
@@ -21,9 +20,7 @@ namespace SistemaAereo.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lista todas as aeronaves
-        /// </summary>
+        // Lista todas as aeronaves com seus respectivos voos
         public async Task<IActionResult> Index()
         {
             try
@@ -39,17 +36,13 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de criação de aeronave
-        /// </summary>
+        // Formulário de criação de aeronave
         public IActionResult Create()
         {
             return View();
         }
 
-        /// <summary>
-        /// Cria uma nova aeronave
-        /// </summary>
+        // Cria uma nova aeronave
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Aircraft aircraft)
@@ -72,9 +65,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Formulário de edição de aeronave
-        /// </summary>
+        // Formulário de edição de aeronave
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -95,9 +86,7 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Atualiza uma aeronave
-        /// </summary>
+        // Atualiza os dados de uma aeronave
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Aircraft aircraft)
@@ -135,15 +124,14 @@ namespace SistemaAereo.Controllers
             }
         }
 
-        /// <summary>
-        /// Exclui uma aeronave
-        /// </summary>
+        // Exclui uma aeronave (verifica se não possui voos associados)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
+                // Verifica se a aeronave está sendo usada em algum voo
                 if (await _aircraftRepository.HasFlightsAsync(id))
                 {
                     TempData["Erro"] = "Não é possível excluir a aeronave pois existem voos associados a ela.";

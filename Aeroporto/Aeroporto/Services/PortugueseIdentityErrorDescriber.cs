@@ -2,8 +2,11 @@
 
 namespace SistemaAereo.Services
 {
+    // Classe responsável por traduzir as mensagens de erro do Identity para português
+    // Herda de IdentityErrorDescriber e sobrescreve os métodos com mensagens em português
     public class PortugueseIdentityErrorDescriber : IdentityErrorDescriber
     {
+        // Erro de concorrência (dados modificados por outro usuário)
         public override IdentityError ConcurrencyFailure()
         {
             return new IdentityError
@@ -13,6 +16,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Erro padrão (inesperado)
         public override IdentityError DefaultError()
         {
             return new IdentityError
@@ -22,6 +26,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Email já está em uso
         public override IdentityError DuplicateEmail(string email)
         {
             return new IdentityError
@@ -31,6 +36,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Nome da role já existe
         public override IdentityError DuplicateRoleName(string role)
         {
             return new IdentityError
@@ -40,6 +46,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Nome de usuário já está em uso
         public override IdentityError DuplicateUserName(string userName)
         {
             return new IdentityError
@@ -49,6 +56,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Email inválido
         public override IdentityError InvalidEmail(string email)
         {
             return new IdentityError
@@ -58,6 +66,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Nome da role inválido
         public override IdentityError InvalidRoleName(string role)
         {
             return new IdentityError
@@ -67,6 +76,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Token inválido
         public override IdentityError InvalidToken()
         {
             return new IdentityError
@@ -76,6 +86,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Nome de usuário inválido
         public override IdentityError InvalidUserName(string userName)
         {
             return new IdentityError
@@ -85,6 +96,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Login já está associado a outra conta
         public override IdentityError LoginAlreadyAssociated()
         {
             return new IdentityError
@@ -94,6 +106,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha incorreta
         public override IdentityError PasswordMismatch()
         {
             return new IdentityError
@@ -103,6 +116,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha precisa conter número
         public override IdentityError PasswordRequiresDigit()
         {
             return new IdentityError
@@ -112,6 +126,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha precisa conter letra minúscula
         public override IdentityError PasswordRequiresLower()
         {
             return new IdentityError
@@ -121,6 +136,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha precisa conter caractere especial
         public override IdentityError PasswordRequiresNonAlphanumeric()
         {
             return new IdentityError
@@ -130,6 +146,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha precisa conter letra maiúscula
         public override IdentityError PasswordRequiresUpper()
         {
             return new IdentityError
@@ -139,6 +156,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Senha muito curta
         public override IdentityError PasswordTooShort(int length)
         {
             return new IdentityError
@@ -148,6 +166,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Falha na recuperação do código
         public override IdentityError RecoveryCodeRedemptionFailed()
         {
             return new IdentityError
@@ -157,6 +176,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Usuário já possui senha
         public override IdentityError UserAlreadyHasPassword()
         {
             return new IdentityError
@@ -166,6 +186,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Usuário já pertence à role
         public override IdentityError UserAlreadyInRole(string role)
         {
             return new IdentityError
@@ -175,6 +196,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Bloqueio não está habilitado
         public override IdentityError UserLockoutNotEnabled()
         {
             return new IdentityError
@@ -184,6 +206,7 @@ namespace SistemaAereo.Services
             };
         }
 
+        // Usuário não pertence à role
         public override IdentityError UserNotInRole(string role)
         {
             return new IdentityError

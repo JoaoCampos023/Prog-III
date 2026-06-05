@@ -5,25 +5,31 @@ using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Services
 {
+    // Serviço estático para criar usuários padrão do sistema
+    // Executado na inicialização da aplicação (Program.cs)
     public static class SeedUserService
     {
-        /// <summary>
-        /// Cria o usuário administrador padrão do sistema
-        /// </summary>
+        // Cria o usuário administrador e funcionário padrão
         public static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
         {
+            // Cria um escopo para acessar os serviços do container de DI
             using var scope = serviceProvider.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var avatarService = scope.ServiceProvider.GetRequiredService<IAvatarService>();
             var context = scope.ServiceProvider.GetRequiredService<AirportsContext>();
 
-            // Garantir que o banco de dados foi criado
+            // Garante que o banco de dados foi criado
             await context.Database.EnsureCreatedAsync();
 
-            // Criar roles se não existirem (apenas as 3 principais)
+            // =============================================
+            // CRIAÇÃO DAS ROLES (PERFIS DE ACESSO)
+            // =============================================
+
+            // Lista de roles disponíveis no sistema
             string[] roles = { "Admin", "Funcionario", "User" };
 
+            // Cria cada role se não existir
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
@@ -32,12 +38,16 @@ namespace SistemaAereo.Services
                 }
             }
 
-            // Criar usuário Admin padrão
+            // =============================================
+            // CRIAÇÃO DO USUÁRIO ADMINISTRADOR
+            // =============================================
+
             var adminEmail = "admin@sistema.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
             {
+                // Gera avatar para o administrador
                 var avatarUrl = avatarService.GerarAvatarUrl("Administrador", 128);
 
                 adminUser = new User
@@ -45,7 +55,7 @@ namespace SistemaAereo.Services
                     UserName = adminEmail,
                     Email = adminEmail,
                     FullName = "Administrador do Sistema",
-                    EmailConfirmed = true,
+                    EmailConfirmed = true,  // Confirma o email automaticamente
                     IsActive = true,
                     AvatarUrl = avatarUrl
                 };
@@ -54,16 +64,21 @@ namespace SistemaAereo.Services
 
                 if (result.Succeeded)
                 {
+                    // Adiciona o usuário à role Admin
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
             }
 
-            // Criar usuário Funcionário padrão
+            // =============================================
+            // CRIAÇÃO DO USUÁRIO FUNCIONÁRIO
+            // =============================================
+
             var funcionarioEmail = "funcionario@sistema.com";
             var funcionarioUser = await userManager.FindByEmailAsync(funcionarioEmail);
 
             if (funcionarioUser == null)
             {
+                // Gera avatar para o funcionário
                 var avatarUrl = avatarService.GerarAvatarUrl("Funcionario", 128);
 
                 funcionarioUser = new User
@@ -80,16 +95,21 @@ namespace SistemaAereo.Services
 
                 if (result.Succeeded)
                 {
+                    // Adiciona o usuário à role Funcionario
                     await userManager.AddToRoleAsync(funcionarioUser, "Funcionario");
                 }
             }
 
-            // Criar usuário Comum padrão (opcional)
+            // =============================================
+            // CRIAÇÃO DO USUÁRIO COMUM (OPCIONAL)
+            // =============================================
+
             var userEmail = "usuario@sistema.com";
             var commonUser = await userManager.FindByEmailAsync(userEmail);
 
             if (commonUser == null)
             {
+                // Gera avatar para o usuário comum
                 var avatarUrl = avatarService.GerarAvatarUrl("Usuario", 128);
 
                 commonUser = new User
@@ -106,6 +126,7 @@ namespace SistemaAereo.Services
 
                 if (result.Succeeded)
                 {
+                    // Adiciona o usuário à role User
                     await userManager.AddToRoleAsync(commonUser, "User");
                 }
             }

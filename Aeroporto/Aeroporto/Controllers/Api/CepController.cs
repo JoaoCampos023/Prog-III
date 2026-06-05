@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaAereo.Services.Interfaces;
 
 namespace SistemaAereo.Controllers.Api
 {
+    // Controller da API para consulta de CEP
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CepController : ControllerBase
     {
         private readonly IViaCepService _viaCepService;
@@ -16,14 +19,11 @@ namespace SistemaAereo.Controllers.Api
             _logger = logger;
         }
 
-        /// <summary>
-        /// Busca endereço por CEP
-        /// </summary>
-        /// <param name="zipCode">CEP no formato 00000000 ou 00000-000</param>
-        /// <returns>Dados do endereço</returns>
+        // Busca endereço por CEP
         [HttpGet("{zipCode}")]
         public async Task<IActionResult> GetAddressByZipCode(string zipCode)
         {
+            // Validação do parâmetro
             if (string.IsNullOrEmpty(zipCode))
             {
                 return BadRequest(new { success = false, message = "CEP é obrigatório" });
@@ -52,9 +52,7 @@ namespace SistemaAereo.Controllers.Api
             });
         }
 
-        /// <summary>
-        /// Valida se o CEP existe
-        /// </summary>
+        // Valida se o CEP existe
         [HttpGet("validate/{zipCode}")]
         public async Task<IActionResult> ValidateZipCode(string zipCode)
         {

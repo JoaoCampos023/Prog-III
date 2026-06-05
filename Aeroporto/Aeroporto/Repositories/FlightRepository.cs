@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 
 namespace SistemaAereo.Repositories
 {
+    // Implementação do repositório de voos
     public class FlightRepository : Repository<Flight>, IFlightRepository
     {
         private readonly AirportsContext _context;
@@ -16,9 +17,11 @@ namespace SistemaAereo.Repositories
             _context = context;
         }
 
-        /// <summary>
-        /// Obtém todos os voos com os dados completos
-        /// </summary>
+        // =============================================
+        // CONSULTAS COMPLEXAS COM INCLUDE
+        // =============================================
+
+        // Obtém todos os voos com todos os dados relacionados
         public async Task<IEnumerable<Flight>> GetFlightsCompleteAsync()
         {
             return await _dbSet
@@ -33,9 +36,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém um voo específico com todos os dados
-        /// </summary>
+        // Obtém um voo específico com todos os dados relacionados
         public async Task<Flight> GetFlightCompleteAsync(int id)
         {
             return await _dbSet
@@ -49,9 +50,7 @@ namespace SistemaAereo.Repositories
                 .FirstOrDefaultAsync(f => f.FlightId == id);
         }
 
-        /// <summary>
-        /// Obtém um voo para edição (com tracking)
-        /// </summary>
+        // Obtém um voo para edição (com tracking)
         public async Task<Flight> GetFlightForEditAsync(int id)
         {
             return await _dbSet
@@ -63,9 +62,11 @@ namespace SistemaAereo.Repositories
                 .FirstOrDefaultAsync(f => f.FlightId == id);
         }
 
-        /// <summary>
-        /// Obtém os próximos voos
-        /// </summary>
+        // =============================================
+        // CONSULTAS FILTRADAS
+        // =============================================
+
+        // Obtém os próximos X voos
         public async Task<IEnumerable<Flight>> GetUpcomingFlightsAsync(int quantity = 5)
         {
             return await _dbSet
@@ -79,9 +80,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém voos por período
-        /// </summary>
+        // Obtém voos em um período específico
         public async Task<IEnumerable<Flight>> GetFlightsByPeriodAsync(DateTime start, DateTime end)
         {
             return await _dbSet
@@ -94,9 +93,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém voos por aeroporto (origem ou destino)
-        /// </summary>
+        // Obtém voos que passam por um determinado aeroporto
         public async Task<IEnumerable<Flight>> GetFlightsByAirportAsync(int airportId)
         {
             return await _dbSet
@@ -109,9 +106,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém voos disponíveis para venda (futuros e com poltronas)
-        /// </summary>
+        // Obtém voos disponíveis para venda
         public async Task<IEnumerable<Flight>> GetAvailableFlightsAsync()
         {
             return await _dbSet
@@ -125,9 +120,11 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém voos com filtros combinados
-        /// </summary>
+        // =============================================
+        // CONSULTAS COM MÚLTIPLOS FILTROS
+        // =============================================
+
+        // Obtém voos aplicando diversos filtros combinados
         public async Task<IEnumerable<Flight>> GetFlightsWithFiltersAsync(
             int? departureAirportId = null,
             int? arrivalAirportId = null,
@@ -169,9 +166,11 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Verifica se um número de voo já existe
-        /// </summary>
+        // =============================================
+        // VALIDAÇÕES
+        // =============================================
+
+        // Verifica se um número de voo já existe
         public async Task<bool> FlightNumberExistsAsync(string flightNumber, int? excludeId = null)
         {
             var query = _dbSet.AsNoTracking().Where(f => f.FlightNumber == flightNumber);
@@ -182,41 +181,35 @@ namespace SistemaAereo.Repositories
             return await query.AnyAsync();
         }
 
-        /// <summary>
-        /// Verifica se o voo possui escalas
-        /// </summary>
+        // Verifica se o voo possui escalas
         public async Task<bool> HasStopoversAsync(int flightId)
         {
             return await _context.Stopovers.AnyAsync(s => s.FlightId == flightId);
         }
 
-        /// <summary>
-        /// Verifica se o voo possui poltronas
-        /// </summary>
+        // Verifica se o voo possui poltronas
         public async Task<bool> HasSeatsAsync(int flightId)
         {
             return await _context.Seats.AnyAsync(s => s.FlightId == flightId);
         }
 
-        /// <summary>
-        /// Verifica se o voo possui poltronas ocupadas
-        /// </summary>
+        // Verifica se o voo possui poltronas ocupadas
         public async Task<bool> HasOccupiedSeatsAsync(int flightId)
         {
             return await _context.Seats.AnyAsync(s => s.FlightId == flightId && !s.IsAvailable);
         }
 
-        /// <summary>
-        /// Obtém total de voos
-        /// </summary>
+        // =============================================
+        // ESTATÍSTICAS
+        // =============================================
+
+        // Total de voos cadastrados
         public async Task<int> GetTotalFlightsAsync()
         {
             return await _dbSet.AsNoTracking().CountAsync();
         }
 
-        /// <summary>
-        /// Obtém total de voos por aeroporto
-        /// </summary>
+        // Total de voos que passam por um aeroporto
         public async Task<int> GetTotalFlightsByAirportAsync(int airportId)
         {
             return await _dbSet
@@ -224,9 +217,7 @@ namespace SistemaAereo.Repositories
                 .CountAsync(f => f.DepartureAirportId == airportId || f.ArrivalAirportId == airportId);
         }
 
-        /// <summary>
-        /// Obtém total de voos por período
-        /// </summary>
+        // Total de voos em um período
         public async Task<int> GetTotalFlightsByPeriodAsync(DateTime start, DateTime end)
         {
             return await _dbSet
@@ -234,9 +225,7 @@ namespace SistemaAereo.Repositories
                 .CountAsync(f => f.DepartureTime >= start && f.DepartureTime <= end);
         }
 
-        /// <summary>
-        /// Obtém total de poltronas disponíveis em um voo
-        /// </summary>
+        // Total de poltronas disponíveis em um voo
         public async Task<int> GetTotalAvailableSeatsAsync(int flightId)
         {
             return await _context.Seats
@@ -244,9 +233,7 @@ namespace SistemaAereo.Repositories
                 .CountAsync(s => s.FlightId == flightId && s.IsAvailable);
         }
 
-        /// <summary>
-        /// Obtém total de poltronas ocupadas em um voo
-        /// </summary>
+        // Total de poltronas ocupadas em um voo
         public async Task<int> GetTotalOccupiedSeatsAsync(int flightId)
         {
             return await _context.Seats
@@ -254,9 +241,11 @@ namespace SistemaAereo.Repositories
                 .CountAsync(s => s.FlightId == flightId && !s.IsAvailable);
         }
 
-        /// <summary>
-        /// Obtém voos de hoje
-        /// </summary>
+        // =============================================
+        // CONSULTAS ESPECIALIZADAS
+        // =============================================
+
+        // Obtém voos que acontecem hoje
         public async Task<IEnumerable<Flight>> GetFlightsTodayAsync()
         {
             var today = DateTime.Today;
@@ -272,9 +261,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém voos por status (futuros, passados, hoje)
-        /// </summary>
+        // Obtém voos filtrados por status (futuros, hoje, passados)
         public async Task<IEnumerable<Flight>> GetFlightsByStatusAsync(string status)
         {
             var now = DateTime.Now;
@@ -296,9 +283,7 @@ namespace SistemaAereo.Repositories
             };
         }
 
-        /// <summary>
-        /// Obtém estatísticas de voos por aeroporto
-        /// </summary>
+        // Obtém estatísticas de voos agrupadas por aeroporto
         public async Task<Dictionary<string, int>> GetFlightStatisticsByAirportAsync()
         {
             var airports = await _context.Airports.ToListAsync();
@@ -313,9 +298,11 @@ namespace SistemaAereo.Repositories
             return statistics;
         }
 
-        /// <summary>
-        /// Atualiza status dos voos (job futuro)
-        /// </summary>
+        // =============================================
+        // OPERAÇÕES EM LOTE
+        // =============================================
+
+        // Atualiza o status de voos antigos (job futuro)
         public async Task UpdateFlightsStatusAsync()
         {
             var oldFlights = await _dbSet
@@ -325,15 +312,13 @@ namespace SistemaAereo.Repositories
             // Lógica de atualização em lote pode ser implementada aqui
             foreach (var flight in oldFlights)
             {
-                // Operações em lote
+                // Operações em lote (ex: marcar como arquivado)
             }
 
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Cancela voos com baixa ocupação
-        /// </summary>
+        // Cancela voos com ocupação abaixo do percentual mínimo
         public async Task CancelFlightsWithLowOccupancyAsync(double minimumPercentage)
         {
             var upcomingFlights = await _dbSet
@@ -349,16 +334,18 @@ namespace SistemaAereo.Repositories
 
                 if (occupancy < minimumPercentage)
                 {
-                    // Lógica para cancelar voo
+                    // Lógica para cancelar voo (ex: mudar status, notificar clientes)
                 }
             }
 
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Obtém voos paginados
-        /// </summary>
+        // =============================================
+        // PAGINAÇÃO
+        // =============================================
+
+        // Obtém voos paginados com ordenação dinâmica
         public async Task<(IEnumerable<Flight> Flights, int TotalCount)> GetPaginatedFlightsAsync(
             int page = 1,
             int itemsPerPage = 10,
@@ -372,6 +359,7 @@ namespace SistemaAereo.Repositories
                 .Include(f => f.Aircraft)
                 .AsQueryable();
 
+            // Aplica ordenação baseada no parâmetro
             query = sortBy?.ToLower() switch
             {
                 "number" => ascending ? query.OrderBy(f => f.FlightNumber) : query.OrderByDescending(f => f.FlightNumber),
@@ -389,9 +377,11 @@ namespace SistemaAereo.Repositories
             return (flights, totalCount);
         }
 
-        /// <summary>
-        /// Sobrescreve o método GetAll para incluir os dados relacionados
-        /// </summary>
+        // =============================================
+        // OVERRIDES DOS MÉTODOS BASE
+        // =============================================
+
+        // Sobrescreve o GetAll para incluir os dados relacionados
         public override async Task<IEnumerable<Flight>> GetAllAsync()
         {
             return await _dbSet
@@ -403,9 +393,7 @@ namespace SistemaAereo.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Sobrescreve o método Find para incluir os dados relacionados
-        /// </summary>
+        // Sobrescreve o Find para incluir os dados relacionados
         public override async Task<IEnumerable<Flight>> FindAsync(Expression<Func<Flight, bool>> predicate)
         {
             return await _dbSet
