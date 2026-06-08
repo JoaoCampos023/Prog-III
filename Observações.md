@@ -6,21 +6,9 @@ OBSERVAÇÕES:
 
 Observações - Kalil:
 
-
-
-
-
-* Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto
 * Lembre de remover as credenciais no menu de login, se não o professor vai reclamar kkk
 
-
-
-
-
 Observações - João:
-
-
-
 
 
 Ja ajustados:
@@ -53,4 +41,4 @@ Ja ajustados:
 * Aba relatorios ainda nao esta 100% funcional, ainda em processo de ajuste - ja esta funcionando
 * Fazer os referidos ajustes nas impressões dos bilhetes de passagens - arrumado
 * É interessante fazer um readme, nele dá para falar que tem que mudar a string de conexão, também é interessante falar o que precisa para o projeto rodar e a versão dos programas usados - Feito
-
+* Acho que a cor de fundo do menu login poderia ser diferente para dar um contraste, ou então deixar a cor principal mais azul como o resto -arrumado

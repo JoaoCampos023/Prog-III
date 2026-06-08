@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|c:\\users\\joaov\\documents\\projeto\\sistema aereo\\prog-iii\\aeroporto\\aeroporto\\controllers\\ticketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EECDF370-0EDA-46DD-85DB-5F72DF166668}|Aeroporto\\SistemaAereo.csproj|solutionrelative:aeroporto\\controllers\\ticketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -23,12 +43,77 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "20260608123940_Atualiza\u00E7\u00E3o4.cs",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs",
+              "RelativeDocumentMoniker": "Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs",
+              "RelativeToolTip": "Aeroporto\\Migrations\\20260608123940_Atualiza\u00E7\u00E3o4.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-08T12:39:41.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Account\\Register.cshtml",
+              "RelativeDocumentMoniker": "Aeroporto\\Views\\Account\\Register.cshtml",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Account\\Register.cshtml",
+              "RelativeToolTip": "Aeroporto\\Views\\Account\\Register.cshtml",
+              "ViewState": "AgIAANYAAAAAAAAAAAAiwAcBAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-08T12:34:47.549Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Aeroporto\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-08T12:07:44.503Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "Aeroporto\\Views\\Account\\Login.cshtml",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "Aeroporto\\Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAANYAAAAAAAAAAADwv/wAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-08T12:03:02.015Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\appsettings.json",
+              "RelativeDocumentMoniker": "Aeroporto\\appsettings.json",
+              "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\appsettings.json",
+              "RelativeToolTip": "Aeroporto\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-08T11:58:01.108Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "TicketsController.cs",
               "DocumentMoniker": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\TicketsController.cs",
               "RelativeDocumentMoniker": "Aeroporto\\Controllers\\TicketsController.cs",
               "ToolTip": "C:\\Users\\joaov\\Documents\\Projeto\\Sistema aereo\\Prog-III\\Aeroporto\\Aeroporto\\Controllers\\TicketsController.cs",
               "RelativeToolTip": "Aeroporto\\Controllers\\TicketsController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUCAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-03T19:48:45.274Z",
               "EditorCaption": ""

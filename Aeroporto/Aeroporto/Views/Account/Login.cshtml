@@ -10,7 +10,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Sistema de Gestão Aérea</title>
+    <title>Login - Global Skyline</title>
+
+    <!-- Favicon - Ícone da aba do navegador -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
@@ -21,7 +26,7 @@
             }
 
             body {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #0c2d4a 0%, #1a4a6f 100%);
                 height: 100vh;
                 display: flex;
                 align-items: center;
@@ -38,30 +43,32 @@
             .login-card {
                 background: white;
                 border-radius: 20px;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
             }
 
             .login-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #0c2d4a 0%, #1a4a6f 100%);
                 color: white;
                 padding: 40px 30px;
                 text-align: center;
             }
 
                 .login-header i {
-                    font-size: 70px;
+                    font-size: 60px;
                     margin-bottom: 15px;
                 }
 
                 .login-header h2 {
-                    font-size: 28px;
+                    font-size: 26px;
                     margin-bottom: 5px;
+                    font-weight: 600;
                 }
 
                 .login-header p {
-                    opacity: 0.9;
+                    opacity: 0.85;
                     margin: 0;
+                    font-size: 14px;
                 }
 
             .login-body {
@@ -75,13 +82,13 @@
                 .form-group label {
                     font-weight: 600;
                     margin-bottom: 8px;
-                    color: #333;
+                    color: #1a4a6f;
                     display: block;
                 }
 
                     .form-group label i {
                         margin-right: 8px;
-                        color: #667eea;
+                        color: #1a4a6f;
                     }
 
             .form-control {
@@ -92,8 +99,8 @@
             }
 
                 .form-control:focus {
-                    border-color: #667eea;
-                    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+                    border-color: #1a4a6f;
+                    box-shadow: 0 0 0 3px rgba(26, 74, 111, 0.1);
                     outline: none;
                 }
 
@@ -112,7 +119,7 @@
                 }
 
             .btn-login {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #0c2d4a 0%, #1a4a6f 100%);
                 border: none;
                 padding: 14px;
                 font-size: 16px;
@@ -126,7 +133,7 @@
 
                 .btn-login:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+                    box-shadow: 0 5px 15px rgba(26, 74, 111, 0.4);
                 }
 
             .register-link {
@@ -137,7 +144,7 @@
             }
 
                 .register-link a {
-                    color: #667eea;
+                    color: #1a4a6f;
                     text-decoration: none;
                     font-weight: 600;
                 }
@@ -152,12 +159,21 @@
             }
 
             .credentials-info {
-                background: #f8f9fa;
+                background: #e8f4f8;
                 border-radius: 10px;
                 padding: 12px;
                 margin-top: 20px;
                 font-size: 12px;
+                border-left: 4px solid #1a4a6f;
             }
+
+                .credentials-info small {
+                    color: #0c2d4a;
+                }
+
+                .credentials-info strong {
+                    color: #1a4a6f;
+                }
     </style>
 </head>
 <body>
@@ -165,7 +181,7 @@
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-plane"></i>
-                <h2>Sistema de Gestão Aérea</h2>
+                <h2>Global Skyline</h2>
                 <p>Faça login para acessar o sistema</p>
             </div>
             <div class="login-body">
